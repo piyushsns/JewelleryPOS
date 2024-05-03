@@ -114,28 +114,6 @@ const CategoryListTable = ({ tableData }) => {
 
   const columns = useMemo(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
-          />
-        )
-      },
       columnHelper.accessor('fullName', {
         header: 'Category Name',
         cell: ({ row }) => (
@@ -163,6 +141,20 @@ const CategoryListTable = ({ tableData }) => {
             />
           </div>
         )
+      }),
+      columnHelper.accessor('action', {
+        header: 'Action',
+        cell: () => (
+          <div className='flex items-center'>
+            <IconButton>
+              <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
+            </IconButton>
+            <IconButton>
+              <i className='ri-edit-box-line text-[22px] text-textSecondary' />
+            </IconButton>
+          </div>
+        ),
+        enableSorting: false
       })
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps

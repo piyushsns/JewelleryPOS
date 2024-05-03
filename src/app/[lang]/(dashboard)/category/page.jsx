@@ -26,7 +26,7 @@ const CategoryListApp = async () => {
     {
       id: 2,
       fullName: 'Bracelets',
-      status: 'pending',
+      status: 'inactive',
       avatar: '/images/avatars/3.png'
     },
     {
