@@ -137,7 +137,7 @@ const CategoryListTable = ({ tableData }) => {
         )
       },
       columnHelper.accessor('fullName', {
-        header: 'User',
+        header: 'Category Name',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
             {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
@@ -149,10 +149,9 @@ const CategoryListTable = ({ tableData }) => {
             </div>
           </div>
         )
-      })
-      ,
+      }),
       columnHelper.accessor('status', {
-        header: 'Status',
+        header: 'Category Status',
         cell: ({ row }) => (
           <div className='flex items-center gap-3'>
             <Chip
