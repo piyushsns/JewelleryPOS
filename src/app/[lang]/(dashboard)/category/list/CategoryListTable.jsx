@@ -37,8 +37,6 @@ import {
 } from '@tanstack/react-table'
 
 // Component Imports
-import TableFilters from './TableFilters'
-import AddUserDrawer from './AddUserDrawer'
 import OptionMenu from '@core/components/option-menu'
 import CustomAvatar from '@core/components/mui/Avatar'
 
@@ -48,6 +46,7 @@ import { getLocalizedUrl } from '@/utils/i18n'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
+import AddCategoryDrawer from './AddCategoryDrawer'
 
 // Styled Components
 const Icon = styled('i')({})
@@ -102,7 +101,7 @@ const userStatusObj = {
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const UserListTable = ({ tableData }) => {
+const CategoryListTable = ({ tableData }) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
@@ -150,33 +149,8 @@ const UserListTable = ({ tableData }) => {
             </div>
           </div>
         )
-      }),
-      columnHelper.accessor('email', {
-        header: 'Email',
-        cell: ({ row }) => <Typography>{row.original.email}</Typography>
-      }),
-      columnHelper.accessor('role', {
-        header: 'Role',
-        cell: ({ row }) => (
-          <div className='flex items-center gap-2'>
-            <Icon
-              className={userRoleObj[row.original.role].icon}
-              sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)`, fontSize: '1.375rem' }}
-            />
-            <Typography className='capitalize' color='text.primary'>
-              {row.original.role}
-            </Typography>
-          </div>
-        )
-      }),
-      columnHelper.accessor('currentPlan', {
-        header: 'Plan',
-        cell: ({ row }) => (
-          <Typography className='capitalize' color='text.primary'>
-            {row.original.currentPlan}
-          </Typography>
-        )
-      }),
+      })
+      ,
       columnHelper.accessor('status', {
         header: 'Status',
         cell: ({ row }) => (
@@ -190,37 +164,6 @@ const UserListTable = ({ tableData }) => {
             />
           </div>
         )
-      }),
-      columnHelper.accessor('action', {
-        header: 'Action',
-        cell: () => (
-          <div className='flex items-center'>
-            <IconButton>
-              <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
-            </IconButton>
-            <IconButton>
-              <Link href={getLocalizedUrl('apps/user/view', locale)} className='flex'>
-                <i className='ri-eye-line text-[22px] text-textSecondary' />
-              </Link>
-            </IconButton>
-            <OptionMenu
-              iconClassName='text-[22px] text-textSecondary'
-              options={[
-                {
-                  text: 'Download',
-                  icon: 'ri-download-line text-[22px]',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                },
-                {
-                  text: 'Edit',
-                  icon: 'ri-edit-box-line text-[22px]',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                }
-              ]}
-            />
-          </div>
-        ),
-        enableSorting: false
       })
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -274,7 +217,7 @@ const UserListTable = ({ tableData }) => {
   return (
     <>
       <Card>
-        <CardHeader title='Category' />
+        <CardHeader title='Categories' />
         {/* <TableFilters setData={setData} tableData={tableData} /> */}
         <Divider />
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
@@ -369,9 +312,9 @@ const UserListTable = ({ tableData }) => {
           onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
         />
       </Card>
-      <AddUserDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
+      <AddCategoryDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
     </>
   )
 }
 
-export default UserListTable
+export default CategoryListTable
