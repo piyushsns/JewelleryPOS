@@ -1,3 +1,22 @@
-export default function Page() {
-  return <h1>About page!</h1>
+// Component Imports
+import InvoiceList from './list/index'
+
+const getData = async () => {
+  // Vars
+  const res = await fetch(`${process.env.API_URL}/apps/invoice`)
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch invoice data')
+  }
+
+  return res.json()
 }
+
+const StockAdjustments = async () => {
+  // Vars
+  const data = await getData()
+
+  return <InvoiceList invoiceData={data} />
+}
+
+export default StockAdjustments

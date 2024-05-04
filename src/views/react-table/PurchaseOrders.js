@@ -19,7 +19,6 @@ import styles from '@core/styles/table.module.css'
 // Data Imports
 import defaultData from './data'
 
-
 // Column Definitions
 const columnHelper = createColumnHelper()
 
@@ -43,7 +42,7 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...prop
   return <TextField {...props} size='small' value={value} onChange={e => setValue(e.target.value)} />
 }
 
-const RowSelection = () => {
+const PurchaseOrders = () => {
   // States
   const [globalFilter, setGlobalFilter] = useState('')
 
@@ -121,18 +120,17 @@ const RowSelection = () => {
     }
   })
 
-
   return (
     <Card>
       {/* <CardHeader title='Row Selection' /> */}
       <CardHeader
         className='flex flex-wrap gap-y-2'
-        title='Kitchen Sink'
+        title='Purchase Orders'
         action={
           <DebouncedInput
             value={globalFilter ?? ''}
             onChange={value => setGlobalFilter(String(value))}
-            placeholder='Search all columns...'
+            placeholder='Search all...'
           />
         }
       />
@@ -169,4 +167,4 @@ const RowSelection = () => {
   )
 }
 
-export default RowSelection
+export default PurchaseOrders

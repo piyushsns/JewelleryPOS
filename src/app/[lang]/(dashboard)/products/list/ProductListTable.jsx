@@ -37,8 +37,6 @@ import {
 } from '@tanstack/react-table'
 
 // Component Imports
-import TableFilters from './TableFilters'
-import AddUserDrawer from './AddUserDrawer'
 import OptionMenu from '@core/components/option-menu'
 import CustomAvatar from '@core/components/mui/Avatar'
 
@@ -48,6 +46,7 @@ import { getLocalizedUrl } from '@/utils/i18n'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
+import AddProductDrawer from './AddProdectDrawer'
 
 // Styled Components
 const Icon = styled('i')({})
@@ -102,7 +101,7 @@ const userStatusObj = {
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const UserListTable = ({ tableData }) => {
+const ProductListTable = ({ tableData }) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
@@ -115,30 +114,8 @@ const UserListTable = ({ tableData }) => {
 
   const columns = useMemo(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
-          />
-        )
-      },
       columnHelper.accessor('fullName', {
-        header: 'User',
+        header: 'Product Name',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
             {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
@@ -151,30 +128,32 @@ const UserListTable = ({ tableData }) => {
           </div>
         )
       }),
-      columnHelper.accessor('email', {
-        header: 'Email',
-        cell: ({ row }) => <Typography>{row.original.email}</Typography>
-      }),
-      columnHelper.accessor('role', {
-        header: 'Role',
+      columnHelper.accessor('productPrice', {
+        header: 'Price',
         cell: ({ row }) => (
-          <div className='flex items-center gap-2'>
-            <Icon
-              className={userRoleObj[row.original.role].icon}
-              sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)`, fontSize: '1.375rem' }}
+          <div className='flex items-center gap-3'>
+            <Chip
+              variant='tonal'
+              className='capitalize'
+              label={row.original.productPrice}
+              color={userStatusObj[row.original.productPrice]}
+              size='small'
             />
-            <Typography className='capitalize' color='text.primary'>
-              {row.original.role}
-            </Typography>
           </div>
         )
       }),
-      columnHelper.accessor('currentPlan', {
-        header: 'Plan',
+      columnHelper.accessor('productWeight', {
+        header: 'Weight',
         cell: ({ row }) => (
-          <Typography className='capitalize' color='text.primary'>
-            {row.original.currentPlan}
-          </Typography>
+          <div className='flex items-center gap-3'>
+            <Chip
+              variant='tonal'
+              className='capitalize'
+              label={row.original.productWeight}
+              color={userStatusObj[row.original.productWeight]}
+              size='small'
+            />
+          </div>
         )
       }),
       columnHelper.accessor('status', {
@@ -191,6 +170,7 @@ const UserListTable = ({ tableData }) => {
           </div>
         )
       }),
+
       columnHelper.accessor('action', {
         header: 'Action',
         cell: () => (
@@ -199,25 +179,8 @@ const UserListTable = ({ tableData }) => {
               <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
             </IconButton>
             <IconButton>
-              <Link href={getLocalizedUrl('apps/user/view', locale)} className='flex'>
-                <i className='ri-eye-line text-[22px] text-textSecondary' />
-              </Link>
+              <i className='ri-edit-box-line text-[22px] text-textSecondary' />
             </IconButton>
-            <OptionMenu
-              iconClassName='text-[22px] text-textSecondary'
-              options={[
-                {
-                  text: 'Download',
-                  icon: 'ri-download-line text-[22px]',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                },
-                {
-                  text: 'Edit',
-                  icon: 'ri-edit-box-line text-[22px]',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                }
-              ]}
-            />
           </div>
         ),
         enableSorting: false
@@ -274,7 +237,7 @@ const UserListTable = ({ tableData }) => {
   return (
     <>
       <Card>
-        <CardHeader title='Customers' />
+        <CardHeader title='Products' />
         {/* <TableFilters setData={setData} tableData={tableData} /> */}
         <Divider />
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
@@ -290,11 +253,11 @@ const UserListTable = ({ tableData }) => {
             <DebouncedInput
               value={globalFilter ?? ''}
               onChange={value => setGlobalFilter(String(value))}
-              placeholder='Search Users'
+              placeholder='Search Category'
               className='is-full sm:is-auto'
             />
             <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='is-full sm:is-auto'>
-              Add User
+              Add Product
             </Button>
           </div>
         </div>
@@ -369,9 +332,9 @@ const UserListTable = ({ tableData }) => {
           onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
         />
       </Card>
-      <AddUserDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
+      <AddProductDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
     </>
   )
 }
 
-export default UserListTable
+export default ProductListTable

@@ -10,7 +10,6 @@ const Roles = ({ userData }) => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-      
         <Typography variant='h5' className='mbe-1'>
           Roles List
         </Typography>
