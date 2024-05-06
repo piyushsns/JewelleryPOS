@@ -21,8 +21,8 @@ const rowsData = [
     email: 'Jacinthe_Blick@hotmail.com',
     iconColor: 'primary',
     roleIcon: 'ri-vip-crown-line',
-    role: 'Admin',
-    status: 'pending'
+    role: 'Store Manager',
+    status: 'inactive'
   },
   {
     avatarSrc: '/images/avatars/2.png',
@@ -31,7 +31,7 @@ const rowsData = [
     email: 'Jaylon_Bartell3@gmail.com',
     iconColor: 'warning',
     roleIcon: 'ri-edit-box-line',
-    role: 'Editor',
+    role: 'Inventory Manager',
     status: 'active'
   },
   {
@@ -41,7 +41,7 @@ const rowsData = [
     email: 'Tristin_Johnson@gmail.com',
     iconColor: 'error',
     roleIcon: 'ri-computer-line',
-    role: 'Author',
+    role: 'Sales Associate',
     status: 'active'
   },
   {
@@ -51,8 +51,8 @@ const rowsData = [
     email: 'Toney21@yahoo.com',
     iconColor: 'warning',
     roleIcon: 'ri-edit-box-line',
-    role: 'Editor',
-    status: 'pending'
+    role: 'Inventory Manager',
+    status: 'inactive'
   },
   {
     avatarSrc: '/images/avatars/5.png',
@@ -61,7 +61,7 @@ const rowsData = [
     email: 'Hunter_Kuhic68@hotmail.com',
     iconColor: 'info',
     roleIcon: 'ri-pie-chart-2-line',
-    role: 'Maintainer',
+    role: 'Jewelry Designer',
     status: 'active'
   },
   {
@@ -71,8 +71,8 @@ const rowsData = [
     email: 'Norene_Bins@yahoo.com',
     iconColor: 'warning',
     roleIcon: 'ri-edit-box-line',
-    role: 'Editor',
-    status: 'pending'
+    role: 'Inventory Manager',
+    status: 'inactive'
   },
   {
     avatarSrc: '/images/avatars/7.png',
@@ -81,7 +81,7 @@ const rowsData = [
     email: 'Emmitt.Walker14@hotmail.com',
     iconColor: 'info',
     roleIcon: 'ri-pie-chart-2-line',
-    role: 'Maintainer',
+    role: 'Sales Associate',
     status: 'inactive'
   },
   {
@@ -91,7 +91,7 @@ const rowsData = [
     email: 'Patrick.Howe73@gmail.com',
     iconColor: 'success',
     roleIcon: 'ri-user-3-line',
-    role: 'Subscriber',
+    role: 'Sales Associate',
     status: 'active'
   }
 ]
@@ -136,7 +136,7 @@ const Table = () => {
                   <Chip
                     className='capitalize'
                     variant='tonal'
-                    color={row.status === 'pending' ? 'warning' : row.status === 'inactive' ? 'secondary' : 'success'}
+                    color={row.status === 'inactive' ? 'warning' : row.status === 'inactive' ? 'secondary' : 'success'}
                     label={row.status}
                     size='small'
                   />

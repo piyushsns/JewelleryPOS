@@ -1,4 +1,6 @@
 import UserList from '@views/apps/user/list'
+import PermissionsApp from '../apps/permissions/page'
+import { Grid } from '@mui/material'
 
 const getData = async () => {
   // Vars
@@ -15,7 +17,7 @@ const UserListApp = async () => {
   // Vars
   const data = await getData()
 
-  return <UserList userData={data} />
+  return (<UserList userData={data} />)
 }
 
-export default UserListApp
+export default UserListApp 

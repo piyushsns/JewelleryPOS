@@ -84,7 +84,7 @@ const TableFilters = ({ setData, tableData }) => {
               inputProps={{ placeholder: 'Select Status' }}
             >
               <MenuItem value=''>Select Status</MenuItem>
-              <MenuItem value='pending'>Pending</MenuItem>
+              {/* <MenuItem value='pending'>Pending</MenuItem> */}
               <MenuItem value='active'>Active</MenuItem>
               <MenuItem value='inactive'>Inactive</MenuItem>
             </Select>

@@ -155,28 +155,28 @@ const UserListTable = ({ tableData }) => {
         header: 'Email',
         cell: ({ row }) => <Typography>{row.original.email}</Typography>
       }),
-      columnHelper.accessor('role', {
-        header: 'Role',
-        cell: ({ row }) => (
-          <div className='flex items-center gap-2'>
-            <Icon
-              className={userRoleObj[row.original.role].icon}
-              sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)`, fontSize: '1.375rem' }}
-            />
-            <Typography className='capitalize' color='text.primary'>
-              {row.original.role}
-            </Typography>
-          </div>
-        )
-      }),
-      columnHelper.accessor('currentPlan', {
-        header: 'Plan',
-        cell: ({ row }) => (
-          <Typography className='capitalize' color='text.primary'>
-            {row.original.currentPlan}
-          </Typography>
-        )
-      }),
+      // columnHelper.accessor('role', {
+      //   header: 'Role',
+      //   cell: ({ row }) => (
+      //     <div className='flex items-center gap-2'>
+      //       <Icon
+      //         className={userRoleObj[row.original.role].icon}
+      //         sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)`, fontSize: '1.375rem' }}
+      //       />
+      //       <Typography className='capitalize' color='text.primary'>
+      //         {row.original.role}
+      //       </Typography>
+      //     </div>
+      //   )
+      // }),
+      // columnHelper.accessor('currentPlan', {
+      //   header: 'Plan',
+      //   cell: ({ row }) => (
+      //     <Typography className='capitalize' color='text.primary'>
+      //       {row.original.currentPlan}
+      //     </Typography>
+      //   )
+      // }),
       columnHelper.accessor('status', {
         header: 'Status',
         cell: ({ row }) => (

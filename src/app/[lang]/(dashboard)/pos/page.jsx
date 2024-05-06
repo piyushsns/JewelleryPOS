@@ -8,8 +8,10 @@
 import React, { useEffect } from 'react'
 
 import Grid from '@mui/material/Grid'
+import OpenDialogOnElementClick from '../../../../components/dialogs/OpenDialogOnElementClick'
+// import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
 
-import { Box, Card, CardContent, CardHeader, Tab, Tabs, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, CardHeader, Tab, Tabs, Typography } from '@mui/material'
 
 import { toast } from 'react-toastify'
 
@@ -18,6 +20,10 @@ import ProductListByCategory from './ProductListByCategory'
 import HttpService from '../../../../services/http_service'
 
 import Summary from './Summary'
+
+import PreviewPage from './preview/sendinvoice'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
 
 const tokenId = ''
 
@@ -79,7 +85,9 @@ const CartAPIService = {
 
 const POSPage = () => {
   // Vars
+  const params = useParams()
 
+  const { lang: locale, id } = params
   const [categories, setCategories] = React.useState([])
 
   const [selectedCategory, setselectedCategory] = React.useState(99999)
@@ -87,6 +95,7 @@ const POSPage = () => {
   const [selectedProducts, setSelectedProducts] = React.useState([])
 
   const [cart, setCart] = React.useState({})
+  const [show, setShow] = React.useState(true)
 
   const [isRefreshOrderSummary, setIsRefreshOrderSummary] = React.useState(true)
 
@@ -128,7 +137,17 @@ const POSPage = () => {
     setIsRefreshOrderSummary(true)
   }
 
+  const hendleClick = () => {
+    setShow(false)
+  }
+
+  const buttonProps = {
+    variant: 'contained',
+    children: 'Show'
+  }
+
   return (
+    <>
     <Grid container spacing={6}>
       <Grid item xs={12} lg={6} md={7}>
         <Card className='shadow'>
@@ -171,7 +190,15 @@ const POSPage = () => {
           setIsRefreshOrderSummary={setIsRefreshOrderSummary}
         />
       </Grid>
+    <Grid xs={12} className='flex justify-end mt-5' >
+      <Link href={`/${locale}/apps/invoice/preview/${'4987'}`}>
+      <Button variant="contained" color="primary" onClick={`/${locale}/apps/invoice/preview/${'4987'}`}>Send invoice</Button>
+      </Link>
     </Grid>
+    </Grid>
+
+    </>
+    
   )
 }
 

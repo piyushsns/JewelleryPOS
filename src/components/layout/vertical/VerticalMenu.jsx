@@ -332,7 +332,8 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
         </MenuItem>
         <SubMenu label={'Employees'} icon={<i className='ri-team-line' />}>
           <MenuItem href={`/${locale}/employees/list`}>Employee List</MenuItem>
-          <MenuItem href={`/${locale}/employees/roles`}>Roles/Permissions</MenuItem>
+          <MenuItem href={`/${locale}/employees/roles`}>Roles</MenuItem>
+          <MenuItem href={`/${locale}/employees/permissions`}>Permissions</MenuItem>
         </SubMenu>
         <MenuItem href={`/${locale}/site_settings`} icon={<i className='ri-settings-line' />}>
           Site Settings
