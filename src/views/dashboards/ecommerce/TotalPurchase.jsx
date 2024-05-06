@@ -15,7 +15,7 @@ import { rgbaToHex } from '@/utils/rgbaToHex'
 // Styled Component Imports
 const AppReactApexCharts = dynamic(() => import('@/libs/styles/AppReactApexCharts'))
 
-const TotalSales = () => {
+const TotalPurchase = () => {
   // Hooks
   const theme = useTheme()
   const { mode, systemMode } = useColorScheme()
@@ -91,11 +91,11 @@ const TotalSales = () => {
       <CardContent className='flex justify-between bs-full'>
         <div className='flex flex-col justify-between'>
           <div className='flex flex-col gap-1'>
-            <Typography variant='h5'>Total Sales</Typography>
-            <Typography>Calculated in last 7 days</Typography>
+            <Typography variant='h5'>Total Purchase</Typography>
+            {/* <Typography>Calculated in last 7 days</Typography> */}
           </div>
           <div className='flex items-center flex-wrap'>
-            <Typography variant='h4'>25,980</Typography>
+            <Typography variant='h4'>16,980</Typography>
             <div>
               <i className='ri-arrow-up-s-line align-bottom text-success' />
               <span className='text-success'>15.6%</span>
@@ -108,4 +108,4 @@ const TotalSales = () => {
   )
 }
 
-export default TotalSales
+export default TotalPurchase

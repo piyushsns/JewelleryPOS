@@ -13,7 +13,7 @@ const Congratulations = () => {
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>
             <Typography variant='h4' className='mbe-9'>
-              Congratulations <span className='font-bold'>John!</span> 🎉
+              Welcome <span className='font-bold'>!!</span> 🎉
             </Typography>
             <Typography>
               You have done 72% 😎 more sales today. Check your new raising badge in your profile.

@@ -128,17 +128,27 @@ const ProductListTable = ({ tableData }) => {
           </div>
         )
       }),
-      columnHelper.accessor('productPrice', {
-        header: 'Price',
+      columnHelper.accessor('metal', {
+        header: 'Metal',
         cell: ({ row }) => (
-          <div className='flex items-center gap-3'>
-            <Chip
-              variant='tonal'
-              className='capitalize'
-              label={row.original.productPrice}
-              color={userStatusObj[row.original.productPrice]}
-              size='small'
-            />
+          <div className='flex items-center gap-4'>
+            <div className='flex flex-col'>
+              <Typography className='font-medium' color='text.primary'>
+                {row.original.metal}
+              </Typography>
+            </div>
+          </div>
+        )
+      }),
+      columnHelper.accessor('carat', {
+        header: 'Carat',
+        cell: ({ row }) => (
+          <div className='flex items-center gap-4'>
+            <div className='flex flex-col'>
+              <Typography className='font-medium' color='text.primary'>
+                {row.original.carat}
+              </Typography>
+            </div>
           </div>
         )
       }),
@@ -151,6 +161,20 @@ const ProductListTable = ({ tableData }) => {
               className='capitalize'
               label={row.original.productWeight}
               color={userStatusObj[row.original.productWeight]}
+              size='small'
+            />
+          </div>
+        )
+      }),
+      columnHelper.accessor('productPrice', {
+        header: 'Price',
+        cell: ({ row }) => (
+          <div className='flex items-center gap-3'>
+            <Chip
+              variant='tonal'
+              className='capitalize'
+              label={row.original.productPrice}
+              color={userStatusObj[row.original.productPrice]}
               size='small'
             />
           </div>

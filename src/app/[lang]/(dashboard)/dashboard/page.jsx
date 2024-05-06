@@ -1,5 +1,6 @@
 // MUI Imports
 import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
 
 // Components Imports
 import Congratulations from '@views/dashboards/ecommerce/Congratulations'
@@ -13,6 +14,8 @@ import NewVisitors from '@views/dashboards/ecommerce/NewVisitors'
 import WebsiteStatistics from '@views/dashboards/ecommerce/WebsiteStatistics'
 import Table from '@views/dashboards/ecommerce/Table'
 import MeetingSchedule from '@views/dashboards/ecommerce/MeetingSchedule'
+import TotalPurchase from '@views/dashboards/ecommerce/TotalPurchase'
+import SalesOverview from '@views/dashboards/ecommerce/salesOverview'
 
 const getData = async () => {
   // Vars
@@ -39,7 +42,7 @@ const DashboardECommerce = async () => {
           <Grid item xs={12} sm={6}>
             <CardStatVertical
               title='Revenue'
-              stats='$95k'
+              stats='95k'
               avatarIcon='ri-money-dollar-circle-line'
               avatarColor='success'
               subtitle='Revenue Increase'
@@ -76,46 +79,48 @@ const DashboardECommerce = async () => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12} md={6} lg={4}>
-        <Transactions />
+      <Grid item xs={12} md={8}>
+        <SalesOverview />
       </Grid>
       <Grid item xs={12} md={6} lg={4}>
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>
+            {/* <LineChartWithShadow /> */}
             <CardStatVertical
-              title='Logistics'
-              stats='$44k'
-              avatarIcon='ri-car-line'
-              avatarColor='error'
-              subtitle='Revenue Increase'
-              trendNumber='42%'
+              title='Total Suppliers'
+              stats='50'
+              avatarIcon='ri-file-chart-line'
+              avatarColor='primary'
+              subtitle='View Suppliers List'
+              trendNumber='10%'
               trend='positive'
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <CardStatVertical
-              title='Reports'
+              title='Total Stock'
               stats='268'
               avatarIcon='ri-file-chart-line'
               avatarColor='warning'
-              subtitle='System Bugs'
+              subtitle='Stock in hand'
               trendNumber='28%'
               trend='negative'
             />
           </Grid>
-          <Grid item xs={12}>
-            <NewVisitors />
-          </Grid>
         </Grid>
       </Grid>
       <Grid item xs={12} md={6} lg={4}>
-        <WebsiteStatistics />
+        {/* <WebsiteStatistics /> */}
+        <Transactions />
       </Grid>
-      <Grid item xs={12} lg={8} className='order-last lg:order-[unset]'>
+      <Grid item xs={12} lg={8}>
+        <Typography variant='h4' className='mbe-9'>
+          Invoice List
+        </Typography>
         <Table invoiceData={data.slice(0, 8)} />
       </Grid>
       <Grid item xs={12} md={6} lg={4}>
-        <MeetingSchedule />
+        {/* <MeetingSchedule /> */}
       </Grid>
     </Grid>
   )

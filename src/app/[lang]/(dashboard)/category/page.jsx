@@ -30,6 +30,18 @@ const CategoryListApp = async () => {
       avatar: '/images/avatars/3.png'
     },
     {
+      id: 2,
+      fullName: 'Pendants',
+      status: 'inactive',
+      avatar: '/images/avatars/3.png'
+    },
+    {
+      id: 2,
+      fullName: 'Necklaces',
+      status: 'active',
+      avatar: '/images/avatars/3.png'
+    },
+    {
       id: 3,
       fullName: 'Earrings',
       status: 'active',
@@ -44,6 +56,12 @@ const CategoryListApp = async () => {
     {
       id: 5,
       fullName: 'Silver',
+      status: 'active',
+      avatar: '/images/avatars/3.png'
+    },
+    {
+      id: 5,
+      fullName: 'Diamond',
       status: 'active',
       avatar: '/images/avatars/3.png'
     }

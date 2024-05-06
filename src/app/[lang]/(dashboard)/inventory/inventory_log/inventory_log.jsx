@@ -22,16 +22,7 @@ import Switch from '@mui/material/Switch'
 import { visuallyHidden } from '@mui/utils'
 import { Card, CardHeader, TextField } from '@mui/material'
 
-function createData(
-  Sku,
-  Discription,
-  Purity,
-  weight,
-  Cost,
-  SellingPrice,
-  Quantity,
-  TotalValue,
-) {
+function createData(Sku, Discription, Purity, weight, Cost, SellingPrice, Quantity, TotalValue) {
   return {
     Sku,
     Discription,
@@ -40,7 +31,7 @@ function createData(
     Cost,
     SellingPrice,
     Quantity,
-    TotalValue,
+    TotalValue
   }
 }
 
@@ -70,14 +61,14 @@ function descendingComparator(a, b, orderBy) {
 }
 
 const headCells = [
-  { id: 'Sku', numeric: false, label: 'Sku' },
-  { id: 'Discription', numeric: false, label: 'Discription' },
+  { id: 'Sku', numeric: false, label: 'SKU' },
+  { id: 'Discription', numeric: false, label: 'Description' },
   { id: 'Purity', numeric: false, label: 'Purity (96)' },
-  { id: 'weight', numeric: false, label: 'weight (g)' },
-  { id: 'Cost', numeric: true, label: 'Cost ($)' },
-  { id: 'SellingPrice', numeric: true, label: 'Selling Price ($)' },
+  { id: 'weight', numeric: false, label: 'Weight (g)' },
+  { id: 'Cost', numeric: true, label: 'Cost (Rs)' },
+  { id: 'SellingPrice', numeric: true, label: 'Selling Price (Rs)' },
   { id: 'Quantity', numeric: true, label: 'Quantity' },
-  { id: 'TotalValue', numeric: true, label: 'Total Value ($)' },
+  { id: 'TotalValue', numeric: true, label: 'Total Value (Rs)' }
 ]
 
 export default function EnhancedTable() {
@@ -105,7 +96,7 @@ export default function EnhancedTable() {
   const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
     // States
     const [value, setValue] = useState(initialValue)
-  
+
     useEffect(() => {
       setValue(initialValue)
     }, [initialValue])
@@ -113,11 +104,11 @@ export default function EnhancedTable() {
       const timeout = setTimeout(() => {
         onChange(value)
       }, debounce)
-  
+
       return () => clearTimeout(timeout)
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
-  
+
     return <TextField {...props} size='small' value={value} onChange={e => setValue(e.target.value)} />
   }
   const handleClick = (event, id) => {
@@ -164,17 +155,17 @@ export default function EnhancedTable() {
   return (
     <Box sx={{ width: '100%' }}>
       <Card sx={{ width: '100%', mb: 2 }}>
-      <CardHeader
-        className='flex flex-wrap gap-y-2'
-        title='Inventory Logs'
-        action={
-          <DebouncedInput
-            value={globalFilter ?? ''}
-            onChange={value => setGlobalFilter(String(value))}
-            placeholder='Search all columns...'
-          />
-        }
-      />
+        <CardHeader
+          className='flex flex-wrap gap-y-2'
+          title='Inventory Logs'
+          action={
+            <DebouncedInput
+              value={globalFilter ?? ''}
+              onChange={value => setGlobalFilter(String(value))}
+              placeholder='Search all columns...'
+            />
+          }
+        />
         <TableContainer>
           <Table aria-labelledby='tableTitle' size='medium'>
             <EnhancedTableHead
