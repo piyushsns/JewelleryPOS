@@ -33,6 +33,7 @@
     "@iconify/json": "^2.2.167",
     "@iconify/tools": "^4.0.0",
     "@iconify/utils": "^2.1.14",
+    "@mui/icons-material": "^5.15.16",
     "@mui/lab": "5.0.0-alpha.160",
     "@mui/material": "^5.15.4",
     "@mui/material-nextjs": "^5.15.3",

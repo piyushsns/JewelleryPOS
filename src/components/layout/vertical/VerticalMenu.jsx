@@ -301,8 +301,8 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
         <MenuItem href={`/${locale}/dashboard`} icon={<i className='ri-home-smile-line' />}>
           Dashboard
         </MenuItem>
-        <MenuItem href={`/${locale}/pos`} icon={<i className='ri-shopping-bag-2-line' />}>
-          POS
+        <MenuItem href={`/${locale}/pos`} icon={<i className='ri-calculator-line' />}>
+          POS Sales
         </MenuItem>
         <MenuItem href={`/${locale}/category`} icon={<i className='ri-archive-stack-fill' />}>
           Categories
