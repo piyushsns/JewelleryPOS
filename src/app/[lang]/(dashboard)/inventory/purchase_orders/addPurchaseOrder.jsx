@@ -423,7 +423,7 @@ const PurchaseOrderForm =()=> {
               <div className='flex items-center justify-between'>
                 <Typography>Total:</Typography>
                 <Typography className='font-medium' color='text.primary'>
-                  $1690
+                  $2144.12
                 </Typography>
               </div>
             </div>
