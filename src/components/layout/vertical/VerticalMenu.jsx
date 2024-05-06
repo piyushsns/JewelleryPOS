@@ -311,6 +311,7 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
           Products
         </MenuItem>
         <SubMenu label={'Inventory'} icon={<i className='ri-barcode-box-line' />}>
+          <MenuItem href={`/${locale}/inventory/inventory_log`}>Inventory Log</MenuItem>
           <MenuItem href={`/${locale}/inventory/purchase_orders`}>Purchase Orders</MenuItem>
           <MenuItem href={`/${locale}/inventory/suppliers`}>Suppliers</MenuItem>
           <MenuItem href={`/${locale}/inventory/stock_on_hand`}>Stock On Hand</MenuItem>
