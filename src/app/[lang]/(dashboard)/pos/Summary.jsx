@@ -7,12 +7,16 @@ import { Card, CardContent, CardHeader } from '@mui/material'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 // Style Imports
+import { toast } from 'react-toastify'
+
 import styles from '@core/styles/table.module.css'
 
 import HttpService from '@/services/http_service'
 
 export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummary, cart, setCart }) {
   const [data, setData] = useState(() => [])
+
+  const [isDataUpdated, setIsDataUpdated] = useState(false)
 
   const refreshOrderSummary = async props => {
     try {
@@ -90,24 +94,25 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
 
         const res = await updateCartItems(updatePayload)
 
-        const res2 = await refreshOrderSummary()
+        setIsDataUpdated(false)
 
-        // console.log(res2)
+        setCart(res.data)
 
-        // setCart(res2.data)
+        setData(res.data.items)
 
-        // setData(res2.data.items)
+        setIsRefreshOrderSummary(false)
 
+        toast.success(res.message)
         console.log(res)
       } catch (error) {
         console.error('Error updating cart items:', error)
       }
     }
 
-    if (isRefreshOrderSummary === false) {
+    if (isDataUpdated == true) {
       updateCartItemsNow()
     }
-  }, [data, isRefreshOrderSummary])
+  }, [isDataUpdated])
 
   // Column Definitions
   const columnHelper = createColumnHelper()
@@ -154,7 +159,11 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
       setValue(initialValue)
     }, [initialValue])
 
-    return <input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur} />
+    return column.id == 'name' || column.id == 's' || column.id == 'formatted_total' ? (
+      value
+    ) : (
+      <input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur} style={{ width: '100px' }} />
+    )
   }
 
   // Give our default column cell renderer editing superpowers!
@@ -188,6 +197,7 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
             return row
           })
         )
+        setIsDataUpdated(true)
       }
     }
   })

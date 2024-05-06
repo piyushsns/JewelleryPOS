@@ -57,7 +57,7 @@ const ApexLineChart = () => {
     },
     tooltip: {
       custom(data) {
-        return `<div class='bar-chart'>
+        return `<div className='bar-chart'>
           <span>${data.series[data.seriesIndex][data.dataPointIndex]}%</span>
         </div>`
       }
