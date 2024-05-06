@@ -72,7 +72,7 @@ export default class HttpService {
   deleteData = async (uri, tokenId = '', signal = '') => {
     const token = localStorage.getItem(tokenId)
 
-    const requestOptions = this.getRequestOptions(token, signal)
+    const requestOptions = this.deleteRequestOptions(token, signal)
 
     return fetch(this.url + '/' + uri, requestOptions)
       .then(response => response.json())
@@ -154,7 +154,7 @@ export default class HttpService {
     return requestOptions
   }
 
-  deleeRequestOptions = (token, signal) => {
+  deleteRequestOptions = (token, signal) => {
     let requestOptions = {
       method: 'DELETE',
       headers: { Authorization: 'Bearer ' + token, 'Content-type': 'application/json', Accept: 'application/json' }

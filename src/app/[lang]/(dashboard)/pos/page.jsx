@@ -97,7 +97,7 @@ const POSPage = () => {
   const [cart, setCart] = React.useState({})
   const [show, setShow] = React.useState(true)
 
-  const [isRefreshOrderSummary, setIsRefreshOrderSummary] = React.useState(true)
+  const [isRefreshOrderSummary, setIsRefreshOrderSummary] = React.useState(false)
 
   const handleChange = (event, selectedCategory) => {
     setselectedCategory(selectedCategory)

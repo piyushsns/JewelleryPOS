@@ -69,13 +69,28 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
         .then(response => response)
         .then(response => (resultData = response))
 
-      // setData(old => old.filter((item, index) => index !== rowIndex))
-
       return resultData
     } catch (error) {
       return error
     }
   }
+
+  // first Timew
+  useEffect(() => {
+    async function fetchNow() {
+      try {
+        const res = await refreshOrderSummary()
+
+        setCart(res?.data ?? cart)
+        setData(res?.data?.items ?? data)
+        setIsRefreshOrderSummary(false)
+      } catch (error) {
+        console.error('Error refreshing order summary:', error)
+      }
+    }
+
+    fetchNow()
+  }, [])
 
   useEffect(() => {
     if (isRefreshOrderSummary === true) {
@@ -236,13 +251,20 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
         setIsDataUpdated(true)
       },
       handleRemove: async (rowIndex, columnId, value) => {
-        console.log(rowIndex, columnId, value)
-
         const res = await destroyCartItem(value)
 
-        setCart(res?.data ?? cart)
-
-        setData(res?.data?.items ?? data)
+        if (res) {
+          if (!res.data) {
+            localStorage.removeItem('current_cart_id')
+            toast.success('Cart Removed Successfully')
+            setCart({})
+            setData([])
+          } else {
+            toast.success(res?.message)
+            setCart(res?.data ?? cart)
+            setData(res?.data?.items ?? data)
+          }
+        }
       }
     }
   })
