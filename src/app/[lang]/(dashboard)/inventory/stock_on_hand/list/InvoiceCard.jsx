@@ -21,7 +21,7 @@ const data = [
   },
   {
     title: 165,
-    subtitle: 'Invoices',
+    subtitle: 'Total Orders Processed',
     icon: 'ri-pages-line'
   },
   {
@@ -42,7 +42,7 @@ const InvoiceCard = () => {
   const isBelowSmScreen = useMediaQuery(theme => theme.breakpoints.down('sm'))
 
   return (
-    <Card>
+    <Card className='shadow mb-5'>
       <CardContent>
         <Grid container spacing={6}>
           {data.map((item, index) => (

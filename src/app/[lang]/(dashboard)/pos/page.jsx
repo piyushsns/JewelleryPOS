@@ -7,13 +7,19 @@
 
 import React, { useEffect } from 'react'
 
+import { useParams } from 'next/navigation'
+
+import Link from 'next/link'
+
 import Grid from '@mui/material/Grid'
-import OpenDialogOnElementClick from '../../../../components/dialogs/OpenDialogOnElementClick'
+
 // import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
 
 import { Box, Button, Card, CardContent, CardHeader, Tab, Tabs, Typography } from '@mui/material'
 
 import { toast } from 'react-toastify'
+
+import OpenDialogOnElementClick from '../../../../components/dialogs/OpenDialogOnElementClick'
 
 import ProductListByCategory from './ProductListByCategory'
 
@@ -22,8 +28,7 @@ import HttpService from '../../../../services/http_service'
 import Summary from './Summary'
 
 import PreviewPage from './preview/sendinvoice'
-import { useParams } from 'next/navigation'
-import Link from 'next/link'
+import InvoiceCard from '../inventory/stock_on_hand/list/InvoiceCard'
 
 const tokenId = ''
 
@@ -148,57 +153,51 @@ const POSPage = () => {
 
   return (
     <>
-    <Grid container spacing={6}>
-      <Grid item xs={12} lg={6} md={7}>
-        <Card className='shadow'>
-          <CardHeader title='Search Products' />
-          <div className='overflow-x-auto'>
-            <CardContent className='sm:!p-12'>
-              <Grid container spacing={6}>
-                <Tabs
-                  value={selectedCategory}
-                  onChange={handleChange}
-                  variant='scrollable'
-                  scrollButtons='auto'
-                  aria-label='scrollable auto tabs example'
-                >
-                  <Tab label='All Products' value={99999} />
-                  {categories.map(category => (
-                    <Tab label={category.name} value={category.id} />
-                  ))}
-                </Tabs>
-              </Grid>
-              <Grid item sm={12}>
-                {selectedCategory && (
-                  <ProductListByCategory
-                    selectedProducts={selectedProducts}
-                    addToCart={addToCart}
-                    categories={categories}
-                    selectedCategory={selectedCategory}
-                  />
-                )}
-              </Grid>
-            </CardContent>
-          </div>
-        </Card>
+      <InvoiceCard spacing={6} />
+      <Grid container spacing={6}>
+        <Grid item xs={12} lg={6} md={7}>
+          <Card className='shadow'>
+            <CardHeader title='Search Products' />
+            <div className='overflow-x-auto'>
+              <CardContent className='sm:!p-12'>
+                <Grid container spacing={6}>
+                  <Tabs
+                    value={selectedCategory}
+                    onChange={handleChange}
+                    variant='scrollable'
+                    scrollButtons='auto'
+                    aria-label='scrollable auto tabs example'
+                  >
+                    <Tab label='All Products' value={99999} />
+                    {categories.map(category => (
+                      <Tab label={category.name} value={category.id} />
+                    ))}
+                  </Tabs>
+                </Grid>
+                <Grid item sm={12}>
+                  {selectedCategory && (
+                    <ProductListByCategory
+                      selectedProducts={selectedProducts}
+                      addToCart={addToCart}
+                      categories={categories}
+                      selectedCategory={selectedCategory}
+                    />
+                  )}
+                </Grid>
+              </CardContent>
+            </div>
+          </Card>
+        </Grid>
+        <Grid item xs={12} lg={6} md={5}>
+          <Summary
+            cart={cart}
+            setCart={setCart}
+            isRefreshOrderSummary={isRefreshOrderSummary}
+            setIsRefreshOrderSummary={setIsRefreshOrderSummary}
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={12} lg={6} md={5}>
-        <Summary
-          cart={cart}
-          setCart={setCart}
-          isRefreshOrderSummary={isRefreshOrderSummary}
-          setIsRefreshOrderSummary={setIsRefreshOrderSummary}
-        />
-      </Grid>
-    <Grid xs={12} className='flex justify-end mt-5' >
-      <Link href={`/${locale}/apps/invoice/preview/${'4987'}`}>
-      <Button variant="contained" color="primary" onClick={`/${locale}/apps/invoice/preview/${'4987'}`}>Send invoice</Button>
-      </Link>
-    </Grid>
-    </Grid>
-
     </>
-    
   )
 }
 

@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 
-import { Card, CardContent, CardHeader } from '@mui/material'
+import Link from 'next/link'
+
+import { Button, Card, CardContent, CardHeader, Grid } from '@mui/material'
 
 // Third-party Imports
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
@@ -270,7 +272,7 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
   })
 
   return (
-    <Card>
+    <Card className='shadow'>
       <CardHeader title='Order Summary' />
       <div className='overflow-x-auto' style={{ maxHeight: '300px' }}>
         <table className={styles.table}>
@@ -333,6 +335,17 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
             <tr>
               <th style={{ textAlign: 'start' }}>Total Taxable Amount</th>
               <td style={{ textAlign: 'end' }}>{cart?.formatted_grand_total}</td>
+            </tr>
+            <tr>
+              <td rowSpan={'100%'} style={{ textAlign: 'end' }}>
+                <Grid xs={12} className='flex justify-end mt-5'>
+                  <Link href={`/${'en'}/apps/invoice/preview/${'4987'}`}>
+                    <Button variant='contained' color='primary'>
+                      Place Order
+                    </Button>
+                  </Link>
+                </Grid>
+              </td>
             </tr>
           </tbody>
         </table>
