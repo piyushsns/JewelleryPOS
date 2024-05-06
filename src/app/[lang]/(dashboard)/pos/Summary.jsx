@@ -56,6 +56,27 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
     }
   }
 
+  const destroyCartItem = async item_id => {
+    try {
+      var resultData = null
+
+      var tokenId = 'user-token'
+
+      var current_cart_id = localStorage.getItem('current_cart_id')
+
+      await new HttpService()
+        .deleteData(`checkout/cart?current_cart_id=${current_cart_id}&cart_item_id=${item_id}`, tokenId)
+        .then(response => response)
+        .then(response => (resultData = response))
+
+      // setData(old => old.filter((item, index) => index !== rowIndex))
+
+      return resultData
+    } catch (error) {
+      return error
+    }
+  }
+
   useEffect(() => {
     if (isRefreshOrderSummary === true) {
       async function fetchNow() {
@@ -118,6 +139,9 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
   const columnHelper = createColumnHelper()
 
   const columns = [
+    columnHelper.accessor('id', {
+      header: 'Action'
+    }),
     columnHelper.accessor('name', {
       header: 'Item'
     }),
@@ -155,15 +179,27 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
       table.options.meta?.updateData(row.index, column.id, value)
     }
 
+    const handleRemove = async () => {
+      await table.options.meta?.handleRemove(row.index, column.id, value)
+    }
+
     useEffect(() => {
       setValue(initialValue)
     }, [initialValue])
 
-    return column.id == 'name' || column.id == 's' || column.id == 'formatted_total' ? (
-      value
-    ) : (
-      <input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur} style={{ width: '100px' }} />
-    )
+    if (column.id == 'id') {
+      return (
+        <div onClick={() => handleRemove()} style={{ cursor: 'pointer' }}>
+          ❌
+        </div>
+      )
+    } else {
+      return column.id == 'name' || column.id == 'purity' || column.id == 'formatted_total' ? (
+        value
+      ) : (
+        <input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur} style={{ width: '100px' }} />
+      )
+    }
   }
 
   // Give our default column cell renderer editing superpowers!
@@ -198,6 +234,15 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
           })
         )
         setIsDataUpdated(true)
+      },
+      handleRemove: async (rowIndex, columnId, value) => {
+        console.log(rowIndex, columnId, value)
+
+        const res = await destroyCartItem(value)
+
+        setCart(res?.data ?? cart)
+
+        setData(res?.data?.items ?? data)
       }
     }
   })
@@ -205,9 +250,9 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
   return (
     <Card>
       <CardHeader title='Order Summary' />
-      <CardContent>
-        <div className='overflow-x-auto' style={{ maxHeight: '300px' }}>
-          <table className={styles.table}>
+      <div className='overflow-x-auto' style={{ maxHeight: '300px' }}>
+        <table className={styles.table}>
+          {cart?.id && (
             <thead>
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id}>
@@ -219,30 +264,32 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
                 </tr>
               ))}
             </thead>
-            <tbody>
-              {table.getTotalSize() > 0 ? (
-                table.getRowModel().rows.map(row => {
-                  return (
-                    <tr key={row.id}>
-                      {row.getVisibleCells().map(cell => {
-                        return (
-                          <td key={cell.id} className={styles.cellWithInput}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </td>
-                        )
-                      })}
-                    </tr>
-                  )
-                })
-              ) : (
-                <tr>
-                  <td rowSpan={'100%'}>Your Cart Is Empty</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        <hr></hr>
+          )}
+          <tbody>
+            {cart?.id && table.getTotalSize() > 0 ? (
+              table.getRowModel().rows.map(row => {
+                return (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map(cell => {
+                      return (
+                        <td key={cell.id} className={styles.cellWithInput}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })
+            ) : (
+              <tr>
+                <td rowSpan={'100%'}>Your Cart Is Empty</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <hr></hr>
+      {cart?.id && (
         <table className={styles.table}>
           <tbody>
             <tr>
@@ -251,23 +298,23 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
             </tr>
             <tr>
               <th style={{ textAlign: 'start' }}>CSGT (7.5%)</th>
-              <td style={{ textAlign: 'end' }}>{cart?.sub_total}</td>
+              <td style={{ textAlign: 'end' }}>{cart?.sgst_total}</td>
             </tr>
             <tr>
               <th style={{ textAlign: 'start' }}>SGST (7.5%)</th>
-              <td style={{ textAlign: 'end' }}>{cart?.sub_total}</td>
+              <td style={{ textAlign: 'end' }}>{cart?.cgst_total}</td>
             </tr>
             <tr>
               <th style={{ textAlign: 'start' }}>Total Tax Amount</th>
               <td style={{ textAlign: 'end' }}>{cart?.formatted_tax_total}</td>
             </tr>
             <tr>
-              <th style={{ textAlign: 'start' }}>Taxable Value</th>
+              <th style={{ textAlign: 'start' }}>Total Taxable Amount</th>
               <td style={{ textAlign: 'end' }}>{cart?.formatted_grand_total}</td>
             </tr>
           </tbody>
         </table>
-      </CardContent>
+      )}
     </Card>
   )
 }

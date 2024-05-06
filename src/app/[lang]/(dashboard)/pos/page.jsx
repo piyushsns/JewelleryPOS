@@ -130,7 +130,7 @@ const POSPage = () => {
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12} lg={7} md={7}>
+      <Grid item xs={12} lg={6} md={7}>
         <Card className='shadow'>
           <CardHeader title='Search Products' />
           <div className='overflow-x-auto'>
@@ -163,7 +163,7 @@ const POSPage = () => {
           </div>
         </Card>
       </Grid>
-      <Grid item xs={12} lg={5} md={5}>
+      <Grid item xs={12} lg={6} md={5}>
         <Summary
           cart={cart}
           setCart={setCart}
