@@ -1,13 +1,13 @@
 'use client'
 
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Accordion, AccordionSummary, Typography, AccordionDetails, useMediaQuery, Select, MenuItem, Tooltip, IconButton, Divider } from '@mui/material';
+import { TextField, Button, Grid, Accordion, AccordionSummary, Typography, AccordionDetails, useMediaQuery, Select, MenuItem, Tooltip, IconButton, Divider, Card } from '@mui/material';
 
 import classnames from 'classnames'
 
 const PurchaseOrderForm =()=> {
 
-    const [expanded, setExpanded] = useState('panel1')
+    const [expanded, setExpanded] = useState('')
     const [count, setCount] = useState(1)
     const isBelowMdScreen = useMediaQuery(theme => theme.breakpoints.down('md'))
     const isBelowSmScreen = useMediaQuery(theme => theme.breakpoints.down('sm'))
@@ -67,6 +67,7 @@ const PurchaseOrderForm =()=> {
   }
   return (
     <form onSubmit={handleSubmit}>
+      <Card className='p-4'>
       <Grid container spacing={2}>
         <Grid item xs={6}>
           <TextField
@@ -167,72 +168,7 @@ const PurchaseOrderForm =()=> {
             fullWidth
           />
         </Grid>
-        <Grid item xs={12}>
-        <Accordion expanded={expanded === 'panel1'} onChange={handleExpandChange('panel1')}>
-        <AccordionSummary className='plb-0'>
-          <Typography color='text.primary'>Delivery Address</Typography>
-          </AccordionSummary>
-            <AccordionDetails>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Billing Address"
-                    name="billingAddress"
-                    value={formData.billingAddress}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    label="Billing PO Box"
-                    name="billingPOBox"
-                    value={formData.billingPOBox}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    label="Billing City"
-                    name="billingCity"
-                    value={formData.billingCity}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    label="Billing State"
-                    name="billingState"
-                    value={formData.billingState}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    label="Billing Postal Code"
-                    name="billingPostalCode"
-                    value={formData.billingPostalCode}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    label="Billing Country"
-                    name="billingCountry"
-                    value={formData.billingCountry}
-                    onChange={handleChange}
-                    fullWidth
-                  />
-                </Grid>
-              </Grid>
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className='mt-2'>
           <Accordion expanded={expanded === 'panel2'} onChange={handleExpandChange('panel2')}>
             <AccordionSummary className='plb-0'>
               <Typography color='text.primary'>Shipping Address</Typography>
@@ -297,8 +233,73 @@ const PurchaseOrderForm =()=> {
             </AccordionDetails>
           </Accordion>
         </Grid>
-
         <Grid item xs={12}>
+        <Accordion expanded={expanded === 'panel1'} onChange={handleExpandChange('panel1')}>
+        <AccordionSummary className='plb-0'>
+          <Typography color='text.primary'>Delivery Address</Typography>
+          </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Billing Address"
+                    name="billingAddress"
+                    value={formData.billingAddress}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Billing PO Box"
+                    name="billingPOBox"
+                    value={formData.billingPOBox}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Billing City"
+                    name="billingCity"
+                    value={formData.billingCity}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Billing State"
+                    name="billingState"
+                    value={formData.billingState}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Billing Postal Code"
+                    name="billingPostalCode"
+                    value={formData.billingPostalCode}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    label="Billing Country"
+                    name="billingCountry"
+                    value={formData.billingCountry}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+        </Grid>     
+        <Grid item xs={12}>
+          <Card>
               {Array.from(Array(count).keys()).map((item, index) => (
                 <div
                   key={index}
@@ -308,16 +309,16 @@ const PurchaseOrderForm =()=> {
                     'gap-5': isBelowMdScreen
                   })}
                 >
-                  <Grid container spacing={5} className='m-0 pbe-5'>
-                    <Grid item lg={6} md={5} xs={12}>
+                  <Grid container spacing={5} className='m-0 pbe-5 p-2'>
+                    <Grid item lg={6} md={5} xs={12} className='pt-3'>
                       <Typography className='font-medium md:absolute md:-top-8' color='text.primary'>
                         Item
                       </Typography>
-                      <Select fullWidth size='small' defaultValue='App Design' className='mbe-5'>
-                        <MenuItem value='App Design'>App Design</MenuItem>
-                        <MenuItem value='App Customization'>App Customization</MenuItem>
-                        <MenuItem value='ABC Template'>ABC Template</MenuItem>
-                        <MenuItem value='App Development'>App Development</MenuItem>
+                      <Select fullWidth size='small' defaultValue='Ceramic' className='mbe-5'>
+                        <MenuItem value='Ceramic'>Ceramic</MenuItem>
+                        <MenuItem value='Gold'>Gold</MenuItem>
+                        <MenuItem value='Meteorite'>Meteorite</MenuItem>
+                        <MenuItem value='Palladium'>Palladium</MenuItem>
                       </Select>
                       <TextField rows={2} fullWidth multiline size='small' defaultValue='Customization & Bug Fixes' />
                     </Grid>
@@ -369,14 +370,15 @@ const PurchaseOrderForm =()=> {
                       <Typography>$24.00</Typography>
                     </Grid>
                   </Grid>
-                  <div className='flex flex-col justify-start border-is'>
+                  < div className='flex flex-col justify-start border-is  mt-5'>
                     <IconButton size='small' onClick={deleteForm}>
                       <i className='ri-close-line text-actionActive' />
                     </IconButton>
                   </div>
-                </div>
+                 </div>
               ))}
-              <Grid item xs={12}>
+            </Card>
+              <Grid item xs={12} className='mt-5'>
                 <Button
                   size='small'
                   variant='contained'
@@ -386,51 +388,52 @@ const PurchaseOrderForm =()=> {
                   Add Item
                 </Button>
               </Grid>
-            </Grid>
-            <Grid item xs={12} className='mt-3'>
-              <div className='flex justify-between flex-col gap-4 sm:flex-row'>
-                <div className='flex flex-col gap-4 order-2 sm:order-[unset]'>
-                  <div className='flex items-center gap-2'>
-                    <Typography className='font-medium' color='text.primary'>
-                      Salesperson:
-                    </Typography>
-                    <TextField size='small' defaultValue='Tommy Shelby' />
-                  </div>
-                  <TextField size='small' placeholder='Thanks for your business' />
-                </div>
-                <div className='min-is-[200px]'>
-                  <div className='flex items-center justify-between'>
-                    <Typography>Subtotal:</Typography>
-                    <Typography className='font-medium' color='text.primary'>
-                      $1800
-                    </Typography>
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <Typography>Discount:</Typography>
-                    <Typography className='font-medium' color='text.primary'>
-                      $28
-                    </Typography>
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <Typography>Tax:</Typography>
-                    <Typography className='font-medium' color='text.primary'>
-                      21%
-                    </Typography>
-                  </div>
-                  <Divider className='mlb-2' />
-                  <div className='flex items-center justify-between'>
-                    <Typography>Total:</Typography>
-                    <Typography className='font-medium' color='text.primary'>
-                      $1690
-                    </Typography>
-                  </div>
-                </div>
+        </Grid>   
+        <Grid item xs={12} className='mt-3'>
+          <div className='flex justify-between flex-col gap-4 sm:flex-row'>
+            <div className='flex flex-col gap-4 order-2 sm:order-[unset]'>
+              <div className='flex items-center gap-2'>
+                <Typography className='font-medium' color='text.primary'>
+                  Sales Person:
+                </Typography>
+                <TextField size='small' defaultValue='Tommy Shelby' />
               </div>
-            </Grid>
-      </Grid>
-        <Grid xs={6} className=' mt-5'>
+              <TextField size='small' placeholder='Thanks for your business' />
+            </div>
+            <div className='min-is-[200px]'>
+              <div className='flex items-center justify-between'>
+                <Typography>Subtotal:</Typography>
+                <Typography className='font-medium' color='text.primary'>
+                  $1800
+                </Typography>
+              </div>
+              <div className='flex items-center justify-between'>
+                <Typography>Discount:</Typography>
+                <Typography className='font-medium' color='text.primary'>
+                  $28
+                </Typography>
+              </div>
+              <div className='flex items-center justify-between'>
+                <Typography>Tax:</Typography>
+                <Typography className='font-medium' color='text.primary'>
+                  21%
+                </Typography>
+              </div>
+              <Divider className='mlb-2' />
+              <div className='flex items-center justify-between'>
+                <Typography>Total:</Typography>
+                <Typography className='font-medium' color='text.primary'>
+                  $1690
+                </Typography>
+              </div>
+            </div>
+          </div>
+        </Grid> 
+       </Grid>
+          <Grid xs={6} className=' mt-5'>
             <Button type="submit" variant="contained" color="primary">Submit</Button>
-        </Grid>
+          </Grid>
+      </Card>
     </form>
   );
 }
