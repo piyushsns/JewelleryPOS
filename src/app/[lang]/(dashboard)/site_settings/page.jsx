@@ -1,3 +1,4 @@
+import AccountSettings from '../pages/account-settings/page'
 export default function Page() {
-  return <h1>About page!</h1>
+  return <AccountSettings />
 }

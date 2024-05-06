@@ -22,6 +22,7 @@ import Switch from '@mui/material/Switch'
 import { visuallyHidden } from '@mui/utils'
 
 import OverViewCard from './salesOverView'
+import { Card, CardHeader, TextField } from '@mui/material'
 
 function createData(
   id,
@@ -181,6 +182,7 @@ const headCells = [
 ]
 
 export default function EnhancedTable() {
+  const [globalFilter, setGlobalFilter] = useState('')
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('invoiceNumber')
   const [selected, setSelected] = useState([])
@@ -244,11 +246,40 @@ export default function EnhancedTable() {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
+  const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
+    // States
+    const [value, setValue] = useState(initialValue)
+  
+    useEffect(() => {
+      setValue(initialValue)
+    }, [initialValue])
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        onChange(value)
+      }, debounce)
+  
+      return () => clearTimeout(timeout)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value])
+  
+    return <TextField {...props} size='small' value={value} onChange={e => setValue(e.target.value)} />
+  }
   return (
 
     <Box sx={{ width: '100%' }}>
     <OverViewCard />
-      <Paper sx={{ width: '100%', mb: 2 }}>
+      <Card sx={{ width: '100%', mb: 2 }}>
+      <CardHeader
+        className='flex flex-wrap gap-y-2'
+        title='Sales List'
+        action={
+          <DebouncedInput
+            value={globalFilter ?? ''}
+            onChange={value => setGlobalFilter(String(value))}
+            placeholder='Search all columns...'
+          />
+        }
+      />
         <TableContainer>
           <Table aria-labelledby='tableTitle' size='medium'>
             <EnhancedTableHead
@@ -331,7 +362,7 @@ export default function EnhancedTable() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </Paper>
+      </Card>
       <FormControlLabel control={<Switch />} label='Dense padding' />
     </Box>
   )

@@ -17,238 +17,44 @@ import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import Paper from '@mui/material/Paper'
 import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Switch from '@mui/material/Switch'
 import { visuallyHidden } from '@mui/utils'
 import { Card, CardHeader, TextField } from '@mui/material'
 
 function createData(
-  id,
-  invoiceNumber,
-  customer,
-  mobile,
-  date,
-  grossSale,
-  itemDiscount,
-  billDiscount,
-  promotionalDiscount,
-  cost,
-  taxableAmount,
-  charges,
-  tip,
-  grandAmount,
-  profit,
-  profitPercentage,
-  status,
-  orderType,
-  terminal,
-  store,
-  employee,
-  payment,
-  note,
-  lastUpdate,
-  channelOrderID
+  PurchaseID,
+  Supplier,
+  Metal,
+  Type,
+  Purity,
+  Weight,
+  UnitPrice,
+  TotalCost,
+  PurchaseDate,
 ) {
   return {
-    id,
-    invoiceNumber,
-    customer,
-    mobile,
-    date,
-    grossSale,
-    itemDiscount,
-    billDiscount,
-    promotionalDiscount,
-    cost,
-    taxableAmount,
-    charges,
-    tip,
-    grandAmount,
-    profit,
-    profitPercentage,
-    status,
-    orderType,
-    terminal,
-    store,
-    employee,
-    payment,
-    note,
-    lastUpdate,
-    channelOrderID
-  }
+    PurchaseID,
+    Supplier,
+    Metal,
+    Type,
+    Purity,
+    Weight,
+    UnitPrice,
+    TotalCost,
+    PurchaseDate,
+  };
 }
-
 const rows = [
-  createData(
-    1,
-    'INV001',
-    'John Doe',
-    '1234567890',
-    '2024-05-01',
-    500,
-    50,
-    10,
-    20,
-    400,
-    400,
-    10,
-    10,
-    500,
-    100,
-    20,
-    'Paid',
-    'Online',
-    'Terminal A',
-    'Store 1',
-    'Employee 1',
-    'Credit Card',
-    '',
-    '2024-05-01',
-    'CH001'
-  ),
-
-  createData(
-    2,
-    'INV002',
-    'Jane Smith',
-    '0987654321',
-    '2024-05-02',
-    700,
-    70,
-    15,
-    30,
-    600,
-    600,
-    15,
-    10,
-    700,
-    100,
-    14.28,
-    'Paid',
-    'In-store',
-    'Terminal B',
-    'Store 2',
-    'Employee 2',
-    'Cash',
-    '',
-    '2024-05-02',
-    'CH002'
-  ),
-
-  createData(
-    2,
-    'INV002',
-    'Jane Smith',
-    '0987654321',
-    '2024-05-02',
-    700,
-    70,
-    15,
-    30,
-    600,
-    600,
-    15,
-    10,
-    700,
-    100,
-    14.28,
-    'Paid',
-    'In-store',
-    'Terminal B',
-    'Store 2',
-    'Employee 2',
-    'Cash',
-    '',
-    '2024-05-02',
-    'CH002'
-  ),
-  createData(
-    2,
-    'INV002',
-    'Jane Smith',
-    '0987654321',
-    '2024-05-02',
-    700,
-    70,
-    15,
-    30,
-    600,
-    600,
-    15,
-    10,
-    700,
-    100,
-    14.28,
-    'Paid',
-    'In-store',
-    'Terminal B',
-    'Store 2',
-    'Employee 2',
-    'Cash',
-    '',
-    '2024-05-02',
-    'CH002'
-  ),
-
-  createData(
-    2,
-    'INV002',
-    'Jane Smith',
-    '0987654321',
-    '2024-05-02',
-    700,
-    70,
-    15,
-    30,
-    600,
-    600,
-    15,
-    10,
-    700,
-    100,
-    14.28,
-    'Paid',
-    'In-store',
-    'Terminal B',
-    'Store 2',
-    'Employee 2',
-    'Cash',
-    '',
-    '2024-05-02',
-    'CH002'
-  ),
-  createData(
-    2,
-    'INV002',
-    'Jane Smith',
-    '0987654321',
-    '2024-05-02',
-    700,
-    70,
-    15,
-    30,
-    600,
-    600,
-    15,
-    10,
-    700,
-    100,
-    14.28,
-    'Paid',
-    'In-store',
-    'Terminal B',
-    'Store 2',
-    'Employee 2',
-    'Cash',
-    '',
-    '2024-05-02',
-    'CH002'
-  )
-
-  // Add more rows as needed
+  createData('PURC001', 'ABC Metals', 'Gold', 'N/A', '75%', 100, 200, 10, 5000, '2024-05-01'),
+  createData('PURC002', 'XYZ', 'Diamond', 'N/A', 'Silver', 50, 100, 20, 2000, '2024-05-03'),
+  createData('PURC003', 'Gemstones', 'Silver World', 'Platinum Co.', 'Platinum', 20, 500, 50, 500, '2024-05-05'),
+  createData('PURC004', 'Silver', 'N/A', 'N/A', '95%', 200, 2000, 2000, 2000, '2024-05-07'),
 ]
-function getComparator(order,orderBy) {
+function getComparator(order, orderBy) {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
+    : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
 function descendingComparator(a, b, orderBy) {
@@ -262,33 +68,19 @@ function descendingComparator(a, b, orderBy) {
 }
 
 const headCells = [
-  { id: 'invoiceNumber', numeric: false, label: 'Id' },
-  { id: 'customer', numeric: false, label: 'Customer' },
-  { id: 'mobile', numeric: false, label: 'Mobile' },
-  { id: 'date', numeric: false, label: 'Date' },
-  { id: 'grossSale', numeric: true, label: 'Gross Sale' },
-  { id: 'itemDiscount', numeric: true, label: 'Item Discount' },
-  { id: 'billDiscount', numeric: true, label: 'Bill Discount' },
-  { id: 'promotionalDiscount', numeric: true, label: 'Promotional Discount' },
-  { id: 'cost', numeric: true, label: 'Cost' },
-  { id: 'taxableAmount', numeric: true, label: 'Taxable Amount' },
-  { id: 'charges', numeric: true, label: 'Charges' },
-  { id: 'tip', numeric: true, label: 'Tip' },
-  { id: 'grandAmount', numeric: true, label: 'Grand Amount' },
-  { id: 'profit', numeric: true, label: 'Profit' },
-  { id: 'profitPercentage', numeric: true, label: 'Profit %' },
-  { id: 'status', numeric: false, label: 'Status' },
-  { id: 'orderType', numeric: false, label: 'Order Type' },
-  { id: 'terminal', numeric: false, label: 'Terminal' },
-  { id: 'store', numeric: false, label: 'Store' },
-  { id: 'employee', numeric: false, label: 'Employee' },
-  { id: 'payment', numeric: false, label: 'Payment' },
-  { id: 'note', numeric: false, label: 'Note' },
-  { id: 'lastUpdate', numeric: false, label: 'Last Update' },
-  { id: 'channelOrderID', numeric: false, label: 'Channel Order ID' }
+  { id: 'PurchaseID', numeric: false, label: 'PurchaseID' },
+  { id: 'Supplier', numeric: false, label: 'Supplier' },
+  { id: 'Metal', numeric: false, label: 'Metal' },
+  { id: 'Type', numeric: false, label: 'Type'},
+  { id: 'Purity', numeric: true, label: 'Purity (%)' },
+  { id: 'Weight', numeric: true, label: 'Weight (g)' },
+  { id: 'UnitPrice', numeric: true, label: 'UnitPrice ($)' },
+  { id: 'TotalCost', numeric: true, label: 'Total Cost ($)' },
+  { id: 'PurchaseDate', numeric: true, label: 'Purchase Date' },
 ]
 
-export default function EnhancedTable() {
+
+export default function PurchaseOrderTable() {
   const [globalFilter, setGlobalFilter] = useState('')
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('invoiceNumber')
@@ -300,6 +92,15 @@ export default function EnhancedTable() {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
+  }
+
+  const handleSelectAllClick = event => {
+    if (event.target.checked) {
+      const newSelected = rows.map(n => n.id)
+      setSelected(newSelected)
+      return
+    }
+    setSelected([])
   }
   const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
     // States
@@ -319,15 +120,6 @@ export default function EnhancedTable() {
   
     return <TextField {...props} size='small' value={value} onChange={e => setValue(e.target.value)} />
   }
-  const handleSelectAllClick = event => {
-    if (event.target.checked) {
-      const newSelected = rows.map(n => n.id)
-      setSelected(newSelected)
-      return
-    }
-    setSelected([])
-  }
-
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id)
     let newSelected = []
@@ -354,16 +146,15 @@ export default function EnhancedTable() {
   }
 
   function stableSort(array, comparator) {
-
-    const stabilizedThis = array.map((el, index) => [el, index]);
+    const stabilizedThis = array.map((el, index) => [el, index])
     stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0]);
+      const order = comparator(a[0], b[0])
       if (order !== 0) {
-        return order;
+        return order
       }
-      return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
+      return a[1] - b[1]
+    })
+    return stabilizedThis.map(el => el[0])
   }
 
   const isSelected = id => selected.indexOf(id) !== -1
@@ -371,12 +162,11 @@ export default function EnhancedTable() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
   return (
-
     <Box sx={{ width: '100%' }}>
       <Card>
-      <CardHeader
+       <CardHeader
         className='flex flex-wrap gap-y-2'
-        title='Sales Order List'
+        title='Purchase Orders List'
         action={
           <DebouncedInput
             value={globalFilter ?? ''}
@@ -385,6 +175,7 @@ export default function EnhancedTable() {
           />
         }
       />
+      {/* <Paper sx={{ width: '100%', mb: 2 }}> */}
         <TableContainer>
           <Table aria-labelledby='tableTitle' size='medium'>
             <EnhancedTableHead
@@ -421,32 +212,15 @@ export default function EnhancedTable() {
                           }}
                         />
                       </TableCell>
-                      <TableCell component='th' id={labelId} scope='row' padding='none'>
-                        {row.invoiceNumber}
-                      </TableCell>
-                      <TableCell align='left'>{row.customer}</TableCell>
-                      <TableCell align='left'>{row.mobile}</TableCell>
-                      <TableCell align='left'>{row.date}</TableCell>
-                      <TableCell align='right'>{row.grossSale}</TableCell>
-                      <TableCell align='right'>{row.itemDiscount}</TableCell>
-                      <TableCell align='right'>{row.billDiscount}</TableCell>
-                      <TableCell align='right'>{row.promotionalDiscount}</TableCell>
-                      <TableCell align='right'>{row.cost}</TableCell>
-                      <TableCell align='right'>{row.taxableAmount}</TableCell>
-                      <TableCell align='right'>{row.charges}</TableCell>
-                      <TableCell align='right'>{row.tip}</TableCell>
-                      <TableCell align='right'>{row.grandAmount}</TableCell>
-                      <TableCell align='right'>{row.profit}</TableCell>
-                      <TableCell align='right'>{row.profitPercentage}</TableCell>
-                      <TableCell align='left'>{row.status}</TableCell>
-                      <TableCell align='left'>{row.orderType}</TableCell>
-                      <TableCell align='left'>{row.terminal}</TableCell>
-                      <TableCell align='left'>{row.store}</TableCell>
-                      <TableCell align='left'>{row.employee}</TableCell>
-                      <TableCell align='left'>{row.payment}</TableCell>
-                      <TableCell align='left'>{row.note}</TableCell>
-                      <TableCell align='left'>{row.lastUpdate}</TableCell>
-                      <TableCell align='left'>{row.channelOrderID}</TableCell>
+                      <TableCell align='left'>{row.PurchaseID}</TableCell>
+                      <TableCell align='left'>{row.Supplier}</TableCell>
+                      <TableCell align='left'>{row.Metal}</TableCell>
+                      <TableCell align='left'>{row.Type}</TableCell>
+                      <TableCell align='right'>{row.Purity}</TableCell>
+                      <TableCell align='right'>{row.Weight}</TableCell>
+                      <TableCell align='right'>{row.UnitPrice}</TableCell>
+                      <TableCell align='right'>{row.TotalCost}</TableCell>
+                      <TableCell align='right'>{row.PurchaseDate}</TableCell>
                     </TableRow>
                   )
                 })}
@@ -467,9 +241,10 @@ export default function EnhancedTable() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </Card>
+      {/* </Paper> */}
       {/* <FormControlLabel control={<Switch />} label='Dense padding' /> */}
-    </Box>
+      </Card>
+  </Box>
   )
 }
 

@@ -22,7 +22,7 @@ import { useSettings } from '@core/hooks/useSettings'
 import { getLocalizedUrl } from '@/utils/i18n'
 
 const LogoText = styled.span`
-  font-size: 1.25rem;
+  font-size: 1.0rem;
   line-height: 1.2;
   font-weight: 600;
   letter-spacing: 0.15px;
