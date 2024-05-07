@@ -5,8 +5,7 @@ import Link from 'next/link'
 import Grid from '@mui/material/Grid'
 
 // Component imports
-import SalesProducts from './sales_by_Product'
-
+import SalesProducts from './sales_by_product'
 
 const Tables = () => {
   return (
