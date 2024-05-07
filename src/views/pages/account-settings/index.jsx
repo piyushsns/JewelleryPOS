@@ -34,7 +34,7 @@ const AccountSettings = ({ tabContentList }) => {
               }
               value='account'
             />
-            <Tab
+            {/* <Tab
               label={
                 <div className='flex items-center gap-1.5'>
                   <i className='ri-lock-unlock-line text-lg' />
@@ -42,7 +42,7 @@ const AccountSettings = ({ tabContentList }) => {
                 </div>
               }
               value='security'
-            />
+            /> */}
             {/* <Tab
               label={
                 <div className='flex items-center gap-1.5'>
@@ -52,7 +52,7 @@ const AccountSettings = ({ tabContentList }) => {
               }
               value='billing-plans'
             /> */}
-            <Tab
+            {/* <Tab
               label={
                 <div className='flex items-center gap-1.5'>
                   <i className='ri-notification-3-line text-lg' />
@@ -69,7 +69,7 @@ const AccountSettings = ({ tabContentList }) => {
                 </div>
               }
               value='connections'
-            />
+            /> */}
           </CustomTabList>
         </Grid>
         <Grid item xs={12}>
