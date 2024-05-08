@@ -26,15 +26,11 @@ const useProductAPI = () => {
   const storeItem = async payloadData => {
     try {
       setLoading(true)
-      var data = await useServiceApi.store(`admin/catalog/products`, payloadData)
-
-      // After storing the item, fetch updated cart data
-
-      localStorage.setItem('Product_id', JSON.stringify(data.id))
-
-      // After storing the item, fetch updated cart data
+      var data = useServiceApi.store(`admin/catalog/products`, payloadData)
 
       await fetchCartData()
+
+      return data
     } catch (error) {
       setError(error)
     } finally {
@@ -58,7 +54,9 @@ const useProductAPI = () => {
     try {
       setLoading(true)
       var ProductData = await useServiceApi.index(`admin/catalog/products/${id}`)
+
       await fetchCartData()
+
       return ProductData
     } catch (error) {
       setError(error)

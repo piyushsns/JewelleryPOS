@@ -23,7 +23,7 @@ import OpenDialogOnElementClick from '../../../../components/dialogs/OpenDialogO
 
 import ProductListByCategory from './ProductListByCategory'
 
-import HttpService from '../../../../services/http_service'
+import HttpService from '../../../../services/http_service_checkout'
 
 import Summary from './Summary'
 

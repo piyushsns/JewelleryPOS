@@ -13,7 +13,7 @@ import { toast } from 'react-toastify'
 
 import styles from '@core/styles/table.module.css'
 
-import HttpService from '@/services/http_service'
+import HttpService from '@/services/http_service_checkout'
 
 export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummary, cart, setCart }) {
   const [data, setData] = useState(() => [])

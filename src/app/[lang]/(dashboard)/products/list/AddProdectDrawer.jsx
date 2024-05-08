@@ -60,9 +60,8 @@ const AddProductDrawer = ({ open, handleClose }) => {
       var ProductData = getItem(Id)
 
        console.log('ProductData===========================',ProductData)
-
+       
       setFormData({ ...ProductData })
-
       // eslint-disable-next-line padding-line-between-statements
       if (Id !== '') {
         setAddUserOpen(!addUserOpen)

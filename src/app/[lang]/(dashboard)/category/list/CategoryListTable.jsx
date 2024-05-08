@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 
 // Next Imports
 import Link from 'next/link'
@@ -109,6 +109,26 @@ const CategoryListTable = ({ tableData }) => {
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
 
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/categories/tree`)
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch data')
+      }
+
+      const datas = await response.json()
+
+      setData(datas.data)
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  React.useEffect(() => {
+    fetchCategories()
+  }, [])
+
   // Hooks
   const { lang: locale } = useParams()
 
@@ -118,12 +138,12 @@ const CategoryListTable = ({ tableData }) => {
         header: 'Category Name',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
+            {getAvatar({ avatar: row.original.avatar, fullName: row.original.name })}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
-                {row.original.fullName}
+                {row.original.name}
               </Typography>
-              <Typography variant='body2'>{row.original.username}</Typography>
+              <Typography variant='body2'>{row.original.name}</Typography>
             </div>
           </div>
         )
@@ -132,13 +152,9 @@ const CategoryListTable = ({ tableData }) => {
         header: 'Category Status',
         cell: ({ row }) => (
           <div className='flex items-center gap-3'>
-            <Chip
-              variant='tonal'
-              className='capitalize'
-              label={row.original.status}
-              color={userStatusObj[row.original.status]}
-              size='small'
-            />
+            <Typography className='font-medium' color='text.primary'>
+              {row.original.status == 1 ? 'Active' : 'Inactive'}
+            </Typography>
           </div>
         )
       }),
