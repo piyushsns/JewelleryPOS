@@ -122,12 +122,12 @@ const ProductListTable = ({ tableData }) => {
   const [globalFilter, setGlobalFilter] = useState('')
   let requestOptions = {
     method: 'GET',
-    headers: { Authorization: 'Bearer ' + localStorage.getItem('user-token')}
+    headers: { Authorization: 'Bearer ' + localStorage.getItem('user-token') }
   }
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/v1/admin/catalog/products`,requestOptions)
+      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/v1/admin/catalog/products`, requestOptions)
 
       if (!response.ok) {
         throw new Error('Failed to fetch data')
@@ -145,17 +145,13 @@ const ProductListTable = ({ tableData }) => {
     fetchCategories()
   }, [])
 
-
   React.useEffect(() => {
-
     fetchCategories()
     var Id = localStorage.getItem('product_id')
     if (Id !== '') {
       setAddUserOpen(!addUserOpen)
     }
-
-
-}, [])
+  }, [])
 
   // Hooks
   const { lang: locale } = useParams()
@@ -209,13 +205,9 @@ const ProductListTable = ({ tableData }) => {
         header: 'Status',
         cell: ({ row }) => (
           <div className='flex items-center gap-3'>
-            <Chip
-              variant='tonal'
-              className='capitalize'
-              label={row.original.status}
-              color={userStatusObj[row.original.status]}
-              size='small'
-            />
+            <Typography className='font-medium' color='text.primary'>
+              {row.original.status == 1 ? 'active' : 'Inactive'}
+            </Typography>
           </div>
         )
       }),
