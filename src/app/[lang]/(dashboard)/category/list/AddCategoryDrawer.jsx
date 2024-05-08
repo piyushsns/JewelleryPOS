@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 // React Imports
 import { useState } from 'react'
 
@@ -11,7 +12,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import Divider from '@mui/material/Divider';
+import Divider from '@mui/material/Divider'
 
 import useCategoryAPI from '../../../../../hooks/useCategory'
 
@@ -19,34 +20,44 @@ import useCategoryAPI from '../../../../../hooks/useCategory'
 
 const AddCategoryDrawer = ({ open, handleClose }) => {
   // States
+  const [slug, setSlug] = useState('')
+
   const initialData = {
-   '_token':'d2epIVBmeDCR22NFsSYJ1726wF2Q5XLONy1nLRjZ',
-    locale:'all',
-    name:'',
-    description:'',
-    slug:'',
-    position:'0',
-    display_mode:'product_and_description',
-    attributes:[11,23],
+    locale: 'all',
+    name: '',
+    description: '',
+    slug: slug,
+    position: '0',
+    display_mode: 'product_and_description',
+    attributes: [11, 23]
   }
 
   const [formData, setFormData] = useState(initialData)
-  const {storeItem} = useCategoryAPI()
+  const { storeItem } = useCategoryAPI()
+
+  const handleNameChange = event => {
+    const newName = event.target.value
+    if (event.target.name == 'slug') {
+      const newSlug = newName.toLowerCase().replace(/\s+/g, '-')
+      setFormData({ ...formData, [event.target.name]: newSlug })
+    } else {
+      setFormData({ ...formData, [event.target.name]: event.target.value })
+    }
+  }
 
   const handleSubmit = e => {
     e.preventDefault()
-    console.log('======================================================',formData);
-     storeItem(formData)
+    console.log('======================================================', formData)
+    storeItem(formData)
+  }
 
-    }
-
-    // handleClose()
-    // setFormData(initialData)
+  // handleClose()
+  // setFormData(initialData)
   const handleReset = () => {
     handleClose()
     setFormData({
-      name:'',
-      description:'',
+      name: '',
+      description: ''
     })
   }
 
@@ -73,8 +84,7 @@ const AddCategoryDrawer = ({ open, handleClose }) => {
             fullWidth
             placeholder='Enter Category Name'
             name='name'
-            value={formData.name}
-            onChange={e => setFormData({ ...formData, name: e.target.value })}
+            onChange={e => handleNameChange(e)}
           />
           <TextField
             label='Description'
@@ -88,9 +98,9 @@ const AddCategoryDrawer = ({ open, handleClose }) => {
             label='Slug'
             fullWidth
             placeholder='Enter Slug Name'
-            name='description'
-            value={formData.description}
-            onChange={e => setFormData({ ...formData, description: e.target.value })}
+            name='slug'
+            value={formData.slug}
+            onChange={e => handleNameChange(e)}
           />
           <div className='flex items-center gap-4'>
             <Button variant='contained' type='submit'>
