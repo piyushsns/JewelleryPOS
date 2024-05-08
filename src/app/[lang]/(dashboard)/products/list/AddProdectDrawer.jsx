@@ -1,5 +1,5 @@
 // React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // MUI Imports
 import Button from '@mui/material/Button'
@@ -58,6 +58,8 @@ const AddProductDrawer = ({ open, handleClose }) => {
     if (localStorage.getItem('product_id')) {
       var Id = localStorage.getItem('product_id')
       var ProductData = getItem(Id)
+
+       console.log('ProductData===========================',ProductData)
 
       setFormData({ ...ProductData })
 

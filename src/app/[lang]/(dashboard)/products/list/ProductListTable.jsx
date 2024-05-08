@@ -270,6 +270,14 @@ const ProductListTable = ({ tableData }) => {
     }
   }
 
+  useEffect(() => {
+    if (localStorage.getItem('product_id')) {
+      var Id = localStorage.getItem('product_id')
+      if (Id !== '') {
+        setAddUserOpen(!addUserOpen)
+      }
+    }
+  }, [])
 
   return (
     <>
