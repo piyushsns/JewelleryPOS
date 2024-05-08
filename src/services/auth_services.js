@@ -11,7 +11,7 @@ export const RegisterUserService = async credentials => {
 
 export const LoginUserService = async credentials => {
   const http = new HttpService()
-  let loginUrl = 'login'
+  let loginUrl = 'admin/login'
 
   // let loginUrl = process.env.LOGIN_URL
 

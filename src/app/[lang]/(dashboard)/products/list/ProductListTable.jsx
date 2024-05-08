@@ -1,3 +1,5 @@
+/* eslint-disable padding-line-between-statements */
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 // React Imports
@@ -47,6 +49,9 @@ import { getLocalizedUrl } from '@/utils/i18n'
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 import AddProductDrawer from './AddProdectDrawer'
+import DialogAddCard from './ShowModel'
+import OpenDialogOnElementClick from './ShowModel'
+import ProductCard from './ProductShow'
 
 // Styled Components
 const Icon = styled('i')({})
@@ -98,12 +103,19 @@ const userStatusObj = {
   inactive: 'secondary'
 }
 
+const buttonProps = {
+  variant: 'contained',
+  children: 'Add Product'
+}
+
 // Column Definitions
+
 const columnHelper = createColumnHelper()
 
 const ProductListTable = ({ tableData }) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
+
   const [rowSelection, setRowSelection] = useState({})
 
   const [data, setData] = useState(...[tableData])
@@ -258,6 +270,7 @@ const ProductListTable = ({ tableData }) => {
     }
   }
 
+
   return (
     <>
       <Card>
@@ -280,9 +293,10 @@ const ProductListTable = ({ tableData }) => {
               placeholder='Search Category'
               className='is-full sm:is-auto'
             />
-            <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='is-full sm:is-auto'>
+            <OpenDialogOnElementClick element={Button} elementProps={buttonProps} dialog={ProductCard} />
+            {/* <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='is-full sm:is-auto'>
               Add Product
-            </Button>
+            </Button> */}
           </div>
         </div>
         <div className='overflow-x-auto'>
@@ -356,7 +370,7 @@ const ProductListTable = ({ tableData }) => {
           onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
         />
       </Card>
-      <AddProductDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
+      {/* <AddProductDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} /> */}
     </>
   )
 }
