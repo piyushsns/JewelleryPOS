@@ -11,7 +11,9 @@ export const RegisterUserService = async credentials => {
 
 export const LoginUserService = async credentials => {
   const http = new HttpService()
-  let loginUrl = process.env.LOGIN_URL
+  let loginUrl = 'login'
+
+  // let loginUrl = process.env.LOGIN_URL
 
   const data = await http.postData(credentials, loginUrl)
 

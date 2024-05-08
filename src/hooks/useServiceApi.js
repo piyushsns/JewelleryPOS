@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react'
 
 import HttpService from '../services/http_service'
 
-const tokenId = 'vOM5ZJo8POIDo9yWZXyjK4i4c2aogMrdKAwgJydic68f9c73'
+// const tokenId = 'vOM5ZJo8POIDo9yWZXyjK4i4c2aogMrdKAwgJydic68f9c73'
 
-// const tokenId = process.env.TOKEN_NAME;
+const tokenId = process.env.TOKEN_NAME
 
 console.log('tokenId', tokenId)
 const useServiceApi = {
@@ -40,6 +40,7 @@ const useServiceApi = {
   update: async (Api_name, cartData) => {
     try {
       let resultData = null
+      console.log('tokenId', tokenId)
       await new HttpService().putData(cartData, `${Api_name}`, tokenId).then(response => {
         resultData = response
       })
