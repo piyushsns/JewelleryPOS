@@ -123,7 +123,7 @@ const ProductListTable = ({ tableData }) => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/product/tree`)
+      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/catalog/products`)
 
       if (!response.ok) {
         throw new Error('Failed to fetch data')

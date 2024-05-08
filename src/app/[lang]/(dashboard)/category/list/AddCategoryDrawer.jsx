@@ -21,21 +21,21 @@ import useCategoryAPI from '../../../../../hooks/useCategory'
 const AddCategoryDrawer = ({ open, handleClose }) => {
   // States
   const [slug, setSlug] = useState('')
-
+console.log(slug);
   const initialData = {
-    'locale': 'en',
-    'name': '',
-    'description': '',
-    'slug': 'slug',
-    'position': '0',
-    'channel':"default",
-    "en": {
-      "slug":"slug",
-      "name": "women-cloths",
-      "description": "demo women Cloths description"
+    locale: 'en',
+    name: '',
+    description: '',
+    slug: slug,
+    position: '0',
+    channel: 'default',
+    en: {
+      slug: slug,
+      name: slug,
+      description: slug
     },
-    'display_mode': 'product_and_description',
-    "attributes": []
+    display_mode: 'product_and_description',
+    attributes: [11]
   }
 
   const [formData, setFormData] = useState(initialData)
@@ -45,6 +45,7 @@ const AddCategoryDrawer = ({ open, handleClose }) => {
     const newName = event.target.value
     if (event.target.name == 'slug') {
       const newSlug = newName.toLowerCase().replace(/\s+/g, '-')
+      setSlug(newSlug)
       setFormData({ ...formData, [event.target.name]: newSlug })
     } else {
       setFormData({ ...formData, [event.target.name]: event.target.value })
