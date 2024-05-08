@@ -11,43 +11,42 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import Divider from '@mui/material/Divider'
+import Divider from '@mui/material/Divider';
+
+import useCategoryAPI from '../../../../../hooks/useCategory'
 
 // Vars
-const initialData = {
-  fullName: '',
-  username: '',
-  email: '',
-  company: '',
-  country: '',
-  contact: '',
-  role: '',
-  plan: '',
-  status: ''
-}
 
 const AddCategoryDrawer = ({ open, handleClose }) => {
   // States
+  const initialData = {
+   '_token':'d2epIVBmeDCR22NFsSYJ1726wF2Q5XLONy1nLRjZ',
+    locale:'all',
+    name:'',
+    description:'',
+    slug:'',
+    position:'0',
+    display_mode:'product_and_description',
+    attributes:[11,23],
+  }
+
   const [formData, setFormData] = useState(initialData)
+  const {storeItem} = useCategoryAPI()
 
   const handleSubmit = e => {
     e.preventDefault()
-    handleClose()
-    setFormData(initialData)
-  }
+    console.log('======================================================',formData);
+     storeItem(formData)
 
+    }
+
+    // handleClose()
+    // setFormData(initialData)
   const handleReset = () => {
     handleClose()
     setFormData({
-      fullName: '',
-      username: '',
-      email: '',
-      company: '',
-      country: '',
-      contact: '',
-      role: '',
-      plan: '',
-      status: ''
+      name:'',
+      description:'',
     })
   }
 
@@ -73,106 +72,26 @@ const AddCategoryDrawer = ({ open, handleClose }) => {
             label='Category Name'
             fullWidth
             placeholder='Enter Category Name'
-            value={formData.fullName}
-            onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-          />
-          {/* <TextField
-            label='Username'
-            fullWidth
-            placeholder='johndoe'
-            value={formData.username}
-            onChange={e => setFormData({ ...formData, username: e.target.value })}
+            name='name'
+            value={formData.name}
+            onChange={e => setFormData({ ...formData, name: e.target.value })}
           />
           <TextField
-            label='Email'
+            label='Description'
             fullWidth
-            placeholder='johndoe@gmail.com'
-            value={formData.email}
-            onChange={e => setFormData({ ...formData, email: e.target.value })}
+            placeholder='Enter Description Name'
+            name='description'
+            value={formData.description}
+            onChange={e => setFormData({ ...formData, description: e.target.value })}
           />
           <TextField
-            label='Company'
+            label='Slug'
             fullWidth
-            placeholder='Company PVT LTD'
-            value={formData.company}
-            onChange={e => setFormData({ ...formData, company: e.target.value })}
+            placeholder='Enter Slug Name'
+            name='description'
+            value={formData.description}
+            onChange={e => setFormData({ ...formData, description: e.target.value })}
           />
-          <FormControl fullWidth>
-            <InputLabel id='country'>Select Country</InputLabel>
-            <Select
-              fullWidth
-              id='country'
-              value={formData.country}
-              onChange={e => setFormData({ ...formData, country: e.target.value })}
-              label='Select Country'
-              labelId='country'
-              inputProps={{ placeholder: 'Country' }}
-            >
-              <MenuItem value='UK'>UK</MenuItem>
-              <MenuItem value='USA'>USA</MenuItem>
-              <MenuItem value='Australia'>Australia</MenuItem>
-              <MenuItem value='Germany'>Germany</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            label='Contact'
-            type='number'
-            fullWidth
-            placeholder='(397) 294-5153'
-            value={formData.contact}
-            onChange={e => setFormData({ ...formData, contact: e.target.value })}
-          />
-          <FormControl fullWidth>
-            <InputLabel id='role-select'>Select Role</InputLabel>
-            <Select
-              fullWidth
-              id='select-role'
-              value={formData.role}
-              onChange={e => setFormData({ ...formData, role: e.target.value })}
-              label='Select Role'
-              labelId='role-select'
-              inputProps={{ placeholder: 'Select Role' }}
-            >
-              <MenuItem value='admin'>Admin</MenuItem>
-              <MenuItem value='author'>Author</MenuItem>
-              <MenuItem value='editor'>Editor</MenuItem>
-              <MenuItem value='maintainer'>Maintainer</MenuItem>
-              <MenuItem value='subscriber'>Subscriber</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id='plan-select'>Select Plan</InputLabel>
-            <Select
-              fullWidth
-              id='select-plan'
-              value={formData.plan}
-              onChange={e => setFormData({ ...formData, plan: e.target.value })}
-              label='Select Plan'
-              labelId='plan-select'
-              inputProps={{ placeholder: 'Select Plan' }}
-            >
-              <MenuItem value='basic'>Basic</MenuItem>
-              <MenuItem value='company'>Company</MenuItem>
-              <MenuItem value='enterprise'>Enterprise</MenuItem>
-              <MenuItem value='team'>Team</MenuItem>
-            </Select>
-          </FormControl> */}
-          <FormControl fullWidth>
-            <InputLabel id='plan-select'>Select Status</InputLabel>
-            <Select
-              fullWidth
-              id='select-status'
-              value={formData.status}
-              onChange={e => setFormData({ ...formData, status: e.target.value })}
-              label='Select Status'
-              labelId='status-select'
-              inputProps={{ placeholder: 'Select Status' }}
-            >
-              <MenuItem value='pending'>Pending</MenuItem>
-              <MenuItem value='active'>Active</MenuItem>
-              <MenuItem value='inactive'>Inactive</MenuItem>
-            </Select>
-          </FormControl>
           <div className='flex items-center gap-4'>
             <Button variant='contained' type='submit'>
               Submit
