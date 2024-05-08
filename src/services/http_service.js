@@ -2,6 +2,8 @@ import { HandleExeption, RaiseSomethingWentWrong } from './handle_exeption'
 
 export default class HttpService {
   url = 'https://jewelleryposapi.mytiny.us/api/v1/admin'
+  url = 'https://jewelleryposapi.mytiny.us/api'
+
   postData = async (payload, uri, tokenId = '', signal) => {
     console.log('payload, uri, tokenIdpayload, uri, tokenIdpayload, uri, tokenId', payload, uri, tokenId)
     const token = localStorage.getItem(tokenId)

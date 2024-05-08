@@ -110,7 +110,7 @@ const POSPage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/categories/tree`)
+      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/categories/tree`)
 
       if (!response.ok) {
         throw new Error('Failed to fetch data')
