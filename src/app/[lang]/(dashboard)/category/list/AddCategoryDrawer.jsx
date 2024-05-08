@@ -23,13 +23,13 @@ const AddCategoryDrawer = ({ open, handleClose }) => {
   const [slug, setSlug] = useState('')
 
   const initialData = {
-    locale: 'all',
-    name: '',
-    description: '',
-    slug: slug,
-    position: '0',
-    display_mode: 'product_and_description',
-    attributes: [11, 23]
+    'locale': 'all',
+    'name': '',
+    'description': '',
+    'slug': 'slug',
+    'position': '0',
+    'display_mode': 'product_and_description',
+    "attributes": []
   }
 
   const [formData, setFormData] = useState(initialData)
