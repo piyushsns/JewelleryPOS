@@ -4,8 +4,7 @@ export default class HttpService {
   url = 'https://jewelleryposapi.mytiny.us/api/v1'
 
   postData = async (payload, uri, tokenId = '', signal) => {
-
-    const token = localStorage.getItem(tokenId)
+    const token = localStorage.getItem('user-token')
 
     const requestOptions = this.postRequestOptions(token, payload, signal)
 

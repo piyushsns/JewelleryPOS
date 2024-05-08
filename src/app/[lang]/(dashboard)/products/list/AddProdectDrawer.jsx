@@ -17,44 +17,56 @@ import UseProductAPI from '../../../../../hooks/useProduct'
 
 // Vars
 const initialData = {
-  fullName: '',
-  username: '',
-  email: '',
-  company: '',
-  country: '',
-  contact: '',
-  role: '',
-  plan: '',
-  status: 1
+  channel: 'default',
+  locale: 'en',
+  sku: 'CP001',
+  name: 'GOLD',
+  url_key: 'gold',
+  short_description: '<p>gold Short Description</p>',
+  description: '<p>gold Short Description</p>',
+  price: 10,
+  per_gram_price: 10,
+  making_charges: 0,
+  weight: 1,
+  visible_individually: 1,
+  status: 1,
+  guest_checkout: 1,
+  manage_stock: 1,
+  inventories: 0,
+  categories: [2]
 }
 
 const AddProductDrawer = ({ open, handleClose }) => {
   // States
   const [formData, setFormData] = useState(initialData)
-  const {storeItem} = UseProductAPI()
+  const { storeItem } = UseProductAPI()
 
   const handleSubmit = e => {
     e.preventDefault()
     handleClose()
+
     //setFormData(initialData)
-    console.log('======================================================',formData);
+    console.log('======================================================', formData)
     storeItem(formData)
   }
 
   const handleReset = () => {
     handleClose()
-    setFormData({
-      fullName: '',
-      username: '',
-      brand: '',
-      company: '',
-      country: '',
-      contact: '',
-      role: '',
-      plan: '',
-      status: ''
-    })
   }
+
+  useEffect(() => {
+    if (localStorage.getItem('product_id')) {
+      var Id = localStorage.getItem('product_id')
+      var ProductData = getItem(Id)
+
+      setFormData({ ...ProductData })
+
+      // eslint-disable-next-line padding-line-between-statements
+      if (Id !== '') {
+        setAddUserOpen(!addUserOpen)
+      }
+    }
+  }, [])
 
   return (
     <Drawer
