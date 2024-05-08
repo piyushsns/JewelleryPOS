@@ -23,11 +23,17 @@ const AddCategoryDrawer = ({ open, handleClose }) => {
   const [slug, setSlug] = useState('')
 
   const initialData = {
-    'locale': 'all',
+    'locale': 'en',
     'name': '',
     'description': '',
     'slug': 'slug',
     'position': '0',
+    'channel':"default",
+    "en": {
+      "slug":"slug",
+      "name": "women-cloths",
+      "description": "demo women Cloths description"
+    },
     'display_mode': 'product_and_description',
     "attributes": []
   }
