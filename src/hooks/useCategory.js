@@ -26,8 +26,8 @@ const useCategoryAPI = () => {
   const storeItem = async payloadData => {
     try {
       setLoading(true)
-      await useServiceApi.update(`admin/catalog/categories/create`, payloadData)
-      
+      await useServiceApi.store(`admin/catalog/categories`, payloadData)
+
       // After storing the item, fetch updated cart data
       await fetchCartData()
     } catch (error) {

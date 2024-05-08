@@ -1,5 +1,6 @@
+/* eslint-disable padding-line-between-statements */
 // React Imports
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 // MUI Imports
 import Button from '@mui/material/Button'
@@ -54,20 +55,26 @@ const AddProductDrawer = ({ open, handleClose }) => {
     handleClose()
   }
 
-  useEffect(() => {
-    if (localStorage.getItem('product_id')) {
+  const fetchCategories = async () => {
+    try {
       var Id = localStorage.getItem('product_id')
-      var ProductData = getItem(Id)
+      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/admin/catalog/products/${Id}`)
+      if (!response.ok) {
 
-       console.log('ProductData===========================',ProductData)
-       
-      setFormData({ ...ProductData })
-      // eslint-disable-next-line padding-line-between-statements
-      if (Id !== '') {
-        setAddUserOpen(!addUserOpen)
+        throw new Error('Failed to fetch data')
+
       }
+
+      const datas = await response.json()
+
+      setData(datas.data)
+    } catch (error) {
+      console.error('Error fetching data:', error)
     }
-  }, [])
+  }
+
+
+
 
   return (
     <Drawer

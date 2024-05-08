@@ -120,10 +120,14 @@ const ProductListTable = ({ tableData }) => {
 
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
+  let requestOptions = {
+    method: 'GET',
+    headers: { Authorization: 'Bearer ' + localStorage.getItem('user-token')}
+  }
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/catalog/products`)
+      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/v1/admin/catalog/products`,requestOptions)
 
       if (!response.ok) {
         throw new Error('Failed to fetch data')
@@ -141,6 +145,18 @@ const ProductListTable = ({ tableData }) => {
     fetchCategories()
   }, [])
 
+
+  React.useEffect(() => {
+
+    fetchCategories()
+    var Id = localStorage.getItem('product_id')
+    if (Id !== '') {
+      setAddUserOpen(!addUserOpen)
+    }
+
+
+}, [])
+
   // Hooks
   const { lang: locale } = useParams()
 
@@ -150,7 +166,7 @@ const ProductListTable = ({ tableData }) => {
         header: 'Product Name',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
+            {getAvatar({ avatar: row.original.avatar, fullName: row.original.name })}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
                 {row.original.name}
@@ -160,30 +176,7 @@ const ProductListTable = ({ tableData }) => {
           </div>
         )
       }),
-      // columnHelper.accessor('metal', {
-      //   header: 'Metal',
-      //   cell: ({ row }) => (
-      //     <div className='flex items-center gap-4'>
-      //       <div className='flex flex-col'>
-      //         <Typography className='font-medium' color='text.primary'>
-      //           {row.original.metal}
-      //         </Typography>
-      //       </div>
-      //     </div>
-      //   )
-      // }),
-      // columnHelper.accessor('carat', {
-      //   header: 'Carat',
-      //   cell: ({ row }) => (
-      //     <div className='flex items-center gap-4'>
-      //       <div className='flex flex-col'>
-      //         <Typography className='font-medium' color='text.primary'>
-      //           {row.original.carat}
-      //         </Typography>
-      //       </div>
-      //     </div>
-      //   )
-      // }),
+
       columnHelper.accessor('productWeight', {
         header: 'Weight',
         cell: ({ row }) => (
@@ -323,7 +316,7 @@ const ProductListTable = ({ tableData }) => {
             />
             <OpenDialogOnElementClick element={Button} elementProps={buttonProps} dialog={ProductCard} />
             <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='is-full sm:is-auto'>
-              Add Product
+              Add Update
             </Button>
           </div>
         </div>

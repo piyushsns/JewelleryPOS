@@ -29,11 +29,7 @@ const AddCategoryDrawer = ({ open, handleClose }) => {
     slug: slug,
     position: '0',
     channel: 'default',
-    en: {
-      slug: slug,
-      name: slug,
-      description: slug
-    },
+
     display_mode: 'product_and_description',
     attributes: [11]
   }
@@ -43,15 +39,21 @@ const AddCategoryDrawer = ({ open, handleClose }) => {
 
   const handleNameChange = event => {
     const newName = event.target.value
-    if (event.target.name == 'slug') {
+    if (event.target.name === 'slug') {
       const newSlug = newName.toLowerCase().replace(/\s+/g, '-')
       setSlug(newSlug)
-      setFormData({ ...formData, [event.target.name]: newSlug })
+      setFormData({
+        ...formData,
+        en: { slug: newSlug, description: newSlug, name: newSlug },
+        [event.target.name]: newSlug
+      })
     } else {
-      setFormData({ ...formData, [event.target.name]: event.target.value })
+      setFormData({
+        ...formData,
+        [event.target.name]: event.target.value
+      })
     }
   }
-
   const handleSubmit = e => {
     e.preventDefault()
     console.log('======================================================', formData)

@@ -29,7 +29,8 @@ const useProductAPI = () => {
       var data = useServiceApi.store(`admin/catalog/products`, payloadData)
 
       await fetchCartData()
-
+      localStorage.setItem('product_id',data.id)
+      
       return data
     } catch (error) {
       setError(error)
