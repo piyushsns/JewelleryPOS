@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 'use client'
 
 import { useState } from 'react';
@@ -5,8 +6,9 @@ import { useState } from 'react';
 // MUI Imports
 import Grid from '@mui/material/Grid'
 
-import PurchaseOrderTable from './purchase_orders_table'
-import { Button } from '@mui/material'
+import PurchaseOrderTable from './purchase_orders_table';
+
+import { Button } from '@mui/material';
 
 import PurchaseOrderForm from './addPurchaseOrder'
 
