@@ -21,7 +21,7 @@ import useCategoryAPI from '../../../../../hooks/useCategory'
 const AddCategoryDrawer = ({ open, handleClose }) => {
   // States
   const [slug, setSlug] = useState('')
-console.log(slug);
+  console.log(slug)
   const initialData = {
     locale: 'en',
     name: '',
