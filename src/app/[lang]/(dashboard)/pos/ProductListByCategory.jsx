@@ -18,7 +18,7 @@ const getAllProducts = async ({ sort = 'name-asc', limit = 12, ...filters } = {}
     ...filters
   }).toString()
 
-  const response = await fetch(`http://localhost:8000/api/products?${queryString}`)
+  const response = await fetch(`https://jewelleryposapi.mytiny.us/api/products?${queryString}`)
 
   if (!response.ok) {
     throw new Error('Failed to fetch invoice data')
