@@ -13,6 +13,8 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 
+import UseProductAPI from '../../../../../hooks/useProduct'
+
 // Vars
 const initialData = {
   fullName: '',
@@ -23,17 +25,20 @@ const initialData = {
   contact: '',
   role: '',
   plan: '',
-  status: ''
+  status: 1
 }
 
 const AddProductDrawer = ({ open, handleClose }) => {
   // States
   const [formData, setFormData] = useState(initialData)
+  const {storeItem} = UseProductAPI()
 
   const handleSubmit = e => {
     e.preventDefault()
     handleClose()
-    setFormData(initialData)
+    //setFormData(initialData)
+    console.log('======================================================',formData);
+    storeItem(formData)
   }
 
   const handleReset = () => {
