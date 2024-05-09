@@ -131,7 +131,7 @@ const UserListTable = ({ tableData }) => {
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchUsers()
   }, [])
 
@@ -183,6 +183,7 @@ const UserListTable = ({ tableData }) => {
         header: 'Email',
         cell: ({ row }) => <Typography>{row.original.email}</Typography>
       }),
+
       // columnHelper.accessor('role', {
       //   header: 'Role',
       //   cell: ({ row }) => (

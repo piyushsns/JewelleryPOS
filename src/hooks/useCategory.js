@@ -13,7 +13,7 @@ const useCategoryAPI = () => {
   const fetchCartData = async () => {
     try {
       setLoading(true)
-      const response = await useServiceApi.index('')
+      const response = await useServiceApi.index('admin/catalog/categories')
 
       setCartData(response.data)
     } catch (error) {

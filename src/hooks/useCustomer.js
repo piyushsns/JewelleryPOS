@@ -9,12 +9,14 @@ const useCustomerAPI = () => {
   const [loading, setLoading] = useState(false)
   const [cartData, setCartData] = useState(null)
   const [error, setError] = useState(null)
+
   // const { APIService } = useServiceApi()
 
   const fetchCartData = async () => {
     try {
       setLoading(true)
-      const response = await useServiceApi.index('/customers')
+      const response = await useServiceApi.index('admin/customers')
+
       setCartData(response.data)
     } catch (error) {
       setError(error)
@@ -22,14 +24,15 @@ const useCustomerAPI = () => {
       setLoading(false)
     }
   }
-  React.useEffect(() => {
+
+  useEffect(() => {
     fetchCartData()
   }, [])
 
-  const storeItem = async (payloadData) => {
+  const storeItem = async payloadData => {
     try {
       setLoading(true)
-      await useServiceApi.store(`/customers`, payloadData)
+      await useServiceApi.store(`admin/customers`, payloadData)
 
       // After storing the item, fetch updated cart data
       await fetchCartData()

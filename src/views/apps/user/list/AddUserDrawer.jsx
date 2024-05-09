@@ -12,7 +12,9 @@ import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
+
 import useCustomerAPI from '../../../../hooks/useCustomer'
+
 // Vars
 const initialData = {
   first_name: '',
@@ -20,8 +22,9 @@ const initialData = {
   email: '',
   dob: '',
   gender: '',
-  contact: ''
+  phone: ''
 }
+
 // role: '',
 // plan: '',
 // status: ''
@@ -30,6 +33,7 @@ const AddUserDrawer = ({ open, handleClose }) => {
   // States
   const [formData, setFormData] = useState(initialData)
   const { storeItem } = useCustomerAPI()
+
   const handleSubmit = e => {
     e.preventDefault()
     handleClose()
@@ -47,7 +51,7 @@ const AddUserDrawer = ({ open, handleClose }) => {
       email: '',
       dob: '',
       gender: '',
-      contact: ''
+      phone: ''
     })
   }
 
@@ -72,29 +76,30 @@ const AddUserDrawer = ({ open, handleClose }) => {
           <TextField
             label='First Name'
             fullWidth
-            placeholder='John Doe'
+            placeholder='John'
             value={formData.first_name}
             onChange={e => setFormData({ ...formData, first_name: e.target.value })}
           />
           <TextField
             label='Last Name'
             fullWidth
-            placeholder='John Doe'
+            placeholder='Doe'
             value={formData.last_name}
             onChange={e => setFormData({ ...formData, last_name: e.target.value })}
           />
           <TextField
             label='Date of Birth'
             type='date'
+            format='MM/dd/yyyy'
             fullWidth
-            placeholder='johndoe'
+            placeholder='dob'
             value={formData.dob}
             onChange={e => setFormData({ ...formData, dob: e.target.value })}
           />
           <TextField
             label='Email'
             fullWidth
-            placeholder='johndoe@gmail.com'
+            placeholder='test@example.com'
             value={formData.email}
             onChange={e => setFormData({ ...formData, email: e.target.value })}
           />
@@ -111,14 +116,14 @@ const AddUserDrawer = ({ open, handleClose }) => {
               fullWidth
               id='country'
               value={formData.gender}
-              onChange={e => setFormData({ ...formData, Gender: e.target.value })}
+              onChange={e => setFormData({ ...formData, gender: e.target.value })}
               label='Select Gender'
               labelId='country'
               inputProps={{ placeholder: 'Gender' }}
             >
-              <MenuItem value='UK'>Male</MenuItem>
-              <MenuItem value='USA'>Female</MenuItem>
-              <MenuItem value='Australia'>Other</MenuItem>
+              <MenuItem value='male'>Male</MenuItem>
+              <MenuItem value='female'>Female</MenuItem>
+              <MenuItem value='other'>Other</MenuItem>
             </Select>
           </FormControl>
           <TextField
