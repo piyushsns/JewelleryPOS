@@ -12,42 +12,42 @@ import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
-
+import useCustomerAPI from '../../../../hooks/useCustomer'
 // Vars
 const initialData = {
-  fullName: '',
-  username: '',
+  first_name: '',
+  last_name: '',
   email: '',
-  company: '',
-  country: '',
-  contact: '',
-  role: '',
-  plan: '',
-  status: ''
+  dob: '',
+  gender: '',
+  contact: ''
 }
+// role: '',
+// plan: '',
+// status: ''
 
 const AddUserDrawer = ({ open, handleClose }) => {
   // States
   const [formData, setFormData] = useState(initialData)
-
+  const { storeItem } = useCustomerAPI()
   const handleSubmit = e => {
     e.preventDefault()
     handleClose()
-    setFormData(initialData)
+
+    //setFormData(initialData)
+    console.log('======================================================', formData)
+    storeItem(formData)
   }
 
   const handleReset = () => {
     handleClose()
     setFormData({
-      fullName: '',
-      username: '',
+      first_name: '',
+      last_name: '',
       email: '',
-      company: '',
-      country: '',
-      contact: '',
-      role: '',
-      plan: '',
-      status: ''
+      dob: '',
+      gender: '',
+      contact: ''
     })
   }
 
@@ -61,7 +61,7 @@ const AddUserDrawer = ({ open, handleClose }) => {
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
       <div className='flex items-center justify-between pli-5 plb-[15px]'>
-        <Typography variant='h5'>Add New User</Typography>
+        <Typography variant='h5'>Add New Customer</Typography>
         <IconButton onClick={handleReset}>
           <i className='ri-close-line' />
         </IconButton>
@@ -70,18 +70,26 @@ const AddUserDrawer = ({ open, handleClose }) => {
       <div className='p-5'>
         <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
           <TextField
-            label='Full Name'
+            label='First Name'
             fullWidth
             placeholder='John Doe'
-            value={formData.fullName}
-            onChange={e => setFormData({ ...formData, fullName: e.target.value })}
+            value={formData.first_name}
+            onChange={e => setFormData({ ...formData, first_name: e.target.value })}
           />
           <TextField
-            label='Username'
+            label='Last Name'
+            fullWidth
+            placeholder='John Doe'
+            value={formData.last_name}
+            onChange={e => setFormData({ ...formData, last_name: e.target.value })}
+          />
+          <TextField
+            label='Date of Birth'
+            type='date'
             fullWidth
             placeholder='johndoe'
-            value={formData.username}
-            onChange={e => setFormData({ ...formData, username: e.target.value })}
+            value={formData.dob}
+            onChange={e => setFormData({ ...formData, dob: e.target.value })}
           />
           <TextField
             label='Email'
@@ -90,39 +98,38 @@ const AddUserDrawer = ({ open, handleClose }) => {
             value={formData.email}
             onChange={e => setFormData({ ...formData, email: e.target.value })}
           />
-          <TextField
+          {/* <TextField
             label='Company'
             fullWidth
             placeholder='Company PVT LTD'
             value={formData.company}
             onChange={e => setFormData({ ...formData, company: e.target.value })}
-          />
+          /> */}
           <FormControl fullWidth>
-            <InputLabel id='country'>Select Country</InputLabel>
+            <InputLabel id='country'>Select Gender</InputLabel>
             <Select
               fullWidth
               id='country'
-              value={formData.country}
-              onChange={e => setFormData({ ...formData, country: e.target.value })}
-              label='Select Country'
+              value={formData.gender}
+              onChange={e => setFormData({ ...formData, Gender: e.target.value })}
+              label='Select Gender'
               labelId='country'
-              inputProps={{ placeholder: 'Country' }}
+              inputProps={{ placeholder: 'Gender' }}
             >
-              <MenuItem value='UK'>UK</MenuItem>
-              <MenuItem value='USA'>USA</MenuItem>
-              <MenuItem value='Australia'>Australia</MenuItem>
-              <MenuItem value='Germany'>Germany</MenuItem>
+              <MenuItem value='UK'>Male</MenuItem>
+              <MenuItem value='USA'>Female</MenuItem>
+              <MenuItem value='Australia'>Other</MenuItem>
             </Select>
           </FormControl>
           <TextField
-            label='Contact'
+            label='Contact Number'
             type='number'
             fullWidth
             placeholder='(397) 294-5153'
-            value={formData.contact}
-            onChange={e => setFormData({ ...formData, contact: e.target.value })}
+            value={formData.phone}
+            onChange={e => setFormData({ ...formData, phone: e.target.value })}
           />
-          <FormControl fullWidth>
+          {/* <FormControl fullWidth>
             <InputLabel id='role-select'>Select Role</InputLabel>
             <Select
               fullWidth
@@ -172,7 +179,7 @@ const AddUserDrawer = ({ open, handleClose }) => {
               <MenuItem value='active'>Active</MenuItem>
               <MenuItem value='inactive'>Inactive</MenuItem>
             </Select>
-          </FormControl>
+          </FormControl> */}
           <div className='flex items-center gap-4'>
             <Button variant='contained' type='submit'>
               Submit

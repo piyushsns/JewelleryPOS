@@ -108,10 +108,14 @@ const CategoryListTable = ({ tableData }) => {
 
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
+  let requestOptions = {
+    method: 'GET',
+    headers: { Authorization: 'Bearer ' + localStorage.getItem('user-token') }
+  }
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/categories/tree`)
+      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/v1/admin/catalog/categories`, requestOptions)
 
       if (!response.ok) {
         throw new Error('Failed to fetch data')
@@ -143,7 +147,7 @@ const CategoryListTable = ({ tableData }) => {
               <Typography className='font-medium' color='text.primary'>
                 {row.original.name}
               </Typography>
-              <Typography variant='body2'>{row.original.name}</Typography>
+              {/* <Typography variant='body2'>{row.original.name}</Typography> */}
             </div>
           </div>
         )

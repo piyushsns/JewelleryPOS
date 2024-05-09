@@ -49,7 +49,7 @@ import { getLocalizedUrl } from '@/utils/i18n'
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 
-// Styled Components
+// Styled Component
 const Icon = styled('i')({})
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {

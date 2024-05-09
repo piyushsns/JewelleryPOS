@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 
 // Next Imports
 import Link from 'next/link'
@@ -51,6 +51,11 @@ import tableStyles from '@core/styles/table.module.css'
 
 // Styled Components
 const Icon = styled('i')({})
+
+let requestOptions = {
+  method: 'GET',
+  headers: { Authorization: 'Bearer ' + localStorage.getItem('user-token') }
+}
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -110,6 +115,26 @@ const UserListTable = ({ tableData }) => {
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/v1/admin/customers`, requestOptions)
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch data')
+      }
+
+      const datas = await response.json()
+
+      setData(datas.data)
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  React.useEffect(() => {
+    fetchUsers()
+  }, [])
+
   // Hooks
   const { lang: locale } = useParams()
 
@@ -141,10 +166,13 @@ const UserListTable = ({ tableData }) => {
         header: 'User',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
+            {getAvatar({
+              avatar: row.original.avatar,
+              fullName: `${row.original.first_name} ${row.original.last_name}`
+            })}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
-                {row.original.fullName}
+                {row.original.first_name} {row.original.last_name}
               </Typography>
               <Typography variant='body2'>{row.original.username}</Typography>
             </div>
@@ -290,11 +318,11 @@ const UserListTable = ({ tableData }) => {
             <DebouncedInput
               value={globalFilter ?? ''}
               onChange={value => setGlobalFilter(String(value))}
-              placeholder='Search Users'
+              placeholder='Search Customers'
               className='is-full sm:is-auto'
             />
             <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='is-full sm:is-auto'>
-              Add User
+              Add Customer
             </Button>
           </div>
         </div>

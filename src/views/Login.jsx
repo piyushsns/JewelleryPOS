@@ -51,7 +51,7 @@ const Login = ({ mode }) => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [errorState, setErrorState] = useState(null)
-  const {storeItem } = useLoginAPI()
+  const { storeItem } = useLoginAPI()
 
   // Vars
   const darkImg = '/images/pages/auth-v2-mask-dark.png'
