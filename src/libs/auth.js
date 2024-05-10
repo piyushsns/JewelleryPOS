@@ -1,16 +1,8 @@
 // Third-party Imports
-import CredentialProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import CredentialProvider from 'next-auth/providers/credentials'
 
 export const authOptions = {
-  adapter: PrismaAdapter(prisma),
-
-  // ** Configure one or more authentication providers
-  // ** Please refer to https://next-auth.js.org/configuration/options#providers for more `providers` options
   providers: [
     CredentialProvider({
       // ** The name to display on the sign in form (e.g. 'Sign in with...')
@@ -66,7 +58,7 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET
     })
   ],
-  
+
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60
@@ -84,7 +76,6 @@ export const authOptions = {
 
       return token
     },
-
     async session({ session, token }) {
       if (session.user) {
         session.user = token.user

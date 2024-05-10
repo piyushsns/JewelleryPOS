@@ -2,7 +2,7 @@ import { HandleExeption, RaiseSomethingWentWrong } from './handle_exeption'
 
 export default class HttpService {
   constructor() {
-    this.url = process.env.API_ENDPOINT
+    this.url = process.env.API_ENDPOINT_CUST
   }
 
   async sendRequest(uri, requestOptions) {
@@ -50,7 +50,7 @@ export default class HttpService {
     const requestOptions = this.getRequestOptions('PUT', token, payload, signal)
 
     return this.sendRequest(uri, requestOptions)
-  }z
+  }
 
   async deleteData(uri, token = '', signal = '') {
     const requestOptions = this.getRequestOptions('DELETE', token, null, signal)

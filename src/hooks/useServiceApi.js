@@ -1,21 +1,15 @@
 /* eslint-disable import/order */
 /* eslint-disable padding-line-between-statements */
-
-import { useState, useEffect } from 'react'
-
 import HttpService from '../services/http_service'
 
-import { toast } from 'react-toastify'
-
-// const tokenId = 'vOM5ZJo8POIDo9yWZXyjK4i4c2aogMrdKAwgJydic68f9c73'
-
-const tokenId = process.env.TOKEN_NAME
-
 const useServiceApi = {
-  index: async Api_Name => {
+  constructor: function (token) {
+    this.token = token
+  },
+  index: async api_route => {
     try {
       let resultData = null
-      await new HttpService().getData(`${Api_Name}`, tokenId).then(response => {
+      await new HttpService().getData(`${api_route}`, this.token).then(response => {
         resultData = response
       })
 
@@ -24,41 +18,34 @@ const useServiceApi = {
       return error
     }
   },
-
-  store: async (Api_name, cartData) => {
-    console.log(Api_name, cartData)
+  store: async (api_route, cartData) => {
     try {
       let resultData = null
-      await new HttpService().postData(cartData, `${Api_name}`, tokenId).then(response => {
+      await new HttpService().postData(cartData, `${api_route}`, this.token).then(response => {
         resultData = response
       })
-      toast.success(resultData.message)
 
       return resultData
     } catch (error) {
       return error
     }
   },
-
-  update: async (Api_name, cartData) => {
+  update: async (api_route, cartData) => {
     try {
       let resultData = null
-      console.log('tokenId', tokenId)
-      await new HttpService().putData(cartData, `${Api_name}`, tokenId).then(response => {
+      await new HttpService().putData(cartData, `${api_route}`, this.token).then(response => {
         resultData = response
       })
-      toast.success(resultData.message)
 
       return resultData
     } catch (error) {
       return error
     }
   },
-
-  delete: async Api_name => {
+  delete: async api_route => {
     try {
       let resultData = null
-      await new HttpService().deleteData(`${Api_name}`, tokenId).then(response => {
+      await new HttpService().deleteData(`${api_route}`, this.token).then(response => {
         resultData = response
       })
 
