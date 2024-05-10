@@ -70,8 +70,8 @@ const Login = ({ mode }) => {
   } = useForm({
     resolver: valibotResolver(schema),
     defaultValues: {
-      email: 'admin@materio.com',
-      password: 'admin'
+      email: 'admin@example.com',
+      password: 'admin123'
     }
   })
 
@@ -93,8 +93,6 @@ const Login = ({ mode }) => {
       password: data.password,
       redirect: false
     })
-
-    console.log(res)
 
     if (res && res.ok && res.error === null) {
       // Vars
@@ -212,7 +210,7 @@ const Login = ({ mode }) => {
               </Typography>
             </div>
           </form>
-          <Divider className='gap-3'>or</Divider>
+          {/* <Divider className='gap-3'>or</Divider>
           <Button
             color='secondary'
             className='self-center text-textPrimary'
@@ -221,7 +219,7 @@ const Login = ({ mode }) => {
             onClick={() => signIn('google')}
           >
             Sign in with Google
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>
