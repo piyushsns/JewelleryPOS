@@ -7,7 +7,8 @@ import IconButton from '@mui/material/IconButton'
 import ImageListItem from '@mui/material/ImageListItem'
 import ImageListItemBar from '@mui/material/ImageListItemBar'
 import ListSubheader from '@mui/material/ListSubheader'
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
+
+// import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 
 const getAllProducts = async ({ sort = 'name-asc', limit = 12, ...filters } = {}) => {
   // name-asc,name-desc, created_at-desc, created_at-asc, price-asc, price-desc
@@ -111,7 +112,8 @@ export default function ProductListByCategory({ categories, selectedCategory, se
                     }}
                     aria-label={`info about ${item.name}`}
                   >
-                    <AddShoppingCartIcon />
+                    <i class='fa fa-shopping-cart' aria-hidden='true'></i>
+                    {/* <AddShoppingCartIcon /> */}
                   </IconButton>
                 }
               />

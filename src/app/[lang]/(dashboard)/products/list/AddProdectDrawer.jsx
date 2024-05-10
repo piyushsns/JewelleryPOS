@@ -41,13 +41,12 @@ const initialData = {
 const AddProductDrawer = ({ open, handleClose }) => {
   // States
   const [formData, setFormData] = useState(initialData)
-  const { storeItem ,updateItem} = UseProductAPI()
+  const { storeItem, updateItem } = UseProductAPI()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault()
     handleClose()
-    updateItem(formData.id,formData);
-    
+    updateItem(formData.id, formData)
   }
 
   const handleReset = () => {
@@ -80,8 +79,6 @@ const AddProductDrawer = ({ open, handleClose }) => {
   React.useEffect(() => {
     fetchProduct()
   }, [])
-
-
 
   return (
     <Drawer
@@ -123,7 +120,7 @@ const AddProductDrawer = ({ open, handleClose }) => {
             value={formData.description}
             onChange={e => setFormData({ ...formData, description: e.target.value })}
           />
-          <label>Weight (grams)</label>{' '}
+          <label>Weight (Grams)</label>{' '}
           <TextField
             fullWidth
             placeholder='Enter weight'
@@ -137,7 +134,7 @@ const AddProductDrawer = ({ open, handleClose }) => {
             value={formData.price}
             onChange={e => setFormData({ ...formData, price: e.target.value })}
           />
-          <label>Product Iamge</label>
+          <label>Product Image</label>
           <TextField fullWidth type='file' onChange={e => setFormData({ ...formData, images: e.target.value })} />
           <FormControl fullWidth className='mt-3'>
             <InputLabel id='plan-select'>Select Status</InputLabel>
@@ -159,7 +156,7 @@ const AddProductDrawer = ({ open, handleClose }) => {
             </Select>
           </FormControl>
           <div className='flex items-center gap-4 mt-3'>
-            <Button variant='contained' type='submit' >
+            <Button variant='contained' type='submit'>
               Submit
             </Button>
             <Button variant='outlined' color='error' type='reset' onClick={() => handleReset()}>

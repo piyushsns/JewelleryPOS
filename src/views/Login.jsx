@@ -73,8 +73,8 @@ const Login = ({ mode }) => {
   } = useForm({
     resolver: valibotResolver(schema),
     defaultValues: {
-      email: 'admin@example.com',
-      password: 'admin123'
+      email: 'sns@example.com',
+      password: 'snsAdmin'
     }
   })
 
@@ -94,9 +94,6 @@ const Login = ({ mode }) => {
     const res = await signIn('credentials', {
       email: 'admin@materio.com',
       password: 'admin',
-
-      // email: data.email,
-      // password: data.password,
       redirect: false
     })
 
@@ -142,7 +139,7 @@ const Login = ({ mode }) => {
       <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
         <div className='absolute block-start-5 sm:block-start-[33px] inline-start-6 sm:inline-start-[38px]'>
           <div className='flex justify-center items-center gap-3 mbe-6'>
-            <Logo className='text-primary' height={28} width={35} />
+            {/* <Logo className='text-primary' height={28} width={35} /> */}
             <Typography variant='h4' className='font-semibold tracking-[0.15px]'>
               {themeConfig.templateName}
             </Typography>
@@ -151,7 +148,7 @@ const Login = ({ mode }) => {
         <div className='flex flex-col gap-5 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset]'>
           <div>
             <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}!👋🏻`}</Typography>
-            <Typography>Please sign-in to your account and start the adventure</Typography>
+            <Typography>Please sign-in to your account</Typography>
           </div>
           <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
             <Typography variant='body2' color='primary'>
@@ -219,20 +216,20 @@ const Login = ({ mode }) => {
             <div className='flex justify-between items-center flex-wrap gap-x-3 gap-y-1'>
               <FormControlLabel control={<Checkbox defaultChecked />} label='Remember me' />
               <Typography className='text-end' color='primary' component={Link} href='/forgot-password'>
-                Forgot password?
+                Forgot Password?
               </Typography>
             </div>
             <Button fullWidth variant='contained' type='submit'>
               Log In
             </Button>
             <div className='flex justify-center items-center flex-wrap gap-2'>
-              <Typography>New on our platform?</Typography>
+              <Typography>Do you have account?</Typography>
               <Typography component={Link} href='/register' color='primary'>
                 Create an account
               </Typography>
             </div>
           </form>
-          <Divider className='gap-3'>or</Divider>
+          {/* <Divider className='gap-3'>or</Divider>
           <Button
             color='secondary'
             className='self-center text-textPrimary'
@@ -241,7 +238,7 @@ const Login = ({ mode }) => {
             onClick={() => signIn('google')}
           >
             Sign in with Google
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>
