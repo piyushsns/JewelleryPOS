@@ -1,6 +1,18 @@
 import React from 'react'
 
-// const CustomerList = () => {
-//   return ()
-// }
-// export default CustomerList;
+import { Button, Card, CardContent, Typography } from '@mui/material'
+
+// Component Imports
+import CustomerModal from './CustomerModal'
+import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
+
+const CustomerList = () => {
+  const buttonProps = {
+    variant: 'contained',
+    children: 'Add New/Existing Customer'
+  }
+
+  return <OpenDialogOnElementClick element={Button} elementProps={buttonProps} dialog={CustomerModal} />
+}
+
+export default CustomerList

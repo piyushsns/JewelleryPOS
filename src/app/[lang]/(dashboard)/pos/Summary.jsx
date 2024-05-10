@@ -15,6 +15,8 @@ import styles from '@core/styles/table.module.css'
 
 import HttpService from '@/services/http_service_customer'
 
+import CustomerList from './CustomerList'
+
 export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummary, cart, setCart }) {
   const [data, setData] = useState(() => [])
 
@@ -335,6 +337,11 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
             <tr>
               <th style={{ textAlign: 'start' }}>Total Taxable Amount</th>
               <td style={{ textAlign: 'end' }}>{cart?.formatted_grand_total}</td>
+            </tr>
+            <tr>
+              <td colSpan={'100%'}>
+                <CustomerList />
+              </td>
             </tr>
             <tr>
               <td rowSpan={'100%'} style={{ textAlign: 'end' }}>

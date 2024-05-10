@@ -1,15 +1,20 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+'use Client'
 /* eslint-disable import/order */
 /* eslint-disable padding-line-between-statements */
+
 import HttpService from '../services/http_service'
 
 const useServiceApi = {
   constructor: function (token) {
     this.token = token
   },
-  index: async api_route => {
+
+  index: async (api_route,token) => {
+    console.log('this.token====================================', this.token)
     try {
       let resultData = null
-      await new HttpService().getData(`${api_route}`, this.token).then(response => {
+      await new HttpService().getData(`${api_route}`, token, (signal = '')).then(response => {
         resultData = response
       })
 

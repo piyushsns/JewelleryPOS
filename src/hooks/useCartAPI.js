@@ -5,12 +5,12 @@ import HttpService from '../services/http_service'
 const token = process.env.TOKEN_NAME
 
 const CartAPIService = {
-  index: async () => {
+  index: async (token) => {
     try {
       var resultData = null
 
       await new HttpService()
-        .getData(`customer/cart`, token)
+        .getData('admin/customers', token)
         .then(response => response)
         .then(response => (resultData = response))
 

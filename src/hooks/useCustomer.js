@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+'use client'
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable import/order */
+/* eslint-disable react-hooks/rules-of-hooks */
+import React, { useState } from 'react'
 
-import HttpService from '../services/http_service'
+import { useSession } from 'next-auth/react'
 import useServiceApi from './useServiceApi'
-
-const tokenId = process.env.TOKEN_NAME
 
 const useCustomerAPI = () => {
   const [loading, setLoading] = useState(false)
   const [cartData, setCartData] = useState(null)
   const [error, setError] = useState(null)
 
-  // const { APIService } = useServiceApi()
-
   const fetchCartData = async () => {
     try {
       setLoading(true)
-      const response = await useServiceApi.index('admin/customers')
+      const response = await useServiceApi.index('admin/customers', token)
 
       setCartData(response.data)
     } catch (error) {
@@ -25,9 +26,18 @@ const useCustomerAPI = () => {
     }
   }
 
-  useEffect(() => {
-    fetchCartData()
-  }, [])
+  const fetchUserData = async (token) => {
+    try {
+      setLoading(true)
+      const response = await useServiceApi.index('admin/customers', token)
+
+      setCartData(response.data)
+    } catch (error) {
+      setError(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const storeItem = async payloadData => {
     try {
@@ -56,7 +66,7 @@ const useCustomerAPI = () => {
     }
   }
 
-  return { loading, cartData, error, fetchCartData, storeItem, removeItem }
+  return { loading, cartData, error, fetchCartData, storeItem, removeItem, fetchUserData }
 }
 
 export default useCustomerAPI
