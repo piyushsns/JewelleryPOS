@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 import HttpService from '../services/http_service'
 
-const tokenId = process.env.TOKEN_NAME
+const token = process.env.TOKEN_NAME
 
 const CartAPIService = {
   index: async () => {
@@ -10,7 +10,7 @@ const CartAPIService = {
       var resultData = null
 
       await new HttpService()
-        .getData(`customer/cart`, tokenId)
+        .getData(`customer/cart`, token)
         .then(response => response)
         .then(response => (resultData = response))
 
@@ -25,7 +25,7 @@ const CartAPIService = {
       var resultData = null
 
       await new HttpService()
-        .postData(cartData, `customer/cart/add/${configurableProductId}`, tokenId)
+        .postData(cartData, `customer/cart/add/${configurableProductId}`, token)
         .then(response => (resultData = response))
 
       return resultData
@@ -38,9 +38,7 @@ const CartAPIService = {
     try {
       var resultData = null
 
-      await new HttpService()
-        .putData(cartData, `customer/cart/update`, tokenId)
-        .then(response => (resultData = response))
+      await new HttpService().putData(cartData, `customer/cart/update`, token).then(response => (resultData = response))
 
       return resultData
     } catch (error) {
@@ -53,7 +51,7 @@ const CartAPIService = {
       var resultData = null
 
       await new HttpService()
-        .deleteData(`customer/cart/remove/${cartItemId}`, tokenId)
+        .deleteData(`customer/cart/remove/${cartItemId}`, token)
         .then(response => (resultData = response))
 
       return resultData
@@ -66,7 +64,7 @@ const CartAPIService = {
     try {
       var resultData = null
 
-      await new HttpService().deleteData(`customer/cart/empty/`, tokenId).then(response => (resultData = response))
+      await new HttpService().deleteData(`customer/cart/empty/`, token).then(response => (resultData = response))
 
       return resultData
     } catch (error) {
@@ -79,7 +77,7 @@ const CartAPIService = {
       var resultData = null
 
       await new HttpService()
-        .postData({}, `customer/cart/move-to-wishlist/${cartItemId}`, tokenId)
+        .postData({}, `customer/cart/move-to-wishlist/${cartItemId}`, token)
         .then(response => (resultData = response))
 
       return resultData
@@ -93,7 +91,7 @@ const CartAPIService = {
       var resultData = null
 
       await new HttpService()
-        .postData(couponData, `customer/cart/coupon/`, tokenId)
+        .postData(couponData, `customer/cart/coupon/`, token)
         .then(response => (resultData = response))
 
       return resultData
@@ -106,7 +104,7 @@ const CartAPIService = {
     try {
       var resultData = null
 
-      await new HttpService().deleteData(`customer/cart/coupon`, tokenId).then(response => (resultData = response))
+      await new HttpService().deleteData(`customer/cart/coupon`, token).then(response => (resultData = response))
 
       return resultData
     } catch (error) {

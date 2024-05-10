@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import HttpService from '../services/http_service'
 
-const TOKEN_NAME = process.env.TOKEN_NAME
+const token = process.env.token
 
 const useCheckoutAPI = () => {
   const [saveAddressLoading, setSaveAddressLoading] = useState(false)
@@ -18,16 +18,16 @@ const useCheckoutAPI = () => {
 
       switch (method) {
         case 'POST':
-          await new HttpService().postData(data, endpoint, TOKEN_NAME).then(response => (resultData = response))
+          await new HttpService().postData(data, endpoint, token).then(response => (resultData = response))
           break
         case 'GET':
-          await new HttpService().postData(endpoint, TOKEN_NAME).then(response => (resultData = response))
+          await new HttpService().postData(endpoint, token).then(response => (resultData = response))
           break
         case 'PUT':
-          await new HttpService().putData(data, endpoint, TOKEN_NAME).then(response => (resultData = response))
+          await new HttpService().putData(data, endpoint, token).then(response => (resultData = response))
           break
         case 'DELETE':
-          await new HttpService().deleteData(endpoint, TOKEN_NAME).then(response => (resultData = response))
+          await new HttpService().deleteData(endpoint, token).then(response => (resultData = response))
           break
         default:
           resultData = null

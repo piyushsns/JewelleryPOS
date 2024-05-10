@@ -30,7 +30,7 @@ import Summary from './Summary'
 import PreviewPage from './preview/sendinvoice'
 import InvoiceCard from '../inventory/stock_on_hand/list/InvoiceCard'
 
-const tokenId = ''
+const token = ''
 
 const CartAPIService = {
   index: async () => {
@@ -40,7 +40,7 @@ const CartAPIService = {
       var current_cart_id = localStorage.getItem('current_cart_id')
 
       await new HttpService()
-        .getData(`checkout/cart?current_cart_id=${current_cart_id}`, tokenId)
+        .getData(`checkout/cart?current_cart_id=${current_cart_id}`, token)
         .then(response => response)
         .then(response => (resultData = response))
 
@@ -61,7 +61,7 @@ const CartAPIService = {
       var current_cart_id = localStorage.getItem('current_cart_id')
 
       await new HttpService()
-        .postData(payload, `checkout/cart?current_cart_id=${current_cart_id}`, tokenId)
+        .postData(payload, `checkout/cart?current_cart_id=${current_cart_id}`, token)
         .then(response => (resultData = response))
 
       await localStorage.setItem('current_cart_id', resultData.data.id)
@@ -78,7 +78,7 @@ const CartAPIService = {
       var current_cart_id = localStorage.getItem('current_cart_id')
 
       await new HttpService()
-        .deleteData(`checkout/cart?cart_item_id=${cart_item_id}&current_cart_id=${current_cart_id}`, tokenId)
+        .deleteData(`checkout/cart?cart_item_id=${cart_item_id}&current_cart_id=${current_cart_id}`, token)
         .then(response => (resultData = response))
 
       return resultData

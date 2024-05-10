@@ -2,7 +2,7 @@ import { HandleExeption, RaiseSomethingWentWrong } from './handle_exeption'
 
 export default class HttpService {
   constructor() {
-    this.url = process.env.API_ENDPOINT_CUST
+    this.url = 'https://jewelleryposapi.mytiny.us/api'
   }
 
   async sendRequest(uri, requestOptions) {
@@ -14,6 +14,8 @@ export default class HttpService {
 
       return data
     } catch (error) {
+      console.error(error)
+
       if (error?.name === 'AbortError') {
         return {
           data: [],

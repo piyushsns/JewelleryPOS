@@ -8,9 +8,15 @@ import ImageListItem from '@mui/material/ImageListItem'
 import ImageListItemBar from '@mui/material/ImageListItemBar'
 import ListSubheader from '@mui/material/ListSubheader'
 
+import { useSession } from 'next-auth/react'
+
+import HttpService from '@/services/http_service_customer'
+
+const httpService = new HttpService()
+
 // import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 
-const getAllProducts = async ({ sort = 'name-asc', limit = 12, ...filters } = {}) => {
+const getAllProducts = async ({ sort = 'name-asc', limit = 12, ...filters } = {}, token) => {
   // name-asc,name-desc, created_at-desc, created_at-asc, price-asc, price-desc
 
   const queryString = new URLSearchParams({
@@ -19,29 +25,25 @@ const getAllProducts = async ({ sort = 'name-asc', limit = 12, ...filters } = {}
     ...filters
   }).toString()
 
-  const response = await fetch(`https://jewelleryposapi.mytiny.us/api/products?${queryString}`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch invoice data')
-  }
-
-  return response.json()
+  return await httpService.getData(`products?${queryString}`, token)
 }
 
 export default function ProductListByCategory({ categories, selectedCategory, selectedProducts, addToCart }) {
+  const { data: session } = useSession()
+
   const categoryObject = categories.find(c => c.id === selectedCategory)
 
   const [products, setProducts] = useState([])
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await getAllProducts({ ...(categoryObject && { category_id: categoryObject.id }) })
+      const res = await getAllProducts({ ...(categoryObject && { category_id: categoryObject.id }) }, session?.user?.token)
 
       setProducts(res.data)
     }
 
     fetchProducts()
-  }, [categoryObject])
+  }, [categoryObject, session?.user?.token])
 
   return (
     <div>
@@ -112,7 +114,7 @@ export default function ProductListByCategory({ categories, selectedCategory, se
                     }}
                     aria-label={`info about ${item.name}`}
                   >
-                    <i class='fa fa-shopping-cart' aria-hidden='true'></i>
+                    <i className='fa fa-shopping-cart' aria-hidden='true'></i>
                     {/* <AddShoppingCartIcon /> */}
                   </IconButton>
                 }

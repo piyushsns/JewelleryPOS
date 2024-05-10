@@ -12,7 +12,6 @@ export const HandleExeption = data => {
       draggable: true,
       progress: undefined
     })
-    localStorage.clear()
 
     // setTimeout(function () {
     //   window.location.href = '/page/account/login'

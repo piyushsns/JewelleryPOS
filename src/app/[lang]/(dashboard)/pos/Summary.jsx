@@ -24,12 +24,12 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
     try {
       var resultData = null
 
-      var tokenId = 'user-token'
+      var token = 'user-token'
 
       var current_cart_id = localStorage.getItem('current_cart_id')
 
       await new HttpService()
-        .getData(`checkout/cart?current_cart_id=${current_cart_id}`, tokenId)
+        .getData(`checkout/cart?current_cart_id=${current_cart_id}`, token)
         .then(response => response)
         .then(response => (resultData = response))
 
@@ -43,12 +43,12 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
     try {
       var resultData = null
 
-      var tokenId = 'user-token'
+      var token = 'user-token'
 
       var current_cart_id = localStorage.getItem('current_cart_id')
 
       await new HttpService()
-        .putData(itempayload, `checkout/cart?current_cart_id=${current_cart_id}`, tokenId)
+        .putData(itempayload, `checkout/cart?current_cart_id=${current_cart_id}`, token)
         .then(response => response)
         .then(response => (resultData = response))
 
@@ -62,12 +62,12 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
     try {
       var resultData = null
 
-      var tokenId = 'user-token'
+      var token = 'user-token'
 
       var current_cart_id = localStorage.getItem('current_cart_id')
 
       await new HttpService()
-        .deleteData(`checkout/cart?current_cart_id=${current_cart_id}&cart_item_id=${item_id}`, tokenId)
+        .deleteData(`checkout/cart?current_cart_id=${current_cart_id}&cart_item_id=${item_id}`, token)
         .then(response => response)
         .then(response => (resultData = response))
 
