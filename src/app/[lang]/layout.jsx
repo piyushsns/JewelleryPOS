@@ -13,10 +13,11 @@ import '@/app/globals.css'
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
 
+import ProgressBarProvider from './ProgressBarProvider'
+
 export const metadata = {
-  title: 'Materio - Material Design Next.js Admin Template',
-  description:
-    'Materio - Material Design Next.js Admin Dashboard Template - is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.'
+  title: 'Jewels Store POS',
+  description: 'Jewels Store POS'
 }
 
 const RootLayout = ({ children, params }) => {
@@ -26,7 +27,7 @@ const RootLayout = ({ children, params }) => {
   return (
     <html id='__next' lang={params.lang} dir={direction}>
       <body className='flex is-full min-bs-full flex-auto flex-col'>
-        {children}
+        <ProgressBarProvider>{children}</ProgressBarProvider>
         {/* <BuyNowButton /> */}
       </body>
     </html>
