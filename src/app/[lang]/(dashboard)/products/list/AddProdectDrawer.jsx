@@ -20,59 +20,66 @@ import UseProductAPI from '../../../../../hooks/useProduct'
 const initialData = {
   channel: 'default',
   locale: 'en',
-  sku: 'CP001',
-  name: 'GOLD',
+  sku: '',
+  name: '',
   url_key: 'gold',
-  short_description: '<p>gold Short Description</p>',
-  description: '<p>gold Short Description</p>',
-  price: 10,
+  short_description: '',
+  description: '',
+  price: '',
   per_gram_price: 10,
   making_charges: 0,
-  weight: 1,
+  weight: '',
   visible_individually: 1,
-  status: 1,
+  status: '',
   guest_checkout: 1,
   manage_stock: 1,
   inventories: 0,
-  categories: [2]
+  categories: [2],
+  images: []
 }
 
 const AddProductDrawer = ({ open, handleClose }) => {
   // States
   const [formData, setFormData] = useState(initialData)
-  const { storeItem } = UseProductAPI()
+  const { storeItem ,updateItem} = UseProductAPI()
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     handleClose()
-
-    //setFormData(initialData)
-    console.log('======================================================', formData)
-    storeItem(formData)
+    updateItem(formData.id,formData);
+    
   }
 
   const handleReset = () => {
     handleClose()
   }
+  let requestOptions = {
+    method: 'GET',
+    headers: { Authorization: 'Bearer ' + localStorage.getItem('user-token') }
+  }
 
-  const fetchCategories = async () => {
+  const fetchProduct = async () => {
     try {
       var Id = localStorage.getItem('product_id')
-      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/admin/catalog/products/${Id}`)
+      const response = await fetch(
+        `https://jewelleryposapi.mytiny.us/api/v1/admin/catalog/products/${Id}`,
+        requestOptions
+      )
       if (!response.ok) {
-
         throw new Error('Failed to fetch data')
-
       }
 
       const datas = await response.json()
 
-      setData(datas.data)
+      setFormData(datas.data)
     } catch (error) {
       console.error('Error fetching data:', error)
     }
   }
 
+  React.useEffect(() => {
+    fetchProduct()
+  }, [])
 
 
 
@@ -98,132 +105,40 @@ const AddProductDrawer = ({ open, handleClose }) => {
           <TextField
             fullWidth
             placeholder='Enter Product Name'
-            value={formData.fullName}
-            onChange={e => setFormData({ ...formData, fullName: e.target.value })}
+            value={formData.name}
+            name='name'
+            onChange={e => setFormData({ ...formData, name: e.target.value })}
           />
           <label>Product Description</label>{' '}
           <TextField
             fullWidth
-            placeholder='Enter product description'
-            value={formData.fullName}
-            onChange={e => setFormData({ ...formData, fullName: e.target.value })}
+            placeholder='Enter Sku'
+            value={formData.sku}
+            onChange={e => setFormData({ ...formData, sku: e.target.value })}
           />
-          <label>Material</label>{' '}
+          <label>Description</label>{' '}
           <TextField
             fullWidth
-            placeholder='Enter product material'
-            value={formData.fullName}
-            onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-          />
-          <label>Gemstones</label>{' '}
-          <TextField
-            fullWidth
-            placeholder='Enter gemstones used (if any)'
-            value={formData.fullName}
-            onChange={e => setFormData({ ...formData, fullName: e.target.value })}
+            placeholder='Enter description '
+            value={formData.description}
+            onChange={e => setFormData({ ...formData, description: e.target.value })}
           />
           <label>Weight (grams)</label>{' '}
           <TextField
             fullWidth
-            placeholder='Enter product weight in grams'
-            value={formData.fullName}
-            onChange={e => setFormData({ ...formData, fullName: e.target.value })}
+            placeholder='Enter weight'
+            value={formData.weight}
+            onChange={e => setFormData({ ...formData, weight: e.target.value })}
           />
           <label>Product Price</label>{' '}
           <TextField
             fullWidth
             placeholder='Enter product price'
-            value={formData.fullName}
-            onChange={e => setFormData({ ...formData, fullName: e.target.value })}
+            value={formData.price}
+            onChange={e => setFormData({ ...formData, price: e.target.value })}
           />
           <label>Product Iamge</label>
-          <TextField
-            fullWidth
-            value={formData.fullName}
-            type='file'
-            onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-          />
-          {/* <TextField
-            label='Username'
-            fullWidth
-            placeholder='johndoe'
-            value={formData.username}
-            onChange={e => setFormData({ ...formData, username: e.target.value })}
-          />
-          <TextField
-            label='Email'
-            fullWidth
-            placeholder='johndoe@gmail.com'
-            value={formData.email}
-            onChange={e => setFormData({ ...formData, email: e.target.value })}
-          />
-          <TextField
-            label='Company'
-            fullWidth
-            placeholder='Company PVT LTD'
-            value={formData.company}
-            onChange={e => setFormData({ ...formData, company: e.target.value })}
-          />
-          <FormControl fullWidth>
-            <InputLabel id='country'>Select Country</InputLabel>
-            <Select
-              fullWidth
-              id='country'
-              value={formData.country}
-              onChange={e => setFormData({ ...formData, country: e.target.value })}
-              label='Select Country'
-              labelId='country'
-              inputProps={{ placeholder: 'Country' }}
-            >
-              <MenuItem value='UK'>UK</MenuItem>
-              <MenuItem value='USA'>USA</MenuItem>
-              <MenuItem value='Australia'>Australia</MenuItem>
-              <MenuItem value='Germany'>Germany</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            label='Contact'
-            type='number'
-            fullWidth
-            placeholder='(397) 294-5153'
-            value={formData.contact}
-            onChange={e => setFormData({ ...formData, contact: e.target.value })}
-          />
-          <FormControl fullWidth>
-            <InputLabel id='role-select'>Select Role</InputLabel>
-            <Select
-              fullWidth
-              id='select-role'
-              value={formData.role}
-              onChange={e => setFormData({ ...formData, role: e.target.value })}
-              label='Select Role'
-              labelId='role-select'
-              inputProps={{ placeholder: 'Select Role' }}
-            >
-              <MenuItem value='admin'>Admin</MenuItem>
-              <MenuItem value='author'>Author</MenuItem>
-              <MenuItem value='editor'>Editor</MenuItem>
-              <MenuItem value='maintainer'>Maintainer</MenuItem>
-              <MenuItem value='subscriber'>Subscriber</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id='plan-select'>Select Plan</InputLabel>
-            <Select
-              fullWidth
-              id='select-plan'
-              value={formData.plan}
-              onChange={e => setFormData({ ...formData, plan: e.target.value })}
-              label='Select Plan'
-              labelId='plan-select'
-              inputProps={{ placeholder: 'Select Plan' }}
-            >
-              <MenuItem value='basic'>Basic</MenuItem>
-              <MenuItem value='company'>Company</MenuItem>
-              <MenuItem value='enterprise'>Enterprise</MenuItem>
-              <MenuItem value='team'>Team</MenuItem>
-            </Select>
-          </FormControl> */}
+          <TextField fullWidth type='file' onChange={e => setFormData({ ...formData, images: e.target.value })} />
           <FormControl fullWidth className='mt-3'>
             <InputLabel id='plan-select'>Select Status</InputLabel>
             <Select
@@ -244,7 +159,7 @@ const AddProductDrawer = ({ open, handleClose }) => {
             </Select>
           </FormControl>
           <div className='flex items-center gap-4 mt-3'>
-            <Button variant='contained' type='submit'>
+            <Button variant='contained' type='submit' >
               Submit
             </Button>
             <Button variant='outlined' color='error' type='reset' onClick={() => handleReset()}>

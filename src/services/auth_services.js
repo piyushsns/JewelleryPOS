@@ -13,8 +13,6 @@ export const LoginUserService = async credentials => {
   const http = new HttpService()
   let loginUrl = 'admin/login'
 
-  // let loginUrl = process.env.LOGIN_URL
-
   const data = await http.postData(credentials, loginUrl)
 
   return data

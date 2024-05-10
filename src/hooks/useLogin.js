@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 
 import HttpService from '../services/http_service'
@@ -37,6 +39,8 @@ const useLoginAPI = () => {
 
       // After storing the item, fetch updated cart data
       await fetchCartData()
+
+      return JSON.stringify(userData)
     } catch (error) {
       setError(error)
     } finally {

@@ -44,9 +44,16 @@ const ProductCard = ({ open, setOpen, data }) => {
   }, [open])
 
   const hendleSubmit = () => {
-    storeItem(cardData)
+    var data = storeItem(cardData);
+    
+    data.then(datas => {
 
-    // localStorage.setItem('Product_id', data.id)
+      if (datas != '') {
+
+        localStorage.setItem('product_id', datas?.data.id)
+      }
+
+    })
 
     handleClose()
   }
