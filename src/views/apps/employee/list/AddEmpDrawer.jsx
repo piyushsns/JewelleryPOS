@@ -13,15 +13,21 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 
-import useCustomerAPI from '../../../../hooks/useCustomer'
+import useEmpAPI from '../../../../hooks/useEmp.js'
 
 // Vars
 const initialData = {
   name: '',
   email: '',
-  dob: '',
-  gender: '',
-  phone: ''
+  status: 1,
+  role: {
+    id: 1,
+    name: 'Administrator',
+    description: 'This role users will have all the access',
+    permission_type: 'all'
+  },
+  password: '',
+  confirm_pwd: ''
 }
 
 // role: '',
@@ -31,7 +37,7 @@ const initialData = {
 const AddUserDrawer = ({ open, handleClose }) => {
   // States
   const [formData, setFormData] = useState(initialData)
-  const { storeItem } = useCustomerAPI()
+  const { storeItem } = useEmpAPI()
 
   const handleSubmit = e => {
     e.preventDefault()
@@ -47,9 +53,15 @@ const AddUserDrawer = ({ open, handleClose }) => {
     setFormData({
       name: '',
       email: '',
-      dob: '',
-      gender: '',
-      phone: ''
+      status: '',
+      role: {
+        id: 1,
+        name: '',
+        description: '',
+        permission_type: 'all'
+      },
+      password: '',
+      confirm_pwd: ''
     })
   }
 
@@ -63,7 +75,7 @@ const AddUserDrawer = ({ open, handleClose }) => {
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
       <div className='flex items-center justify-between pli-5 plb-[15px]'>
-        <Typography variant='h5'>Add New Customer</Typography>
+        <Typography variant='h5'>Add New Employee</Typography>
         <IconButton onClick={handleReset}>
           <i className='ri-close-line' />
         </IconButton>
@@ -78,28 +90,27 @@ const AddUserDrawer = ({ open, handleClose }) => {
             value={formData.name}
             onChange={e => setFormData({ ...formData, name: e.target.value })}
           />
-          {/* <TextField
-            label='Last Name'
-            fullWidth
-            placeholder='Doe'
-            value={formData.last_name}
-            onChange={e => setFormData({ ...formData, last_name: e.target.value })}
-          /> */}
-          <TextField
-            label='Date of Birth'
-            type='date'
-            format='MM/dd/yyyy'
-            fullWidth
-            placeholder='dob'
-            value={formData.dob}
-            onChange={e => setFormData({ ...formData, dob: e.target.value })}
-          />
           <TextField
             label='Email'
             fullWidth
-            placeholder='test@example.com'
+            placeholder='email@example.com'
             value={formData.email}
             onChange={e => setFormData({ ...formData, email: e.target.value })}
+          />
+          <TextField
+            label='Password'
+            type='password'
+            fullWidth
+            placeholder='Password'
+            value={formData.password}
+            onChange={e => setFormData({ ...formData, password: e.target.value })}
+          />
+          <TextField
+            label='Confirm Password'
+            fullWidth
+            placeholder='Confirm Password'
+            value={formData.confirm_pwd}
+            onChange={e => setFormData({ ...formData, confirm_pwd: e.target.value })}
           />
           {/* <TextField
             label='Company'
@@ -109,30 +120,6 @@ const AddUserDrawer = ({ open, handleClose }) => {
             onChange={e => setFormData({ ...formData, company: e.target.value })}
           /> */}
           <FormControl fullWidth>
-            <InputLabel id='country'>Select Gender</InputLabel>
-            <Select
-              fullWidth
-              id='country'
-              value={formData.gender}
-              onChange={e => setFormData({ ...formData, gender: e.target.value })}
-              label='Select Gender'
-              labelId='country'
-              inputProps={{ placeholder: 'Gender' }}
-            >
-              <MenuItem value='male'>Male</MenuItem>
-              <MenuItem value='female'>Female</MenuItem>
-              <MenuItem value='other'>Other</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            label='Contact Number'
-            type='number'
-            fullWidth
-            placeholder='(397) 294-5153'
-            value={formData.phone}
-            onChange={e => setFormData({ ...formData, phone: e.target.value })}
-          />
-          {/* <FormControl fullWidth>
             <InputLabel id='role-select'>Select Role</InputLabel>
             <Select
               fullWidth
@@ -143,14 +130,14 @@ const AddUserDrawer = ({ open, handleClose }) => {
               labelId='role-select'
               inputProps={{ placeholder: 'Select Role' }}
             >
-              <MenuItem value='admin'>Admin</MenuItem>
-              <MenuItem value='author'>Author</MenuItem>
-              <MenuItem value='editor'>Editor</MenuItem>
+              <MenuItem value='administrator'>Administrator</MenuItem>
               <MenuItem value='maintainer'>Maintainer</MenuItem>
-              <MenuItem value='subscriber'>Subscriber</MenuItem>
+              {/* <MenuItem value='author'>Author</MenuItem>
+              <MenuItem value='editor'>Editor</MenuItem>
+              <MenuItem value='subscriber'>Subscriber</MenuItem> */}
             </Select>
           </FormControl>
-          <FormControl fullWidth>
+          {/* <FormControl fullWidth>
             <InputLabel id='plan-select'>Select Plan</InputLabel>
             <Select
               fullWidth
@@ -166,7 +153,7 @@ const AddUserDrawer = ({ open, handleClose }) => {
               <MenuItem value='enterprise'>Enterprise</MenuItem>
               <MenuItem value='team'>Team</MenuItem>
             </Select>
-          </FormControl>
+          </FormControl> */}
           <FormControl fullWidth>
             <InputLabel id='plan-select'>Select Status</InputLabel>
             <Select
@@ -178,11 +165,11 @@ const AddUserDrawer = ({ open, handleClose }) => {
               labelId='status-select'
               inputProps={{ placeholder: 'Select Status' }}
             >
-              <MenuItem value='pending'>Pending</MenuItem>
-              <MenuItem value='active'>Active</MenuItem>
-              <MenuItem value='inactive'>Inactive</MenuItem>
+              <MenuItem value='1'>Active</MenuItem>
+              <MenuItem value='0'>Inactive</MenuItem>
             </Select>
-          </FormControl> */}
+          </FormControl>
+
           <div className='flex items-center gap-4'>
             <Button variant='contained' type='submit'>
               Submit

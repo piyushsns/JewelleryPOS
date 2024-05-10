@@ -1,21 +1,21 @@
-import UserList from '@views/apps/user/list'
+import EmpList from '@views/apps/employee/list'
 
 const getData = async () => {
   // Vars
   const res = await fetch(`${process.env.API_URL}/apps/user-list`)
 
   if (!res.ok) {
-    throw new Error('Failed to fetch userData')
+    throw new Error('Failed to fetch employee data')
   }
 
   return res.json()
 }
 
-const UserListApp = async () => {
+const EmpListApp = async () => {
   // Vars
   const data = await getData()
 
-  return <UserList userData={data} />
+  return <EmpList userData={data} />
 }
 
-export default UserListApp
+export default EmpListApp
