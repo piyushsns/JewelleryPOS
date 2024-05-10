@@ -24,8 +24,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { object, minLength, string, email } from 'valibot'
 
-import useLoginAPI from '../hooks/useLogin'
-
 // Component Imports
 import Logo from '@core/svg/Logo'
 import Illustrations from '@components/Illustrations'
@@ -51,7 +49,6 @@ const Login = ({ mode }) => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [errorState, setErrorState] = useState(null)
-  const { storeItem } = useLoginAPI()
 
   // Vars
   const darkImg = '/images/pages/auth-v2-mask-dark.png'
@@ -73,8 +70,8 @@ const Login = ({ mode }) => {
   } = useForm({
     resolver: valibotResolver(schema),
     defaultValues: {
-      email: 'admin@example.com',
-      password: 'admin123'
+      email: 'admin@materio.com',
+      password: 'admin'
     }
   })
 
@@ -92,25 +89,15 @@ const Login = ({ mode }) => {
 
   const onSubmit = async data => {
     const res = await signIn('credentials', {
-      email: 'admin@materio.com',
-      password: 'admin',
-
-      // email: data.email,
-      // password: data.password,
+      email: data.email,
+      password: data.password,
       redirect: false
     })
 
-    var loginData = {
-      email: data.email,
-      password: data.password,
-      device_name: 'webapp'
-    }
-
-    storeItem(loginData)
-
-    // Vars
+    console.log(res)
 
     if (res && res.ok && res.error === null) {
+      // Vars
       const redirectURL = searchParams.get('redirectTo') ?? '/'
 
       router.push(getLocalizedUrl(redirectURL, locale))
@@ -153,13 +140,6 @@ const Login = ({ mode }) => {
             <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}!👋🏻`}</Typography>
             <Typography>Please sign-in to your account and start the adventure</Typography>
           </div>
-          <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
-            <Typography variant='body2' color='primary'>
-              Email: <span className='font-medium'>admin@example.com</span> / Pass:{' '}
-              <span className='font-medium'>admin</span>
-            </Typography>
-          </Alert>
-
           <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
             <Controller
               name='email'
@@ -178,7 +158,7 @@ const Login = ({ mode }) => {
                   }}
                   {...((errors.email || errorState !== null) && {
                     error: true,
-                    helperText: errors?.email?.message || errorState?.message[0]
+                    helperText: errors?.email?.message || errorState?.[0]
                   })}
                 />
               )}

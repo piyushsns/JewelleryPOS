@@ -34,12 +34,11 @@ export const authOptions = {
 
         try {
           // ** Login API Call to match the user credentials and receive user data in response along with his role
-          const res = await fetch(`${process.env.API_URL}/login`, {
+
+          const res = await fetch(`${process.env.API_ENDPOINT}/${process.env.LOGIN_URL}`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, device_name: 'mobile' })
           })
 
           const data = await res.json()
@@ -48,18 +47,17 @@ export const authOptions = {
             throw new Error(JSON.stringify(data))
           }
 
-          if (res.status === 200) {
-            /*
-             * Please unset all the sensitive information of the user either from API response or before returning
-             * user data below. Below return statement will set the user object in the token and the same is set in
-             * the session which will be accessible all over the app.
-             */
-            return data
+          if (res.status === 422) {
+            throw new Error(JSON.stringify([data.message]))
           }
 
-          return null
+          if (res.status === 200) {
+            return { ...data.data, ['token']: data.token }
+          }
+
+          return data
         } catch (e) {
-          throw new Error(e.message)
+          throw new Error([e.message])
         }
       }
     }),
@@ -67,8 +65,6 @@ export const authOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET
     })
-
-    // ** ...add more providers here
   ],
 
   // ** Please refer to https://next-auth.js.org/configuration/options#session for more `session` options
@@ -102,20 +98,24 @@ export const authOptions = {
      * via `jwt()` callback to make them accessible in the `session()` callback
      */
     async jwt({ token, user }) {
+      console.log(user)
+      console.log(token)
+
       if (user) {
         /*
          * For adding custom parameters to user in session, we first need to add those parameters
          * in token which then will be available in the `session()` callback
          */
-        token.name = user.name
+        token.user = user
       }
 
       return token
     },
+
     async session({ session, token }) {
       if (session.user) {
         // ** Add custom params to user in session which are added in `jwt()` callback via `token` parameter
-        session.user.name = token.name
+        session.user = token.user
       }
 
       return session
