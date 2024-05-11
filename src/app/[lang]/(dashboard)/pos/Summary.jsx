@@ -337,7 +337,7 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
   })
 
   const handleCustomerSelect = customer => {
-    setSelectedCustomer(customer)
+    setSelectedCustomer(customer || {})
   }
 
   return (
