@@ -4,14 +4,16 @@ export const db = {
       about: [
         { property: 'Full Name', value: 'John Doe', icon: 'ri-user-3-line' },
         { property: 'Status', value: 'active', icon: 'ri-check-line' },
-        { property: 'Role', value: 'Developer', icon: 'ri-star-line' },
-        { property: 'Country', value: 'USA', icon: 'ri-flag-line' },
+        { property: 'Role', value: 'Admin', icon: 'ri-star-line' },
+        { property: 'Country', value: 'INDIA', icon: 'ri-flag-line' },
         { property: 'Language', value: 'English', icon: 'ri-translate-2' }
       ],
       contacts: [
-        { property: 'Contact', value: '(123) 456-7890', icon: 'ri-phone-line' },
-        { property: 'Skype', value: 'john.doe', icon: 'ri-wechat-line' },
-        { property: 'Email', value: 'john.doe@example.com', icon: 'ri-mail-open-line' }
+        { property: 'Contact', value: '(123) 456-7890', icon: 'ri-phone-line' }
+
+        // { property: 'Skype', value: 'john.doe', icon: 'ri-wechat-line' },
+
+        // { property: 'Email', value: 'john.doe@example.com', icon: 'ri-mail-open-line' }
       ],
       teams: [
         { property: 'Backend Developer', value: '(126 Members)' },

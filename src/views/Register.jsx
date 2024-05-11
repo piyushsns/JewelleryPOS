@@ -54,13 +54,13 @@ const RegisterV2 = ({ mode }) => {
   return (
     <div className='flex bs-full justify-center'>
       <div className='flex bs-full items-center justify-center flex-1 min-bs-[100dvh] relative p-6 max-md:hidden'>
-        <div className='plb-12 pis-12'>
+        {/* <div className='plb-12 pis-12'>
           <img
             src={characterIllustration}
             alt='character-illustration'
             className='max-bs-[500px] max-is-full bs-auto'
           />
-        </div>
+        </div> */}
         <Illustrations
           image1={{ src: '/images/illustrations/objects/tree-3.png' }}
           image2={null}
@@ -70,17 +70,19 @@ const RegisterV2 = ({ mode }) => {
       <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
         <div className='absolute block-start-5 sm:block-start-[33px] inline-start-6 sm:inline-start-[38px]'>
           <div className='flex justify-center items-center gap-3 mbe-6'>
-            <Logo className='text-primary' height={28} width={35} />
             <Typography variant='h4' className='font-semibold tracking-[0.15px]'>
               {themeConfig.templateName}
             </Typography>
+          </div>
+          <div className='flex justify-center items-center gap-3 mbe-6'>
+            <Logo className='text-primary' height={28} width={35} />
           </div>
         </div>
 
         <div className='flex flex-col gap-5 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset]'>
           <div>
-            <Typography variant='h4'>Adventure starts here 🚀</Typography>
-            <Typography className='mbe-1'>Make your app management easy and fun!</Typography>
+            <Typography variant='h4'>Jewel POS - Register 👋🏻</Typography>
+            <Typography className='mbe-1'>Create Your Account</Typography>
           </div>
           <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()} className='flex flex-col gap-5'>
             <TextField autoFocus fullWidth label='Username' />
@@ -118,7 +120,7 @@ const RegisterV2 = ({ mode }) => {
             <div className='flex justify-center items-center flex-wrap gap-2'>
               <Typography>Already have an account?</Typography>
               <Typography component={Link} href='/login' color='primary'>
-                Sign in instead
+                Sign In
               </Typography>
             </div>
             <Divider className='gap-3'>or</Divider>

@@ -39,7 +39,7 @@ const UserProfile = ({ tabContentList, data }) => {
                 }
                 value='profile'
               />
-              <Tab
+              {/* <Tab
                 label={
                   <div className='flex items-center gap-1.5'>
                     <i className='ri-team-line text-lg' />
@@ -65,7 +65,7 @@ const UserProfile = ({ tabContentList, data }) => {
                   </div>
                 }
                 value='connections'
-              />
+              /> */}
             </CustomTabList>
 
             <TabPanel value={activeTab} className='p-0'>
