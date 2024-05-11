@@ -3,27 +3,23 @@ import React, { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 
-import {
-  Autocomplete,
-  Button,
-  Card,
-  CardHeader,
-  Grid,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  TextField
-} from '@mui/material'
-
 import { useSession } from 'next-auth/react'
+
+import { Card, CardHeader, Grid, Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material'
+
+import Button from '@mui/material/Button'
+import Autocomplete from '@mui/material/Autocomplete'
+import TextField from '@mui/material/TextField'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemAvatar from '@mui/material/ListItemAvatar'
+import ListItemText from '@mui/material/ListItemText'
 
 // Third-party Imports
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 // Style Imports
 import { toast } from 'react-toastify'
-
-import { List } from 'immutable'
 
 import styles from '@core/styles/table.module.css'
 
@@ -33,9 +29,33 @@ import HttpServiceCustomer from '@/services/http_service_customer'
 
 import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
 
-import CustomerModal from './CustomerModal'
-
 import CustomAvatar from '@core/components/mui/Avatar'
+
+import AddNewCustomer from './AddNewCustomer'
+
+export const CustomerDialogForm = props => {
+  return (
+    <Dialog fullWidth maxWidth='md' scroll='body' open={props.open} onClose={() => props.setOpen(false)}>
+      <DialogTitle
+        variant='h4'
+        className='flex gap-2 flex-col text-center pbs-10 pbe-6 pli-10 sm:pbe-6 sm:pli-8'
+      >
+        Add New Customer
+      </DialogTitle>
+      <DialogContent className='flex flex-col gap-6 pbs-0 pbe-10 pli-10 sm:pli-16 sm:pbe-16'>
+        <IconButton onClick={() => props.setOpen(false)} className='absolute block-start-4 inline-end-4'>
+          <i className='ri-close-line' />
+        </IconButton>
+        <AddNewCustomer
+          httpService={props.httpService}
+          session={props.session}
+          customers={props.customers}
+          setCustomers={props.setCustomers}
+        />
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummary, cart, setCart }) {
   const httpService = new HttpService()
@@ -55,8 +75,10 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
       setCustomers(res.data ?? [])
     }
 
-    fetchCustomerData()
-  }, [])
+    if (session?.user?.token) {
+      fetchCustomerData()
+    }
+  }, [session])
 
   useEffect(() => {
     console.log('customers ==>', customers)
@@ -381,16 +403,16 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
             <tr>
               <td colSpan={'100%'}>
                 <div className='flex flex-row gap-3 items-center'>
-                  <div className='flex flex-col gap-2 items-start'>
+                  <div className='flex flex-col flex-1'>
                     {customers.length > 0 && (
                       <Autocomplete
-                        fullWidth
                         id='add-customer'
-                        options={customers ?? []}
+                        fullWidth
+                        options={customers || []}
                         ListboxComponent={List}
                         getOptionLabel={option => option.name}
                         renderInput={params => (
-                          <TextField {...params} size='small' placeholder='Select Existing Customers...' />
+                          <TextField {...params} size='small' placeholder='Add Existing customer...' />
                         )}
                         renderOption={(props, option) => (
                           <ListItem {...props} key={option.name}>
@@ -406,8 +428,15 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
                   <div className='flex flex-col gap-2 items-start'>
                     <OpenDialogOnElementClick
                       element={Button}
-                      elementProps={{ variant: 'contained', children: 'Add New Customer' }}
-                      dialog={CustomerModal}
+                      dialog={CustomerDialogForm}
+                      elementProps={{
+                        variant: 'contained',
+                        children: 'Add New Customer',
+                        httpService: httpService,
+                        session: session,
+                        customers: customers,
+                        setCustomers: setCustomers
+                      }}
                     />
                   </div>
                 </div>

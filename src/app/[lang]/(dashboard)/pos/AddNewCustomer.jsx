@@ -5,95 +5,146 @@ import { useState } from 'react'
 
 // MUI Imports
 import Grid from '@mui/material/Grid'
+import { toast } from 'react-toastify'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import { Card, CardContent, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
-import { toast } from 'react-toastify'
-
-// Vars
-const customerDatainitialData = {
-  first_name: '',
-  last_name: '',
-  phone: '',
-  email: '',
-  status: 1,
-  gender: ''
-}
+import { Card, CardContent, CircularProgress, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { valibotResolver } from '@hookform/resolvers/valibot'
+import { Controller, useForm } from 'react-hook-form'
+import { minLength, object, string } from 'valibot'
 
 const AddNewCustomer = ({ httpService, session, customers, setCustomers }) => {
-  const [open, setOpen] = useState(true)
+  // Vars
+  const customerDatainitialData = {
+    first_name: '',
+    last_name: '',
+    phone: '',
+    email: '',
+    gender: '',
+    password: 'password',
+    status: 1
+  }
 
-  const [customerData, setCustomerData] = useState(customerDatainitialData)
+  const schema = object({
+    first_name: string([minLength(1, 'This first name is required')]),
+    last_name: string([minLength(1, 'This last name is required')]),
+    phone: string([minLength(1, 'This phone is required')]),
+    email: string([minLength(1, 'This email is required')]),
+    gender: string([minLength(1, 'This gender is required')]),
+    password: string([
+      minLength(1, 'This password is required'),
+      minLength(8, 'Password must be at least 8 characters long')
+    ])
+  })
 
-  const handleClose = async () => {
-    setOpen(false)
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: valibotResolver(schema),
+    defaultValues: customerDatainitialData
+  })
 
-    var res = await httpService.postData(customerData, 'admin/customers', session?.user?.token)
+  const [errorState, setErrorState] = useState(null)
+
+  const [loading, setLoading] = useState(false)
+
+  const fieldObjectArray = [
+    { name: 'first_name', label: 'First Name', type: 'text', required: true, size: 6, classNames: '' },
+    { name: 'last_name', label: 'Last Name', type: 'text', required: true, size: 6, classNames: '' },
+    { name: 'email', label: 'Email', type: 'text', required: true, size: 6, classNames: '' },
+    { name: 'phone', label: 'Phone', type: 'text', required: true, size: 6, classNames: '' },
+    {
+      name: 'gender',
+      label: 'Gender',
+      type: 'select',
+      required: true,
+      options: ['', 'Male', 'Female'],
+      size: 6,
+      classNames: ''
+    }
+  ]
+
+  const onSubmit = async formData => {
+    setLoading(true)
+    var res = await httpService.postData(formData, 'admin/customers', session?.user?.token)
 
     setCustomers([...customers, res.data])
 
     toast.success(res?.message || 'failed to add customer')
+    setLoading(false)
+    reset()
   }
 
   return (
-    <Card fullWidth open={open} maxWidth='md' scroll='body'>
+    <Card fullWidth open={true} maxWidth='md' scroll='body'>
       <CardContent>
-        <h4>Create New customer</h4>
-        <form onSubmit={e => e.preventDefault()}>
+        <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label='First Name'
-                placeholder='John'
-                value={customerData?.first_name}
-                onChange={e => setCustomerData({ ...customerData, first_name: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label='Last Name'
-                placeholder='Doe'
-                value={customerData?.last_name}
-                onChange={e => setCustomerData({ ...customerData, last_name: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label='Email'
-                placeholder='example@example.com'
-                value={customerData?.email}
-                onChange={e => setCustomerData({ ...customerData, email: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label='Phone'
-                placeholder='XXXXXXXXXX'
-                value={customerData?.phone}
-                onChange={e => setCustomerData({ ...customerData, phone: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Gender</InputLabel>
-                <Select
-                  label='Gender'
-                  value={customerData?.gender}
-                  onChange={e => setCustomerData({ ...customerData, gender: e.target.value })}
-                >
-                  <MenuItem value={''}>--Select--</MenuItem>
-                  <MenuItem value={'Female'}>Female</MenuItem>
-                  <MenuItem value={'Male'}>Male</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Button variant='contained' onClick={handleClose} type='submit'>
+            {fieldObjectArray.map((fieldobj, index) => (
+              <Grid key={index} item xs={12} sm={12} lg={fieldobj.size} className={fieldobj.classNames}>
+                {fieldobj.type === 'text' && (
+                  <Controller
+                    name={fieldobj.name}
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        autoFocus
+                        type={fieldobj.type}
+                        label={fieldobj.label}
+                        onChange={e => {
+                          field.onChange(e.target.value)
+                          errorState !== null && setErrorState(null)
+                        }}
+                        {...((errors[fieldobj.name] || errorState !== null) && {
+                          error: true,
+                          helperText: errors[fieldobj.name].message || errorState?.[0]
+                        })}
+                      />
+                    )}
+                  />
+                )}
+                {fieldobj.type === 'select' && (
+                  <Controller
+                    name={fieldobj.name}
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <Select
+                        field
+                        label={fieldobj.label}
+                        onChange={e => {
+                          field.onChange(e.target.value)
+                          errorState !== null && setErrorState(null)
+                        }}
+                        {...((errors[fieldobj.name] || errorState !== null) && {
+                          error: true,
+                          helperText: errors[fieldobj.name].message || errorState?.[0]
+                        })}
+                      >
+                        {fieldobj.options.map((option, i) => (
+                          <MenuItem key={i} value={option}>
+                            {i === 0 ? `--Select ${fieldobj.label}--` : option}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                )}
+              </Grid>
+            ))}
+            <Grid item xs={12} sm={12} className='flex gap-4'>
+              <Button variant='contained' type='submit' className='gap-2'>
+                {loading && <CircularProgress size={20} color='inherit' />}
                 Submit
+              </Button>
+              <Button variant='outlined' type='reset' onClick={() => reset()}>
+                Reset
               </Button>
             </Grid>
           </Grid>
