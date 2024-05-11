@@ -49,6 +49,7 @@ export const CustomerDialogForm = props => {
           customers={props.customers}
           setCustomers={props.setCustomers}
           setOpen={props.setOpen}
+          setSelectedCustomer={props.setSelectedCustomer}
         />
       </DialogContent>
     </Dialog>
@@ -64,23 +65,9 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
 
   const [customers, setCustomers] = useState([])
 
+  const [selectedCustomer, setSelectedCustomer] = useState({})
+
   const [isDataUpdated, setIsDataUpdated] = useState(false)
-
-  useEffect(() => {
-    async function fetchCustomerData() {
-      var res = await httpService.getData('admin/customers', session?.user?.token)
-
-      setCustomers(res.data ?? [])
-    }
-
-    if (session?.user?.token) {
-      fetchCustomerData()
-    }
-  }, [session])
-
-  useEffect(() => {
-    console.log('customers ==>', customers)
-  }, [customers])
 
   const refreshOrderSummary = async () => {
     try {
@@ -138,6 +125,22 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
       return error
     }
   }
+
+  useEffect(() => {
+    async function fetchCustomerData() {
+      var res = await httpService.getData('admin/customers', session?.user?.token)
+
+      setCustomers(res.data ?? [])
+    }
+
+    if (session?.user?.token) {
+      fetchCustomerData()
+    }
+  }, [session])
+
+  useEffect(() => {
+    console.log('selectedCustomer ==>', selectedCustomer)
+  }, [selectedCustomer])
 
   // first Timew
   useEffect(() => {
@@ -333,6 +336,10 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
     }
   })
 
+  const handleCustomerSelect = customer => {
+    setSelectedCustomer(customer)
+  }
+
   return (
     <Card className='shadow'>
       <CardHeader title='Order Summary' />
@@ -406,18 +413,22 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
                       <Autocomplete
                         id='add-customer'
                         fullWidth
-                        options={customers || []}
                         ListboxComponent={List}
-                        getOptionLabel={option => option.name}
+                        options={customers || []}
+                        onChange={(event, value) => handleCustomerSelect(value)}
+                        {...(selectedCustomer.id != undefined ? { value: selectedCustomer } : { value: null })}
+                        getOptionLabel={option => `ID: ${option.id} ${option.name} (${option.email} | ${option.phone})`}
                         renderInput={params => (
-                          <TextField {...params} size='small' placeholder='Add Existing customer...' />
+                          <TextField {...params} size='small' placeholder='Select Existing customer...' />
                         )}
                         renderOption={(props, option) => (
-                          <ListItem {...props} key={option.name}>
+                          <ListItem {...props} key={option.id}>
                             <ListItemAvatar>
                               <CustomAvatar src={`/images/avatars/${option.avatar}`} alt={option.name} size={30} />
                             </ListItemAvatar>
-                            <ListItemText primary={option.name} />
+                            <ListItemText
+                              primary={`ID: ${option.id} ${option.name} (${option.email} | ${option.phone})`}
+                            />
                           </ListItem>
                         )}
                       />
@@ -431,7 +442,8 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
                         httpService: httpService,
                         session: session,
                         customers: customers,
-                        setCustomers: setCustomers
+                        setCustomers: setCustomers,
+                        setSelectedCustomer: setSelectedCustomer
                       }}
                       elementProps={{
                         variant: 'contained',
