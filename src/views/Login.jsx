@@ -54,7 +54,8 @@ const Login = ({ mode }) => {
   const darkImg = '/images/pages/auth-v2-mask-dark.png'
   const lightImg = '/images/pages/auth-v2-mask-light.png'
   const darkIllustration = '/images/illustrations/auth/v2-login-dark.png'
-  const lightIllustration = '/images/illustrations/auth/v2-login-light.png'
+  const lightIllustration = '/images/illustrations/auth/MacBook-Pro-14.jpg'
+  const lightIllustrationLogo = '/images/illustrations/auth/login_logo.png'
   const borderedDarkIllustration = '/images/illustrations/auth/v2-login-dark-border.png'
   const borderedLightIllustration = '/images/illustrations/auth/v2-login-light-border.png'
 
@@ -80,6 +81,7 @@ const Login = ({ mode }) => {
   const characterIllustration = useImageVariant(
     mode,
     lightIllustration,
+    lightIllustrationLogo,
     darkIllustration,
     borderedLightIllustration,
     borderedDarkIllustration
@@ -109,31 +111,30 @@ const Login = ({ mode }) => {
   }
 
   return (
-    <div className='flex bs-full justify-center'>
+    <div className='flex bs-full justify-center' style={{ background: `url(${lightIllustration})` }}>
       <div className='flex bs-full items-center justify-center flex-1 min-bs-[100dvh] relative p-6 max-md:hidden'>
-        <div className='plb-12 pis-12'>
-          <img
-            src={characterIllustration}
-            alt='character-illustration'
-            className='max-bs-[500px] max-is-full bs-auto'
-          />
-        </div>
-        <Illustrations
+        {/* <div className='plb-12 pis-12'>
+          <img src={lightIllustration} className='max-bs-[500px] max-is-full bs-auto' />
+        </div> */}
+        {/* <Illustrations
           image1={{ src: '/images/illustrations/objects/tree-2.png' }}
           image2={null}
           maskImg={{ src: authBackground }}
-        />
+        /> */}
       </div>
       <div className='flex justify-center items-center bs-full bg-backgroundPaper !min-is-full p-6 md:!min-is-[unset] md:p-12 md:is-[480px]'>
         <div className='absolute block-start-5 sm:block-start-[33px] inline-start-6 sm:inline-start-[38px]'>
           <div className='flex justify-center items-center gap-3 mbe-6'>
             {/* <Logo className='text-primary' height={28} width={35} /> */}
-            <Typography variant='h4' className='font-semibold tracking-[0.15px]'>
+            <Typography variant='h4' className='font-semibold tracking-[0.15px] text-white'>
               {themeConfig.templateName}
             </Typography>
           </div>
         </div>
         <div className='flex flex-col gap-5 is-full sm:is-auto md:is-full sm:max-is-[400px] md:max-is-[unset]'>
+          {/* <div className=' pis-12'>
+            <img src={lightIllustrationLogo} className='max-bs-[220px] max-is-full bs-auto' />
+          </div> */}
           <div>
             <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}!👋🏻`}</Typography>
             <Typography>Please sign-in to your account</Typography>
