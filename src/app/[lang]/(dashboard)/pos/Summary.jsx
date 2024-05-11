@@ -429,13 +429,15 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
                     <OpenDialogOnElementClick
                       element={Button}
                       dialog={CustomerDialogForm}
-                      elementProps={{
-                        variant: 'contained',
-                        children: 'Add New Customer',
+                      dialogProps={{
                         httpService: httpService,
                         session: session,
                         customers: customers,
                         setCustomers: setCustomers
+                      }}
+                      elementProps={{
+                        variant: 'contained',
+                        children: 'Add New Customer',
                       }}
                     />
                   </div>
