@@ -8,12 +8,21 @@ import Grid from '@mui/material/Grid'
 import { toast } from 'react-toastify'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import { Card, CardContent, CircularProgress, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  CircularProgress,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select
+} from '@mui/material'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { Controller, useForm } from 'react-hook-form'
 import { minLength, object, string } from 'valibot'
 
-const AddNewCustomer = ({ httpService, session, customers, setCustomers }) => {
+const AddNewCustomer = ({ httpService, session, customers, setCustomers, setOpen }) => {
   // Vars
   const customerDatainitialData = {
     first_name: '',
@@ -61,7 +70,7 @@ const AddNewCustomer = ({ httpService, session, customers, setCustomers }) => {
       label: 'Gender',
       type: 'select',
       required: true,
-      options: ['', 'Male', 'Female'],
+      options: ['Male', 'Female'],
       size: 6,
       classNames: ''
     }
@@ -71,11 +80,16 @@ const AddNewCustomer = ({ httpService, session, customers, setCustomers }) => {
     setLoading(true)
     var res = await httpService.postData(formData, 'admin/customers', session?.user?.token)
 
-    setCustomers([...customers, res.data])
+    if (res.success == false && res.exception_type == 'validation') {
+      toast.warn(res?.message)
+    } else if (res?.data?.id > 0) {
+      setCustomers([...customers, res.data])
+      toast.success(res?.message || 'failed to add customer')
+      reset()
+      setOpen(false)
+    }
 
-    toast.success(res?.message || 'failed to add customer')
     setLoading(false)
-    reset()
   }
 
   return (
@@ -110,31 +124,24 @@ const AddNewCustomer = ({ httpService, session, customers, setCustomers }) => {
                   />
                 )}
                 {fieldobj.type === 'select' && (
-                  <Controller
-                    name={fieldobj.name}
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                      <Select
-                        field
-                        label={fieldobj.label}
-                        onChange={e => {
-                          field.onChange(e.target.value)
-                          errorState !== null && setErrorState(null)
-                        }}
-                        {...((errors[fieldobj.name] || errorState !== null) && {
-                          error: true,
-                          helperText: errors[fieldobj.name].message || errorState?.[0]
-                        })}
-                      >
-                        {fieldobj.options.map((option, i) => (
-                          <MenuItem key={i} value={option}>
-                            {i === 0 ? `--Select ${fieldobj.label}--` : option}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    )}
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel error={Boolean(errors[fieldobj.name])}>{fieldobj.label}</InputLabel>
+                    <Controller
+                      name={fieldobj.name}
+                      control={control}
+                      rules={{ required: fieldobj.required }}
+                      render={({ field }) => (
+                        <Select {...field} label={fieldobj.label} error={Boolean(errors[fieldobj.name])}>
+                          {fieldobj.options.map((option, i) => (
+                            <MenuItem key={i} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )}
+                    />
+                    {errors[fieldobj.name] && <FormHelperText error>{errors[fieldobj.name].message}</FormHelperText>}
+                  </FormControl>
                 )}
               </Grid>
             ))}
