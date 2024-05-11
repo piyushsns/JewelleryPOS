@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 // React Imports
@@ -36,6 +37,8 @@ import {
   getSortedRowModel
 } from '@tanstack/react-table'
 
+import { useSession } from 'next-auth/react'
+
 // Component Imports
 import AddUserDrawer from './AddEmpDrawer'
 import OptionMenu from '@core/components/option-menu'
@@ -47,92 +50,65 @@ import { getLocalizedUrl } from '@/utils/i18n'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
-
-// Styled Components
-const Icon = styled('i')({})
-
-let requestOptions = {
-  method: 'GET',
-  headers: { Authorization: 'Bearer ' + localStorage.getItem('user-token') }
-}
+import HttpService from '@/services/http_service'
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
-  // Rank the item
   const itemRank = rankItem(row.getValue(columnId), value)
 
-  // Store the itemRank info
-  addMeta({
-    itemRank
-  })
+  addMeta({ itemRank })
 
-  // Return if the item should be filtered in/out
   return itemRank.passed
 }
 
 const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
-  // States
   const [value, setValue] = useState(initialValue)
 
   useEffect(() => {
     setValue(initialValue)
   }, [initialValue])
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       onChange(value)
     }, debounce)
 
     return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
   return <TextField {...props} value={value} onChange={e => setValue(e.target.value)} size='small' />
 }
 
-// Vars
-const userRoleObj = {
-  admin: { icon: 'ri-vip-crown-line', color: 'error' },
-  author: { icon: 'ri-computer-line', color: 'warning' },
-  editor: { icon: 'ri-edit-box-line', color: 'info' },
-  maintainer: { icon: 'ri-pie-chart-2-line', color: 'success' },
-  subscriber: { icon: 'ri-user-3-line', color: 'primary' }
-}
-
-const userStatusObj = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
-}
-
-// Column Definitions
-const columnHelper = createColumnHelper()
-
-const EmpListTable = ({ tableData }) => {
-  // States
-  const [addUserOpen, setAddUserOpen] = useState(false)
-  const [rowSelection, setRowSelection] = useState({})
-
-  const [data, setData] = useState(...[tableData])
-  const [globalFilter, setGlobalFilter] = useState('')
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/v1/admin/settings/users`, requestOptions)
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch data')
-      }
-
-      const datas = await response.json()
-
-      setData(datas.data)
-    } catch (error) {
-      console.error('Error fetching data:', error)
-    }
+const EmpListTable = () => {
+  const userStatusObj = {
+    active: 'success',
+    inactive: 'danger'
   }
 
+  const columnHelper = createColumnHelper()
+
+  const { data: session } = useSession()
+
+  const httpService = new HttpService()
+
+  const [addUserOpen, setAddUserOpen] = useState(false)
+
+  const [rowSelection, setRowSelection] = useState({})
+
+  const [data, setData] = useState([])
+
+  const [globalFilter, setGlobalFilter] = useState('')
+
   useEffect(() => {
-    fetchUsers()
-  }, [])
+    async function fetchUsers() {
+      var res = await httpService.getData('admin/settings/users', session?.user?.token)
+
+      setData(res.data ?? [])
+    }
+
+    if (session?.user?.token) {
+      fetchUsers()
+    }
+  }, [session])
 
   // Hooks
   const { lang: locale } = useParams()
@@ -161,8 +137,8 @@ const EmpListTable = ({ tableData }) => {
           />
         )
       },
-      columnHelper.accessor('fullName', {
-        header: 'User',
+      columnHelper.accessor('name', {
+        header: 'Name',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
             {getAvatar({
@@ -173,7 +149,6 @@ const EmpListTable = ({ tableData }) => {
               <Typography className='font-medium' color='text.primary'>
                 {row.original.name}
               </Typography>
-              {/* <Typography variant='body2'>{row.original.username}</Typography> */}
             </div>
           </div>
         )
@@ -182,39 +157,16 @@ const EmpListTable = ({ tableData }) => {
         header: 'Email',
         cell: ({ row }) => <Typography>{row.original.email}</Typography>
       }),
-
-      // columnHelper.accessor('role', {
-      //   header: 'Role',
-      //   cell: ({ row }) => (
-      //     <div className='flex items-center gap-2'>
-      //       <Icon
-      //         className={userRoleObj[row.original.role].icon}
-      //         sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)`, fontSize: '1.375rem' }}
-      //       />
-      //       <Typography className='capitalize' color='text.primary'>
-      //         {row.original.role}
-      //       </Typography>
-      //     </div>
-      //   )
-      // }),
-      // columnHelper.accessor('currentPlan', {
-      //   header: 'Plan',
-      //   cell: ({ row }) => (
-      //     <Typography className='capitalize' color='text.primary'>
-      //       {row.original.currentPlan}
-      //     </Typography>
-      //   )
-      // }),
       columnHelper.accessor('status', {
         header: 'Status',
         cell: ({ row }) => (
           <div className='flex items-center gap-3'>
             <Chip
+              size='small'
               variant='tonal'
               className='capitalize'
-              label={row.original.status}
-              color={userStatusObj[row.original.status]}
-              size='small'
+              label={row.original.status == 1 ? 'Active' : 'In active'}
+              color={userStatusObj[row.original.status == 1 ? 'active' : 'inactive']}
             />
           </div>
         )
@@ -224,21 +176,16 @@ const EmpListTable = ({ tableData }) => {
         cell: () => (
           <div className='flex items-center'>
             <IconButton>
-              <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
-            </IconButton>
-            <IconButton>
               <Link href={getLocalizedUrl('apps/user/view', locale)} className='flex'>
                 <i className='ri-eye-line text-[22px] text-textSecondary' />
               </Link>
             </IconButton>
+            <IconButton>
+              <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
+            </IconButton>
             <OptionMenu
               iconClassName='text-[22px] text-textSecondary'
               options={[
-                {
-                  text: 'Download',
-                  icon: 'ri-download-line text-[22px]',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                },
                 {
                   text: 'Edit',
                   icon: 'ri-edit-box-line text-[22px]',
@@ -251,7 +198,6 @@ const EmpListTable = ({ tableData }) => {
         enableSorting: false
       })
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 
@@ -303,7 +249,6 @@ const EmpListTable = ({ tableData }) => {
     <>
       <Card>
         <CardHeader title='Employees' />
-        {/* <TableFilters setData={setData} tableData={tableData} /> */}
         <Divider />
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
           <Button
