@@ -22,7 +22,7 @@ import { valibotResolver } from '@hookform/resolvers/valibot'
 import { Controller, useForm } from 'react-hook-form'
 import { minLength, object, string } from 'valibot'
 
-const AddNewCustomer = ({ httpService, session, customers, setCustomers }) => {
+const AddNewCustomer = ({ httpService, session, customers, setCustomers, setOpen }) => {
   // Vars
   const customerDatainitialData = {
     first_name: '',
@@ -80,11 +80,16 @@ const AddNewCustomer = ({ httpService, session, customers, setCustomers }) => {
     setLoading(true)
     var res = await httpService.postData(formData, 'admin/customers', session?.user?.token)
 
-    setCustomers([...customers, res.data])
+    if (res.success == false && res.exception_type == 'validation') {
+      toast.warn(res?.message)
+    } else if (res?.data?.id > 0) {
+      setCustomers([...customers, res.data])
+      toast.success(res?.message || 'failed to add customer')
+      reset()
+      setOpen(false)
+    }
 
-    toast.success(res?.message || 'failed to add customer')
     setLoading(false)
-    reset()
   }
 
   return (

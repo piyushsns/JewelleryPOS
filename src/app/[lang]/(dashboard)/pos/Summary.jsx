@@ -36,10 +36,7 @@ import AddNewCustomer from './AddNewCustomer'
 export const CustomerDialogForm = props => {
   return (
     <Dialog fullWidth maxWidth='md' scroll='body' open={props.open} onClose={() => props.setOpen(false)}>
-      <DialogTitle
-        variant='h4'
-        className='flex gap-2 flex-col text-center pbs-10 pbe-6 pli-10 sm:pbe-6 sm:pli-8'
-      >
+      <DialogTitle variant='h4' className='flex gap-2 flex-col text-center pbs-10 pbe-6 pli-10 sm:pbe-6 sm:pli-8'>
         Add New Customer
       </DialogTitle>
       <DialogContent className='flex flex-col gap-6 pbs-0 pbe-10 pli-10 sm:pli-16 sm:pbe-16'>
@@ -51,6 +48,7 @@ export const CustomerDialogForm = props => {
           session={props.session}
           customers={props.customers}
           setCustomers={props.setCustomers}
+          setOpen={props.setOpen}
         />
       </DialogContent>
     </Dialog>
@@ -437,7 +435,7 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
                       }}
                       elementProps={{
                         variant: 'contained',
-                        children: 'Add New Customer',
+                        children: 'Add New Customer'
                       }}
                     />
                   </div>
