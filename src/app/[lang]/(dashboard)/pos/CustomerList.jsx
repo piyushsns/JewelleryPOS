@@ -12,7 +12,7 @@ const CustomerList = () => {
     children: 'Add New/Existing Customer'
   }
 
-  return <OpenDialogOnElementClick element={Button} elementProps={buttonProps} dialog={CustomerModal} />
+  return <OpenDialogOnElementClick element={Button} elementProps={{variant: 'contained', children: 'Add New/Existing Customer'}} dialog={CustomerModal} />
 }
 
 export default CustomerList

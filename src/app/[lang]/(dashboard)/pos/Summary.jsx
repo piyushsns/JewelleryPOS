@@ -3,7 +3,19 @@ import React, { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 
-import { Button, Card, CardContent, CardHeader, Grid } from '@mui/material'
+import {
+  Autocomplete,
+  Button,
+  Card,
+  CardHeader,
+  Grid,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  TextField
+} from '@mui/material'
+
+import { useSession } from 'next-auth/react'
 
 // Third-party Imports
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
@@ -11,18 +23,46 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '
 // Style Imports
 import { toast } from 'react-toastify'
 
+import { List } from 'immutable'
+
 import styles from '@core/styles/table.module.css'
 
-import HttpService from '@/services/http_service_customer'
+import HttpService from '@/services/http_service'
 
-import CustomerList from './CustomerList'
+import HttpServiceCustomer from '@/services/http_service_customer'
+
+import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
+
+import CustomerModal from './CustomerModal'
+
+import CustomAvatar from '@core/components/mui/Avatar'
 
 export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummary, cart, setCart }) {
+  const httpService = new HttpService()
+
+  const { data: session } = useSession()
+
   const [data, setData] = useState(() => [])
+
+  const [customers, setCustomers] = useState([])
 
   const [isDataUpdated, setIsDataUpdated] = useState(false)
 
-  const refreshOrderSummary = async props => {
+  useEffect(() => {
+    async function fetchCustomerData() {
+      var res = await httpService.getData('admin/customers', session?.user?.token)
+
+      setCustomers(res.data ?? [])
+    }
+
+    fetchCustomerData()
+  }, [])
+
+  useEffect(() => {
+    console.log('customers ==>', customers)
+  }, [customers])
+
+  const refreshOrderSummary = async () => {
     try {
       var resultData = null
 
@@ -30,7 +70,7 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
 
       var current_cart_id = localStorage.getItem('current_cart_id')
 
-      await new HttpService()
+      await new HttpServiceCustomer()
         .getData(`checkout/cart?current_cart_id=${current_cart_id}`, token)
         .then(response => response)
         .then(response => (resultData = response))
@@ -49,7 +89,7 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
 
       var current_cart_id = localStorage.getItem('current_cart_id')
 
-      await new HttpService()
+      await new HttpServiceCustomer()
         .putData(itempayload, `checkout/cart?current_cart_id=${current_cart_id}`, token)
         .then(response => response)
         .then(response => (resultData = response))
@@ -68,7 +108,7 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
 
       var current_cart_id = localStorage.getItem('current_cart_id')
 
-      await new HttpService()
+      await new HttpServiceCustomer()
         .deleteData(`checkout/cart?current_cart_id=${current_cart_id}&cart_item_id=${item_id}`, token)
         .then(response => response)
         .then(response => (resultData = response))
@@ -340,7 +380,37 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
             </tr>
             <tr>
               <td colSpan={'100%'}>
-                <CustomerList />
+                <div className='flex flex-row gap-3 items-center'>
+                  <div className='flex flex-col gap-2 items-start'>
+                    {customers.length > 0 && (
+                      <Autocomplete
+                        fullWidth
+                        id='add-customer'
+                        options={customers ?? []}
+                        ListboxComponent={List}
+                        getOptionLabel={option => option.name}
+                        renderInput={params => (
+                          <TextField {...params} size='small' placeholder='Select Existing Customers...' />
+                        )}
+                        renderOption={(props, option) => (
+                          <ListItem {...props} key={option.name}>
+                            <ListItemAvatar>
+                              <CustomAvatar src={`/images/avatars/${option.avatar}`} alt={option.name} size={30} />
+                            </ListItemAvatar>
+                            <ListItemText primary={option.name} />
+                          </ListItem>
+                        )}
+                      />
+                    )}
+                  </div>
+                  <div className='flex flex-col gap-2 items-start'>
+                    <OpenDialogOnElementClick
+                      element={Button}
+                      elementProps={{ variant: 'contained', children: 'Add New Customer' }}
+                      dialog={CustomerModal}
+                    />
+                  </div>
+                </div>
               </td>
             </tr>
             <tr>
