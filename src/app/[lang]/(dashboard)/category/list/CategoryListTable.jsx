@@ -109,6 +109,7 @@ const columnHelper = createColumnHelper()
 const CategoryListTable = ({ tableData }) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
+  const [selectedRow, setSelectedRow] = useState(null)
   const [rowSelection, setRowSelection] = useState({})
   const httpService = new HttpService()
 
@@ -132,6 +133,7 @@ const CategoryListTable = ({ tableData }) => {
   const editCategories = row => {
     setAddUserOpen(true)
     setSelectedRow(row.original)
+    console.log('xxxxxxxxxxx',row.original)
   }
 
   const deleteCategories = row => {
@@ -335,7 +337,19 @@ const CategoryListTable = ({ tableData }) => {
           onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
         />
       </Card>
-      <AddCategoryDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
+      {/* <AddCategoryDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} /> */}
+      {addUserOpen && (
+        <AddCategoryDrawer
+          open={addUserOpen}
+          handleClose={() => {
+            setSelectedRow(null)
+            setAddUserOpen(!addUserOpen)
+          }}
+          setData={setData}
+          selectedRow={selectedRow}
+          setSelectedRow={setSelectedRow}
+        />
+      )}
     </>
   )
 }

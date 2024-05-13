@@ -1,7 +1,7 @@
 'use client'
 /* eslint-disable padding-line-between-statements */
 // React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // MUI Imports
 import Grid from '@mui/material/Grid'
@@ -16,13 +16,10 @@ import Divider from '@mui/material/Divider'
 import {
   Card,
   CardContent,
-  CircularProgress,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select
+  CircularProgress
 } from '@mui/material'
+
+import * as v from 'valibot'
 
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { Controller, useForm } from 'react-hook-form'
@@ -34,12 +31,22 @@ import HttpService from '@/services/http_service'
 
 // Vars
 
-const AddCategoryDrawer = ({ open, handleClose, categories, setCategories, setOpen, setSelectedCategories }) => {
+const AddCategoryDrawer = ({
+  open,
+  handleClose,
+  setData,
+  selectedRow,
+  setSelectedRow,
+  categories,
+  setCategories,
+  setOpen,
+  setSelectedCategories
+}) => {
   // States
   const [slug, setSlug] = useState('')
 
   // console.log(slug)
-  const initialData = {
+  var initialData = {
     locale: 'en',
     name: '',
     description: '',
@@ -50,12 +57,21 @@ const AddCategoryDrawer = ({ open, handleClose, categories, setCategories, setOp
     attributes: [11]
   }
 
-  const catSchema = object({
-    name: string([minLength(1, 'Category name is required')]),
-    description: string([minLength(1, 'This description is required')]),
-    slug: string([minLength(1, 'The slug is required')]),
-    position: string([minLength(1, 'The position is required')]),
-    attributes: string([minLength(2, 'The position is required')])
+  if (selectedRow) {
+    initialData = {
+      name: selectedRow.name,
+      description: selectedRow.description,
+      slug: selectedRow.slug,
+      status: selectedRow.status,
+      position: selectedRow.position,
+      attributes: selectedRow.attributes
+    }
+  }
+  var catSchema = v.object({
+    name: v.string([v.minLength(1, 'Category name is required')]),
+    description: v.string([v.minLength(1, 'This description is required')]),
+    slug: v.string([v.minLength(1, 'The slug is required')]),
+    position: v.string([v.minLength(1, 'The position is required')])
   })
 
   const {
@@ -68,13 +84,15 @@ const AddCategoryDrawer = ({ open, handleClose, categories, setCategories, setOp
     defaultValues: initialData
   })
 
-  // if (selectedRow) {
-  //   catinitialData = {
-  //     name: selectedRow.name,
-  //     description: selectedRow.description,
-  //     slug: selectedRow.slug
-  //   }
-  // }
+  if (selectedRow) {
+    catSchema = v.object({
+      name: v.string([v.minLength(1, 'Category name is required')]),
+      description: v.string([v.minLength(1, 'This description is required')]),
+      slug: v.string([v.minLength(1, 'This slug is required')]),
+      status: v.string([v.minLength(1, 'This status is required')]),
+      position: v.optional(v.string())
+    })
+  }
   const httpService = new HttpService()
   const [errorState, setErrorState] = useState(null)
 
@@ -88,23 +106,32 @@ const AddCategoryDrawer = ({ open, handleClose, categories, setCategories, setOp
   const { data: session } = useSession()
 
   const onSubmit = async formData => {
-    // setLoading(true)
-    console.log('tttttttttttttttttttt', session?.user?.token)
+    setLoading(true)
+    if (selectedRow)
+      var res = await new HttpService().putData(
+        formData,
+        `admin/catalog/categories/${selectedRow.id}`,
+        session?.user?.token
+      )
+    else var res = await httpService.postData(formData, 'admin/catalog/categories', session?.user?.token)
 
-    var res = await httpService.postData(formData, 'admin/catalog/categories', session?.user?.token)
-    console.log(formData)
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
-    } else if (res?.data?.id > 0) {
-      setCategories([...categories, res.data])
+    } else if (res?.user?.id > 0) {
       toast.success(res?.message || 'failed to add category')
       reset()
-      setOpen(false)
-      setSelectedCategories(res.data)
-    }
+      var refreshCategories = await new HttpService().getData('admin/catalog/categories', session?.user?.token)
 
+      setSelectedRow(null)
+
+      setData(refreshCategories.data ?? [])
+      handleClose()
+    }
     setLoading(false)
   }
+  useEffect(() => {
+    console.log(errors)
+  }, [errors])
 
   return (
     <Drawer

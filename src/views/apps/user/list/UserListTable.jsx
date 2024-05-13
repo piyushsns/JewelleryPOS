@@ -40,7 +40,7 @@ import {
 import { useSession } from 'next-auth/react'
 
 import TableFilters from './TableFilters'
-import AddUserDrawer from './AddUserDrawer'
+import AddCustomerDrawer from './AddUserDrawer'
 import OptionMenu from '@core/components/option-menu'
 import CustomAvatar from '@core/components/mui/Avatar'
 
@@ -108,9 +108,10 @@ const columnHelper = createColumnHelper()
 
 const UserListTable = ({ tableData }) => {
   // States
-  const [addUserOpen, setAddUserOpen] = useState(false)
-  const [rowSelection, setRowSelection] = useState({})
   const httpService = new HttpService()
+  const [addUserOpen, setAddUserOpen] = useState(false)
+  const [selectedRow, setSelectedRow] = useState(null)
+  const [rowSelection, setRowSelection] = useState({})
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
 
@@ -118,7 +119,7 @@ const UserListTable = ({ tableData }) => {
 
   useEffect(() => {
     async function fetchCustomers() {
-      console.log(session?.user?.token)
+      // console.log(session?.user?.token)
 
       var res = await httpService.getData('admin/customers', session?.user?.token)
 
@@ -130,11 +131,12 @@ const UserListTable = ({ tableData }) => {
     }
   }, [session])
 
-  console.log('================================================>', data)
+  // console.log('================================================>', data)
 
   const editCustomer = row => {
     setAddUserOpen(true)
     setSelectedRow(row.original)
+    console.log('xxxxxxxxxxx', row.original)
   }
 
   const deleteCustomer = row => {
@@ -408,7 +410,19 @@ const UserListTable = ({ tableData }) => {
           onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
         />
       </Card>
-      <AddUserDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
+      {/* <AddUserDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} /> */}
+      {addUserOpen && (
+        <AddCustomerDrawer
+          open={addUserOpen}
+          handleClose={() => {
+            setSelectedRow(null)
+            setAddUserOpen(!addUserOpen)
+          }}
+          setData={setData}
+          selectedRow={selectedRow}
+          setSelectedRow={setSelectedRow}
+        />
+      )}
     </>
   )
 }
