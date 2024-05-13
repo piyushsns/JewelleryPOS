@@ -55,7 +55,7 @@ const AddCategoryDrawer = ({ open, handleClose, categories, setCategories, setOp
     description: string([minLength(1, 'This description is required')]),
     slug: string([minLength(1, 'The slug is required')]),
     position: string([minLength(1, 'The position is required')]),
-    attributes: string([minLength(1, 'The attribute is required')])
+    attributes: string([minLength(2, 'The position is required')])
   })
 
   const {
@@ -88,12 +88,11 @@ const AddCategoryDrawer = ({ open, handleClose, categories, setCategories, setOp
   const { data: session } = useSession()
 
   const onSubmit = async formData => {
-    setLoading(true)
+    // setLoading(true)
     console.log('tttttttttttttttttttt', session?.user?.token)
 
     var res = await httpService.postData(formData, 'admin/catalog/categories', session?.user?.token)
     console.log(formData)
-    console.log(res)
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
     } else if (res?.data?.id > 0) {

@@ -51,7 +51,7 @@ import { getLocalizedUrl } from '@/utils/i18n'
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 
-import httpService from '@/services/http_service.js'
+import HttpService from '@/services/http_service.js'
 
 // Styled Components
 const Icon = styled('i')({})
@@ -110,7 +110,7 @@ const UserListTable = ({ tableData }) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
-
+  const httpService = new HttpService()
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
 
@@ -131,6 +131,15 @@ const UserListTable = ({ tableData }) => {
   }, [session])
 
   console.log('================================================>', data)
+
+  const editCustomer = row => {
+    setAddUserOpen(true)
+    setSelectedRow(row.original)
+  }
+
+  const deleteCustomer = row => {
+    console.log(row.original)
+  }
 
   // Hooks
   const { lang: locale } = useParams()
@@ -169,7 +178,7 @@ const UserListTable = ({ tableData }) => {
             })}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
-                {row.original.fullName}
+                {row.original.name}
               </Typography>
               <Typography variant='body2'>{row.original.username}</Typography>
             </div>
@@ -208,11 +217,11 @@ const UserListTable = ({ tableData }) => {
         cell: ({ row }) => (
           <div className='flex items-center gap-3'>
             <Chip
+              size='small'
               variant='tonal'
               className='capitalize'
-              label={row.original.status}
-              color={userStatusObj[row.original.status]}
-              size='small'
+              label={row.original.status == 1 ? 'Active' : 'In active'}
+              color={userStatusObj[row.original.status == 1 ? 'active' : 'inactive']}
             />
           </div>
         )
@@ -222,12 +231,15 @@ const UserListTable = ({ tableData }) => {
         cell: () => (
           <div className='flex items-center'>
             <IconButton>
-              <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
-            </IconButton>
-            <IconButton>
               <Link href={getLocalizedUrl('apps/user/view', locale)} className='flex'>
                 <i className='ri-eye-line text-[22px] text-textSecondary' />
               </Link>
+            </IconButton>
+            <IconButton onClick={() => editCustomer(row)}>
+              <i className='ri-edit-box-line text-[22px] text-textSecondary' />
+            </IconButton>
+            <IconButton onClick={() => deleteCustomer(row)}>
+              <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
             </IconButton>
             <OptionMenu
               iconClassName='text-[22px] text-textSecondary'
@@ -236,12 +248,13 @@ const UserListTable = ({ tableData }) => {
                   text: 'Download',
                   icon: 'ri-download-line text-[22px]',
                   menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                },
-                {
-                  text: 'Edit',
-                  icon: 'ri-edit-box-line text-[22px]',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
                 }
+
+                // {
+                //   text: 'Edit',
+                //   icon: 'ri-edit-box-line text-[22px]',
+                //   menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
+                // }
               ]}
             />
           </div>
