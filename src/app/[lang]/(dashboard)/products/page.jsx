@@ -76,7 +76,7 @@ const ProductListApp = () => {
 
   return (
     <>
-      <ProductListTable HideAddProsuctForm={hideAddProductForm} />
+      <ProductListTable userData={data} HideAddProsuctForm={hideAddProductForm} />
       {addUserOpen && <AddProductPage setAddUserOpen={setAddUserOpen} addUserOpen={addUserOpen} />}
     </>
   );

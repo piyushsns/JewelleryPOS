@@ -16,50 +16,77 @@ import Divider from '@mui/material/Divider'
 import { CircularProgress, FormHelperText, Grid, InputAdornment } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 
-import { blob, custom, forward, maxSize, mimeType, minLength, object, string } from 'valibot'
+import * as v from 'valibot'
 
 import { valibotResolver } from '@hookform/resolvers/valibot'
 
-import useEmpAPI from '../../../../hooks/useEmp.js'
+import { useSession } from 'next-auth/react'
+
+import { toast } from 'react-toastify'
+
+import HttpService from '@/services/http_service.js'
 
 // Vars
-const AddUserDrawer = ({ open, handleClose }) => {
-  const customerDatainitialData = {
-    name: 'Piyush Jain',
-    email: 'piyush.jain+88@snssystem.com',
-    password: '12345678',
-    password_confirmation: '12345678',
-    role_id: '1',
-    status: '1',
+const AddUserDrawer = ({ open, handleClose, setData, selectedRow, setSelectedRow }) => {
+  var employeeDatainitialData = {
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    role_id: '',
+    status: '',
     image: ''
   }
 
-  const schema = object(
+  if (selectedRow) {
+    employeeDatainitialData = {
+      name: selectedRow.name,
+      email: selectedRow.email,
+      role_id: selectedRow.role.id + '',
+      status: selectedRow.status + '',
+      image: '',
+      password: ''
+    }
+  }
+
+  var baseSchema = v.object(
     {
-      name: string([minLength(1, 'This name is required')]),
-      email: string([minLength(1, 'This email is required')]),
-      role_id: string([minLength(1, 'This role is required')]),
-      status: string([minLength(1, 'This status is required')]),
-      password: string([
-        minLength(1, 'This password is required'),
-        minLength(8, 'Password must be at least 8 characters long')
+      name: v.string([v.minLength(1, 'This name is required')]),
+      email: v.string([v.minLength(1, 'This email is required')]),
+      role_id: v.string([v.minLength(1, 'This role is required')]),
+      status: v.string([v.minLength(1, 'This status is required')]),
+      password: v.string([
+        v.minLength(1, 'This password is required'),
+        v.minLength(8, 'Password must be at least 8 characters long')
       ]),
-      password_confirmation: string([
-        minLength(1, 'This confirm password is required'),
-        minLength(8, 'Password must be at least 8 characters long')
+      password_confirmation: v.string([
+        v.minLength(1, 'This confirm password is required'),
+        v.minLength(8, 'Password must be at least 8 characters long')
       ]),
-      image: blob('Please select an user profile.', [
-        mimeType(['image/jpeg', 'image/png'], 'Please select a JPEG or PNG file.'),
-        maxSize(1024 * 1024 * 10, 'Please select a file smaller than 10 MB.')
-      ])
+      image: v.optional(v.string())
+
+      // v.blob('Please select an image file.', [
+      //   v.mimeType(['image/jpeg', 'image/png'], 'Please select a JPEG or PNG file.'),
+      //   v.maxSize(1024 * 1024 * 10, 'Please select a file smaller than 10 MB.')
+      // ])
+      // )
     },
-    [
-      forward(
-        custom(input => input.password === input.password_confirmation, 'Passwords do not match.'),
-        ['password_confirmation']
-      )
-    ]
+    v.forward(
+      v.custom(input => input.password === input.password_confirmation, 'Passwords do not match.'),
+      ['password_confirmation']
+    )
   )
+
+  if (selectedRow) {
+    baseSchema = object({
+      name: v.string([v.minLength(1, 'This name is required')]),
+      email: v.string([v.minLength(1, 'This email is required')]),
+      role_id: v.string([v.minLength(1, 'This role is required')]),
+      status: v.string([v.minLength(1, 'This status is required')]),
+      password: v.optional(v.string()),
+      image: v.optional(v.string())
+    })
+  }
 
   const {
     control,
@@ -67,8 +94,8 @@ const AddUserDrawer = ({ open, handleClose }) => {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    resolver: valibotResolver(schema),
-    defaultValues: customerDatainitialData
+    resolver: valibotResolver(baseSchema),
+    defaultValues: employeeDatainitialData
   })
 
   const [isPasswordShown, setIsPasswordShown] = useState(false)
@@ -77,43 +104,51 @@ const AddUserDrawer = ({ open, handleClose }) => {
 
   const [loading, setLoading] = useState(false)
 
-  const [fileInput, setFileInput] = useState('')
-
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
   const handleClickShowConfirmPassword = () => setIsConfirmPasswordShown(show => !show)
 
-  const handleFileInputChange = file => {
+  const { data: session } = useSession()
+
+  const handleFileInputChange = (file, onChangeEvent) => {
     const reader = new FileReader()
     const { files } = file.target
 
     if (files && files.length !== 0) {
       reader.onload = () => setImgSrc(reader.result)
       reader.readAsDataURL(files[0])
-
-      if (reader.result !== null) {
-        setFileInput(reader.result)
-      }
+      onChangeEvent(files[0] || null)
     }
   }
 
   const handleFileInputReset = () => {
-    setFileInput('')
     setImgSrc('/images/avatars/1.png')
   }
 
   const onSubmit = async formData => {
     setLoading(true)
-    var res = await httpService.postData(formData, 'admin/settings/users', session?.user?.token)
+
+    if (selectedRow)
+      var res = await new HttpService().putData(
+        formData,
+        `admin/settings/users/${selectedRow.id}`,
+        session?.user?.token
+      )
+    else var res = await new HttpService().postData(formData, 'admin/settings/users', session?.user?.token)
 
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
-    } else if (res?.data?.id > 0) {
-      setCustomers([...customers, res.data])
-      toast.success(res?.message || 'failed to add customer')
+    } else if (res?.user?.id > 0) {
+      toast.success(res?.message || 'failed to add employee')
       reset()
+      var refreshEmplopyees = await new HttpService().getData('admin/settings/users', session?.user?.token)
+
+      setSelectedRow(null)
+
+      setData(refreshEmplopyees.data ?? [])
+      handleClose()
     }
 
     setLoading(false)
@@ -208,41 +243,43 @@ const AddUserDrawer = ({ open, handleClose }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={12}>
-              <Controller
-                name='password_confirmation'
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label='Confirm Password'
-                    placeholder='············'
-                    id='stepper-linear-password_confirmation'
-                    type={isConfirmPasswordShown ? 'text' : 'password'}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position='end'>
-                          <IconButton
-                            edge='end'
-                            onClick={handleClickShowConfirmPassword}
-                            onMouseDown={e => e.preventDefault()}
-                            aria-label='toggle password visibility'
-                          >
-                            <i className={isConfirmPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
-                          </IconButton>
-                        </InputAdornment>
-                      )
-                    }}
-                    {...(errors['password_confirmation'] && {
-                      error: true,
-                      helperText: errors['password_confirmation'].message
-                    })}
-                  />
-                )}
-              />
-            </Grid>
+            {selectedRow === null && (
+              <Grid item xs={12} sm={12}>
+                <Controller
+                  name='password_confirmation'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label='Confirm Password'
+                      placeholder='············'
+                      id='stepper-linear-password_confirmation'
+                      type={isConfirmPasswordShown ? 'text' : 'password'}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position='end'>
+                            <IconButton
+                              edge='end'
+                              onClick={handleClickShowConfirmPassword}
+                              onMouseDown={e => e.preventDefault()}
+                              aria-label='toggle password visibility'
+                            >
+                              <i className={isConfirmPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }}
+                      {...(errors['password_confirmation'] && {
+                        error: true,
+                        helperText: errors['password_confirmation'].message
+                      })}
+                    />
+                  )}
+                />
+              </Grid>
+            )}
             <Grid item xs={12} sm={12}>
               <FormControl fullWidth>
                 <InputLabel error={Boolean(errors.role_id)}>Role</InputLabel>
@@ -252,7 +289,7 @@ const AddUserDrawer = ({ open, handleClose }) => {
                   rules={{ required: true }}
                   render={({ field }) => (
                     <Select label='Role' {...field} error={Boolean(errors.role_id)}>
-                      <MenuItem value={1}>Admin</MenuItem>
+                      <MenuItem value={'1'}>Admin</MenuItem>
                     </Select>
                   )}
                 />
@@ -260,11 +297,26 @@ const AddUserDrawer = ({ open, handleClose }) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={12}>
-              {console.log(control)}
+              <FormControl fullWidth>
+                <InputLabel error={Boolean(errors.status)}>Status</InputLabel>
+                <Controller
+                  name={'status'}
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select label='Status' {...field} error={Boolean(errors.status)}>
+                      <MenuItem value={'1'}>Active</MenuItem>
+                      <MenuItem value={'0'}>InActive</MenuItem>
+                    </Select>
+                  )}
+                />
+                {errors.role_id && <FormHelperText error>{errors.role_id.message}</FormHelperText>}
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={12}>
               <Controller
                 name='image'
                 control={control}
-                rules={{ required: false }}
                 render={({ field: { onChange, value, ...field } }) => (
                   <div className='flex items-start sm:items-center gap-6'>
                     <img height={100} width={100} className='rounded' src={imgSrc} alt='UserProfile' />
@@ -276,15 +328,13 @@ const AddUserDrawer = ({ open, handleClose }) => {
                           variant='contained'
                           htmlFor='account-settings-upload-image'
                         >
-                          Upload a Profile
+                          Upload New Photo
                           <input
-                            {...field}
-                            className="disabled:cursor-not-allowed disabled:opacity-75 sm:text-sm"
-                            id="image"
-                            name="image"
-                            type="file"
+                            hidden
+                            type='file'
                             accept='image/png, image/jpeg'
-                            onChange={(event) => onChange(event.target.files?.[0] || null)}
+                            id='account-settings-upload-image'
+                            onChange={event => handleFileInputChange(event, onChange)}
                           />
                         </Button>
                         <Button size='small' variant='outlined' color='error' onClick={() => handleFileInputReset()}>
