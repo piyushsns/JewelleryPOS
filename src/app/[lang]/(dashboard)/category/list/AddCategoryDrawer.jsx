@@ -26,24 +26,19 @@ import {
 
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { Controller, useForm } from 'react-hook-form'
-import { minLength, object, string } from 'valibot'
 
+import { minLength, object, string, number } from 'valibot'
 import { useSession } from 'next-auth/react'
+
+import HttpService from '@/services/http_service'
 
 // Vars
 
-const AddCategoryDrawer = ({
-  open,
-  handleClose,
-  httpService,
-  categories,
-  setCategories,
-  setOpen,
-  setSelectedCategories
-}) => {
+const AddCategoryDrawer = ({ open, handleClose, categories, setCategories, setOpen, setSelectedCategories }) => {
   // States
   const [slug, setSlug] = useState('')
-  console.log(slug)
+
+  // console.log(slug)
   const initialData = {
     locale: 'en',
     name: '',
@@ -51,15 +46,16 @@ const AddCategoryDrawer = ({
     slug: slug,
     position: '0',
     channel: 'default',
-
     display_mode: 'product_and_description',
     attributes: [11]
   }
 
-  const schema = object({
+  const catSchema = object({
     name: string([minLength(1, 'Category name is required')]),
     description: string([minLength(1, 'This description is required')]),
-    slug: string([minLength(1, 'The slug is required')])
+    slug: string([minLength(1, 'The slug is required')]),
+    position: string([minLength(1, 'The position is required')]),
+    attributes: string([minLength(1, 'The attribute is required')])
   })
 
   const {
@@ -68,10 +64,18 @@ const AddCategoryDrawer = ({
     handleSubmit,
     formState: { errors }
   } = useForm({
-    resolver: valibotResolver(schema),
+    resolver: valibotResolver(catSchema),
     defaultValues: initialData
   })
 
+  // if (selectedRow) {
+  //   catinitialData = {
+  //     name: selectedRow.name,
+  //     description: selectedRow.description,
+  //     slug: selectedRow.slug
+  //   }
+  // }
+  const httpService = new HttpService()
   const [errorState, setErrorState] = useState(null)
 
   const [loading, setLoading] = useState(false)
@@ -84,16 +88,17 @@ const AddCategoryDrawer = ({
   const { data: session } = useSession()
 
   const onSubmit = async formData => {
-    // setLoading(true)
-    console.log(session?.user?.token)
+    setLoading(true)
+    console.log('tttttttttttttttttttt', session?.user?.token)
 
     var res = await httpService.postData(formData, 'admin/catalog/categories', session?.user?.token)
     console.log(formData)
+    console.log(res)
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
     } else if (res?.data?.id > 0) {
       setCategories([...categories, res.data])
-      toast.success(res.message)
+      toast.success(res?.message || 'failed to add category')
       reset()
       setOpen(false)
       setSelectedCategories(res.data)
@@ -124,7 +129,7 @@ const AddCategoryDrawer = ({
             <form className='flex flex-col gap-5' noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={5}>
                 {fieldObjectArray.map((fieldobj, index) => (
-                  <Grid key={index} item xs={12} sm={12} lg={fieldobj.size} className={fieldobj.classNames}>
+                  <Grid key={index} item lg={12} sm={12} className={fieldobj.classNames}>
                     {fieldobj.type === 'text' && (
                       <Controller
                         name={fieldobj.name}

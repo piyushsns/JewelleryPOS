@@ -130,7 +130,7 @@ const ProductListTable = ({ tableData }) => {
   const fetchProducts = async () => {
     console.log(session?.user?.token)
 
-    var res = await HttpService.getData('admin/catalog/products', session?.user?.token)
+    var res = await HttpService().getData('admin/catalog/products', session?.user?.token)
 
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
