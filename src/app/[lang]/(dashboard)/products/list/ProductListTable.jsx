@@ -124,13 +124,14 @@ const ProductListTable = ({ tableData }) => {
 
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
+  const httpService = new HttpService()
 
   const { data: session } = useSession()
 
   const fetchProducts = async () => {
     console.log(session?.user?.token)
 
-    var res = await HttpService().getData('admin/catalog/products', session?.user?.token)
+    var res = await httpService.getData('admin/catalog/products', session?.user?.token)
 
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
