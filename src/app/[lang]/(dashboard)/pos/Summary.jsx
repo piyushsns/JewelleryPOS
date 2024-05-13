@@ -227,9 +227,10 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
     columnHelper.accessor('name', {
       header: 'Item'
     }),
-    columnHelper.accessor('purity', {
-      header: 'Purity (K)'
-    }),
+
+    // columnHelper.accessor('purity', {
+    //   header: 'Purity (K)'
+    // }),
     columnHelper.accessor('formatted_price', {
       header: 'Rate/gm'
     }),

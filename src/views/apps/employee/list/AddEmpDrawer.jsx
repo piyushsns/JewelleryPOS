@@ -78,7 +78,7 @@ const AddUserDrawer = ({ open, handleClose, setData, selectedRow, setSelectedRow
   )
 
   if (selectedRow) {
-    baseSchema = object({
+    baseSchema = v.object({
       name: v.string([v.minLength(1, 'This name is required')]),
       email: v.string([v.minLength(1, 'This email is required')]),
       role_id: v.string([v.minLength(1, 'This role is required')]),
