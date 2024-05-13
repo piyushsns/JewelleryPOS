@@ -1,24 +1,47 @@
+'use client'
 /* eslint-disable padding-line-between-statements */
 // React Imports
 import { useState } from 'react'
 
 // MUI Imports
+import Grid from '@mui/material/Grid'
+import { toast } from 'react-toastify'
 import Button from '@mui/material/Button'
 import Drawer from '@mui/material/Drawer'
-import FormControl from '@mui/material/FormControl'
 import IconButton from '@mui/material/IconButton'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
+
+import {
+  Card,
+  CardContent,
+  CircularProgress,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select
+} from '@mui/material'
+
+import { valibotResolver } from '@hookform/resolvers/valibot'
+import { Controller, useForm } from 'react-hook-form'
+import { minLength, object, string } from 'valibot'
 
 import useCategoryAPI from '../../../../../hooks/useCategory'
 
 // Vars
 
-const AddCategoryDrawer = ({ open, handleClose }) => {
+const AddCategoryDrawer = ({
+  open,
+  handleClose,
+  httpService,
+  session,
+  categories,
+  setCategories,
+  setOpen,
+  setSelectedCategories
+}) => {
   // States
   const [slug, setSlug] = useState('')
   console.log(slug)
@@ -34,40 +57,49 @@ const AddCategoryDrawer = ({ open, handleClose }) => {
     attributes: [11]
   }
 
+  const schema = object({
+    name: string([minLength(1, 'This name is required')]),
+    description: string([minLength(1, 'This description is required')]),
+    slug: string([minLength(1, 'This slug is required')])
+  })
+
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: valibotResolver(schema),
+    defaultValues: initialData
+  })
+
   const [formData, setFormData] = useState(initialData)
   const { storeItem } = useCategoryAPI()
+  const [errorState, setErrorState] = useState(null)
 
-  const handleNameChange = event => {
-    const newName = event.target.value
-    if (event.target.name === 'slug') {
-      const newSlug = newName.toLowerCase().replace(/\s+/g, '-')
-      setSlug(newSlug)
-      setFormData({
-        ...formData,
-        en: { slug: newSlug, description: newSlug, name: newSlug },
-        [event.target.name]: newSlug
-      })
-    } else {
-      setFormData({
-        ...formData,
-        [event.target.name]: event.target.value
-      })
+  const [loading, setLoading] = useState(false)
+
+  const fieldObjectArray = [
+    { name: 'name', label: 'Category Name', type: 'text', required: true, size: 6, classNames: '' },
+    { name: 'description', label: 'Description', type: 'text', required: true, size: 6, classNames: '' },
+    { name: 'slug', label: 'Slug', type: 'text', required: true, size: 6, classNames: '' }
+  ]
+
+  const onSubmit = async formData => {
+    setLoading(true)
+    var res = await httpService.postData(formData, 'admin/catalog/categories', session?.user?.token)
+
+    if (res.success == false && res.exception_type == 'validation') {
+      toast.warn(res?.message)
+    } else if (res?.data?.id > 0) {
+      setCategories([...categories, res.data])
+      toast.success(res.message)
+      reset()
+      setOpen(false)
+      setSelectedCategories(res.data)
     }
-  }
-  const handleSubmit = e => {
-    e.preventDefault()
-    console.log('======================================================', formData)
-    storeItem(formData)
-  }
 
-  // handleClose()
-  // setFormData(initialData)
-  const handleReset = () => {
-    handleClose()
-    setFormData({
-      name: '',
-      description: ''
-    })
+    setLoading(false)
   }
 
   return (
@@ -75,51 +107,63 @@ const AddCategoryDrawer = ({ open, handleClose }) => {
       open={open}
       anchor='right'
       variant='temporary'
-      onClose={handleReset}
+      onClose={reset}
       ModalProps={{ keepMounted: true }}
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
       <div className='flex items-center justify-between pli-5 plb-[15px]'>
         <Typography variant='h5'>Add Category</Typography>
-        <IconButton onClick={handleReset}>
+        <IconButton onClick={reset}>
           <i className='ri-close-line' />
         </IconButton>
       </div>
       <Divider />
       <div className='p-5'>
-        <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
-          <TextField
-            label='Category Name'
-            fullWidth
-            placeholder='Enter Category Name'
-            name='name'
-            onChange={e => handleNameChange(e)}
-          />
-          <TextField
-            label='Description'
-            fullWidth
-            placeholder='Enter Description Name'
-            name='description'
-            value={formData.description}
-            onChange={e => setFormData({ ...formData, description: e.target.value })}
-          />
-          <TextField
-            label='Slug'
-            fullWidth
-            placeholder='Enter Slug Name'
-            name='slug'
-            value={formData.slug}
-            onChange={e => handleNameChange(e)}
-          />
-          <div className='flex items-center gap-4'>
-            <Button variant='contained' type='submit'>
-              Submit
-            </Button>
-            <Button variant='outlined' color='error' type='reset' onClick={() => handleReset()}>
-              Cancel
-            </Button>
-          </div>
-        </form>
+        <Card fullWidth open={true} maxWidth='md' scroll='body'>
+          <CardContent>
+            <form className='flex flex-col gap-5' noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+              <Grid container spacing={5}>
+                {fieldObjectArray.map((fieldobj, index) => (
+                  <Grid key={index} item xs={12} sm={12} lg={fieldobj.size} className={fieldobj.classNames}>
+                    {fieldobj.type === 'text' && (
+                      <Controller
+                        name={fieldobj.name}
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            fullWidth
+                            autoFocus
+                            type={fieldobj.type}
+                            label={fieldobj.label}
+                            onChange={e => {
+                              field.onChange(e.target.value)
+                              errorState !== null && setErrorState(null)
+                            }}
+                            {...((errors[fieldobj.name] || errorState !== null) && {
+                              error: true,
+                              helperText: errors[fieldobj.name].message || errorState?.[0]
+                            })}
+                          />
+                        )}
+                      />
+                    )}
+                  </Grid>
+                ))}
+                <Grid item xs={12} sm={12} className='flex gap-4'>
+                  <Button variant='contained' type='submit' className='gap-2'>
+                    {loading && <CircularProgress size={20} color='inherit' />}
+                    Submit
+                  </Button>
+                  <Button variant='outlined' type='reset' onClick={() => reset()}>
+                    Reset
+                  </Button>
+                </Grid>
+              </Grid>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </Drawer>
   )

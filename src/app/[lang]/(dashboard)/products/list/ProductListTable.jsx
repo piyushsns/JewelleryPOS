@@ -39,6 +39,8 @@ import {
 } from '@tanstack/react-table'
 
 // Component Imports
+import { useSession } from 'next-auth/react'
+
 import OptionMenu from '@core/components/option-menu'
 import CustomAvatar from '@core/components/mui/Avatar'
 
@@ -52,6 +54,8 @@ import AddProductDrawer from './AddProdectDrawer'
 import DialogAddCard from './ShowModel'
 import OpenDialogOnElementClick from './ShowModel'
 import ProductCard from './ProductShow'
+
+import HttpService from '@/services/http_service'
 
 // Styled Components
 const Icon = styled('i')({})
@@ -120,38 +124,37 @@ const ProductListTable = ({ tableData }) => {
 
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
-  let requestOptions = {
-    method: 'GET',
-    headers: { Authorization: 'Bearer ' + localStorage.getItem('user-token') }
-  }
 
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/v1/admin/catalog/products`, requestOptions)
+  const { data: session } = useSession()
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch data')
-      }
+  const fetchProducts = async () => {
+    console.log(session?.user?.token)
 
-      const datas = await response.json()
+    var res = await HttpService.getData('admin/catalog/products', session?.user?.token)
 
-      setData(datas.data)
-    } catch (error) {
-      console.error('Error fetching data:', error)
+    if (res.success == false && res.exception_type == 'validation') {
+      toast.warn(res?.message)
+    } else if (res?.data?.id > 0) {
+      setData(res.data)
+      setOpen(false)
     }
   }
 
   React.useEffect(() => {
-    fetchCategories()
-  }, [])
-
-  React.useEffect(() => {
-    fetchCategories()
-    var Id = localStorage.getItem('product_id')
-    if (Id !== '') {
-      setAddUserOpen(!addUserOpen)
+    if (session?.user?.token) {
+      fetchProducts()
     }
-  }, [])
+  }, [session])
+
+  console.log('================================================>', data)
+
+  // React.useEffect(() => {
+  //   fetchProducts()
+  //   var Id = localStorage.getItem('product_id')
+  //   if (Id !== '') {
+  //     setAddUserOpen(!addUserOpen)
+  //   }
+  // }, [])
 
   // Hooks
   const { lang: locale } = useParams()
@@ -162,10 +165,10 @@ const ProductListTable = ({ tableData }) => {
         header: 'Product Name',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.name })}
+            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
-                {row.original.name}
+                {row.original.fullName}
               </Typography>
               <Typography variant='body2'>{row.original.username}</Typography>
             </div>
