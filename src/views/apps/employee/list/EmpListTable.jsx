@@ -41,12 +41,10 @@ import { useSession } from 'next-auth/react'
 
 // Component Imports
 import AddUserDrawer from './AddEmpDrawer'
-import OptionMenu from '@core/components/option-menu'
 import CustomAvatar from '@core/components/mui/Avatar'
 
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
-import { getLocalizedUrl } from '@/utils/i18n'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
@@ -92,6 +90,8 @@ const EmpListTable = () => {
 
   const [addUserOpen, setAddUserOpen] = useState(false)
 
+  const [selectedRow, setSelectedRow] = useState(null)
+
   const [rowSelection, setRowSelection] = useState({})
 
   const [data, setData] = useState([])
@@ -110,8 +110,14 @@ const EmpListTable = () => {
     }
   }, [session])
 
-  // Hooks
-  const { lang: locale } = useParams()
+  const editEmployee = row => {
+    setAddUserOpen(true)
+    setSelectedRow(row.original)
+  }
+
+  const deleteEmployee = row => {
+    console.log(row.original)
+  }
 
   const columns = useMemo(
     () => [
@@ -173,26 +179,14 @@ const EmpListTable = () => {
       }),
       columnHelper.accessor('action', {
         header: 'Action',
-        cell: () => (
+        cell: ({ row }) => (
           <div className='flex items-center'>
-            <IconButton>
-              <Link href={getLocalizedUrl('apps/user/view', locale)} className='flex'>
-                <i className='ri-eye-line text-[22px] text-textSecondary' />
-              </Link>
+            <IconButton onClick={() => editEmployee(row)}>
+              <i className='ri-edit-box-line text-[22px] text-textSecondary' />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => deleteEmployee(row)}>
               <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
             </IconButton>
-            <OptionMenu
-              iconClassName='text-[22px] text-textSecondary'
-              options={[
-                {
-                  text: 'Edit',
-                  icon: 'ri-edit-box-line text-[22px]',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                }
-              ]}
-            />
           </div>
         ),
         enableSorting: false
@@ -342,7 +336,18 @@ const EmpListTable = () => {
           onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
         />
       </Card>
-      <AddUserDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
+      {addUserOpen && (
+        <AddUserDrawer
+          open={addUserOpen}
+          handleClose={() => {
+            setSelectedRow(null)
+            setAddUserOpen(!addUserOpen)
+          }}
+          setData={setData}
+          selectedRow={selectedRow}
+          setSelectedRow={setSelectedRow}
+        />
+      )}
     </>
   )
 }
