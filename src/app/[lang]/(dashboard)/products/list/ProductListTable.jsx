@@ -52,6 +52,7 @@ import AddProductDrawer from './AddProdectDrawer'
 import DialogAddCard from './ShowModel'
 import OpenDialogOnElementClick from './ShowModel'
 import ProductCard from './ProductShow'
+import AddProductPage from '../AddProducts/AddProductPage'
 
 // Styled Components
 const Icon = styled('i')({})
@@ -112,7 +113,9 @@ const buttonProps = {
 
 const columnHelper = createColumnHelper()
 
-const ProductListTable = ({ tableData }) => {
+const ProductListTable = ({ tableData,  HideAddProsuctForm }) => {
+  console.log('HideAddProsuctFormHideAddProsuctFormHideAddProsuctFormHideAddProsuctFormHideAddProsuctForm11111111111111111111',HideAddProsuctForm);
+
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
 
@@ -145,13 +148,20 @@ const ProductListTable = ({ tableData }) => {
     fetchCategories()
   }, [])
 
-  React.useEffect(() => {
-    fetchCategories()
-    var Id = localStorage.getItem('product_id')
-    if (Id !== '') {
-      setAddUserOpen(!addUserOpen)
+  useEffect(() => {
+    if (localStorage.getItem('product_id')) {
+      var Id = localStorage.getItem('product_id')
+
+      // if (Id !== '' || Id !== undefined) {
+      // setAddUserOpen(!addUserOpen)
+
+      // }
     }
   }, [])
+
+  const handleSubmit = () => {
+    HideAddProsuctForm();
+  };
 
   // Hooks
   const { lang: locale } = useParams()
@@ -275,115 +285,109 @@ const ProductListTable = ({ tableData }) => {
     }
   }
 
-  useEffect(() => {
-    if (localStorage.getItem('product_id')) {
-      var Id = localStorage.getItem('product_id')
-      if (Id !== '') {
-        setAddUserOpen(!addUserOpen)
-      }
-    }
-  }, [])
-
   return (
     <>
-      <Card>
-        <CardHeader title='Products' />
-        {/* <TableFilters setData={setData} tableData={tableData} /> */}
-        <Divider />
-        <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
-          <Button
-            color='secondary'
-            variant='outlined'
-            startIcon={<i className='ri-upload-2-line text-xl' />}
-            className='is-full sm:is-auto'
-          >
-            Export
-          </Button>
-          <div className='flex items-center gap-x-4 is-full gap-4 flex-col sm:is-auto sm:flex-row'>
-            <DebouncedInput
-              value={globalFilter ?? ''}
-              onChange={value => setGlobalFilter(String(value))}
-              placeholder='Search Category'
+      {addUserOpen == false && (
+        <Card>
+          <CardHeader title='Products' />
+          {/* <TableFilters setData={setData} tableData={tableData} /> */}
+          <Divider />
+          <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
+            <Button
+              color='secondary'
+              variant='outlined'
+              startIcon={<i className='ri-upload-2-line text-xl' />}
               className='is-full sm:is-auto'
-            />
-            <OpenDialogOnElementClick element={Button} elementProps={buttonProps} dialog={ProductCard} />
-            <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='is-full sm:is-auto'>
-              Add Update
+            >
+              Export
             </Button>
+            <div className='flex items-center gap-x-4 is-full gap-4 flex-col sm:is-auto sm:flex-row'>
+              <DebouncedInput
+                value={globalFilter ?? ''}
+                onChange={value => setGlobalFilter(String(value))}
+                placeholder='Search Category'
+                className='is-full sm:is-auto'
+              />
+              {/* <OpenDialogOnElementClick element={Button} elementProps={buttonProps} dialog={ProductCard} /> */}
+              <Button variant='contained' onClick={handleSubmit} className='is-full sm:is-auto'>
+                Add Product
+              </Button>
+            </div>
           </div>
-        </div>
-        <div className='overflow-x-auto'>
-          <table className={tableStyles.table}>
-            <thead>
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id}>
-                      {header.isPlaceholder ? null : (
-                        <>
-                          <div
-                            className={classnames({
-                              'flex items-center': header.column.getIsSorted(),
-                              'cursor-pointer select-none': header.column.getCanSort()
-                            })}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {{
-                              asc: <i className='ri-arrow-up-s-line text-xl' />,
-                              desc: <i className='ri-arrow-down-s-line text-xl' />
-                            }[header.column.getIsSorted()] ?? null}
-                          </div>
-                        </>
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            {table.getFilteredRowModel().rows.length === 0 ? (
-              <tbody>
-                <tr>
-                  <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
-                    No data available
-                  </td>
-                </tr>
-              </tbody>
-            ) : (
-              <tbody>
-                {table
-                  .getRowModel()
-                  .rows.slice(0, table.getState().pagination.pageSize)
-                  .map(row => {
-                    return (
-                      <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
-                        {row.getVisibleCells().map(cell => (
-                          <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                        ))}
-                      </tr>
-                    )
-                  })}
-              </tbody>
-            )}
-          </table>
-        </div>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component='div'
-          className='border-bs'
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={table.getState().pagination.pageSize}
-          page={table.getState().pagination.pageIndex}
-          SelectProps={{
-            inputProps: { 'aria-label': 'rows per page' }
-          }}
-          onPageChange={(_, page) => {
-            table.setPageIndex(page)
-          }}
-          onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
-        />
-      </Card>
-      <AddProductDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
+          <div className='overflow-x-auto'>
+            <table className={tableStyles.table}>
+              <thead>
+                {table.getHeaderGroups().map(headerGroup => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <th key={header.id}>
+                        {header.isPlaceholder ? null : (
+                          <>
+                            <div
+                              className={classnames({
+                                'flex items-center': header.column.getIsSorted(),
+                                'cursor-pointer select-none': header.column.getCanSort()
+                              })}
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              {{
+                                asc: <i className='ri-arrow-up-s-line text-xl' />,
+                                desc: <i className='ri-arrow-down-s-line text-xl' />
+                              }[header.column.getIsSorted()] ?? null}
+                            </div>
+                          </>
+                        )}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              {table.getFilteredRowModel().rows.length === 0 ? (
+                <tbody>
+                  <tr>
+                    <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
+                      No data available
+                    </td>
+                  </tr>
+                </tbody>
+              ) : (
+                <tbody>
+                  {table
+                    .getRowModel()
+                    .rows.slice(0, table.getState().pagination.pageSize)
+                    .map(row => {
+                      return (
+                        <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
+                          {row.getVisibleCells().map(cell => (
+                            <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                          ))}
+                        </tr>
+                      )
+                    })}
+                </tbody>
+              )}
+            </table>
+          </div>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50]}
+            component='div'
+            className='border-bs'
+            count={table.getFilteredRowModel().rows.length}
+            rowsPerPage={table.getState().pagination.pageSize}
+            page={table.getState().pagination.pageIndex}
+            SelectProps={{
+              inputProps: { 'aria-label': 'rows per page' }
+            }}
+            onPageChange={(_, page) => {
+              table.setPageIndex(page)
+            }}
+            onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
+          />
+        </Card>
+      )}
+      {/* <AddProductDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} /> */}
+      {/* {addUserOpen == true && <AddProductPage setAddUserOpen={setAddUserOpen} addUserOpen={addUserOpen} />} */}
     </>
   )
 }

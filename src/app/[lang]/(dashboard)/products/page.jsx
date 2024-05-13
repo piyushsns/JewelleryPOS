@@ -1,6 +1,13 @@
+'use client'
+/* eslint-disable @next/next/no-async-client-component */
 /* eslint-disable import/no-unresolved */
 // Component Imports
-import ProductListPage from './list/'
+
+
+import { useState } from 'react';
+
+import AddProductPage from './AddProducts/AddProductPage';
+import ProductListTable from './list/ProductListTable';
 
 // const getData = async () => {
 //   // Vars
@@ -13,8 +20,13 @@ import ProductListPage from './list/'
 //   return res.json()
 // }
 
-const ProductListApp = async () => {
+const ProductListApp = () => {
   // Vars
+  const [addUserOpen, setAddUserOpen] = useState(false);
+
+  const hideAddProductForm = () => {
+    setAddUserOpen(false);
+  };
 
   const data = [
     {
@@ -62,7 +74,12 @@ const ProductListApp = async () => {
     }
   ]
 
-  return <ProductListPage userData={data} />
+  return (
+    <>
+      <ProductListTable HideAddProsuctForm={hideAddProductForm} />
+      {addUserOpen && <AddProductPage setAddUserOpen={setAddUserOpen} addUserOpen={addUserOpen} />}
+    </>
+  );
 }
 
 export default ProductListApp
