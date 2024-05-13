@@ -28,7 +28,7 @@ import { valibotResolver } from '@hookform/resolvers/valibot'
 import { Controller, useForm } from 'react-hook-form'
 import { minLength, object, string } from 'valibot'
 
-import useCategoryAPI from '../../../../../hooks/useCategory'
+import { useSession } from 'next-auth/react'
 
 // Vars
 
@@ -36,7 +36,6 @@ const AddCategoryDrawer = ({
   open,
   handleClose,
   httpService,
-  session,
   categories,
   setCategories,
   setOpen,
@@ -58,9 +57,9 @@ const AddCategoryDrawer = ({
   }
 
   const schema = object({
-    name: string([minLength(1, 'This name is required')]),
+    name: string([minLength(1, 'Category name is required')]),
     description: string([minLength(1, 'This description is required')]),
-    slug: string([minLength(1, 'This slug is required')])
+    slug: string([minLength(1, 'The slug is required')])
   })
 
   const {
@@ -73,8 +72,6 @@ const AddCategoryDrawer = ({
     defaultValues: initialData
   })
 
-  const [formData, setFormData] = useState(initialData)
-  const { storeItem } = useCategoryAPI()
   const [errorState, setErrorState] = useState(null)
 
   const [loading, setLoading] = useState(false)
@@ -84,11 +81,14 @@ const AddCategoryDrawer = ({
     { name: 'description', label: 'Description', type: 'text', required: true, size: 6, classNames: '' },
     { name: 'slug', label: 'Slug', type: 'text', required: true, size: 6, classNames: '' }
   ]
+  const { data: session } = useSession()
 
   const onSubmit = async formData => {
-    setLoading(true)
-    var res = await httpService.postData(formData, 'admin/catalog/categories', session?.user?.token)
+    // setLoading(true)
+    console.log(session?.user?.token)
 
+    var res = await httpService.postData(formData, 'admin/catalog/categories', session?.user?.token)
+    console.log(formData)
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
     } else if (res?.data?.id > 0) {
@@ -107,13 +107,13 @@ const AddCategoryDrawer = ({
       open={open}
       anchor='right'
       variant='temporary'
-      onClose={reset}
+      onClose={handleClose}
       ModalProps={{ keepMounted: true }}
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
       <div className='flex items-center justify-between pli-5 plb-[15px]'>
         <Typography variant='h5'>Add Category</Typography>
-        <IconButton onClick={reset}>
+        <IconButton onClick={handleClose}>
           <i className='ri-close-line' />
         </IconButton>
       </div>

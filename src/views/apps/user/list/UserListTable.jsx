@@ -37,6 +37,8 @@ import {
 } from '@tanstack/react-table'
 
 // Component Imports
+import { useSession } from 'next-auth/react'
+
 import TableFilters from './TableFilters'
 import AddUserDrawer from './AddUserDrawer'
 import OptionMenu from '@core/components/option-menu'
@@ -49,13 +51,10 @@ import { getLocalizedUrl } from '@/utils/i18n'
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 
+import httpService from '@/services/http_service.js'
+
 // Styled Components
 const Icon = styled('i')({})
-
-let requestOptions = {
-  method: 'GET',
-  headers: { Authorization: 'Bearer ' + localStorage.getItem('user-token') }
-}
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -115,25 +114,23 @@ const UserListTable = ({ tableData }) => {
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
 
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(`https://jewelleryposapi.mytiny.us/api/v1/admin/customers`, requestOptions)
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch data')
-      }
-
-      const datas = await response.json()
-
-      setData(datas.data)
-    } catch (error) {
-      console.error('Error fetching data:', error)
-    }
-  }
+  const { data: session } = useSession()
 
   useEffect(() => {
-    fetchUsers()
-  }, [])
+    async function fetchCustomers() {
+      console.log(session?.user?.token)
+
+      var res = await httpService.getData('admin/customers', session?.user?.token)
+
+      setData(res.data ?? [])
+    }
+
+    if (session?.user?.token) {
+      fetchCustomers()
+    }
+  }, [session])
+
+  console.log('================================================>', data)
 
   // Hooks
   const { lang: locale } = useParams()
@@ -172,7 +169,7 @@ const UserListTable = ({ tableData }) => {
             })}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
-                {row.original.first_name} {row.original.last_name}
+                {row.original.fullName}
               </Typography>
               <Typography variant='body2'>{row.original.username}</Typography>
             </div>
