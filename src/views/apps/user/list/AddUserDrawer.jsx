@@ -31,7 +31,8 @@ import HttpService from '@/services/http_service.js'
 // Vars
 const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelectedRow }) => {
   var customerInitialData = {
-    name: '',
+    first_name: '',
+    last_name: '',
     email: '',
     date_of_birth: '',
     gender: '',
@@ -40,7 +41,8 @@ const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelecte
 
   if (selectedRow) {
     customerInitialData = {
-      name: selectedRow.name,
+      first_name: selectedRow.first_name,
+      last_name: selectedRow.last_name,
       email: selectedRow.email,
       date_of_birth: selectedRow.date_of_birth,
       gender: selectedRow.gender,
@@ -49,7 +51,8 @@ const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelecte
   }
 
   var baseCustomerSchema = v.object({
-    name: v.string([v.minLength(1, 'This name is required')]),
+    first_name: v.string([v.minLength(1, 'This name is required')]),
+    last_name: v.string([v.minLength(1, 'This name is required')]),
     email: v.string([v.minLength(1, 'This email is required')]),
     date_of_birth: v.string([v.minLength(1, 'The date of birth is required')]),
     gender: v.string([v.minLength(1, 'This gender is required')]),
@@ -58,13 +61,66 @@ const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelecte
 
   if (selectedRow) {
     baseCustomerSchema = v.object({
-      name: v.string([v.minLength(1, 'This name is required')]),
+      first_name: v.string([v.minLength(1, 'This name is required')]),
+      last_name: v.string([v.minLength(1, 'This name is required')]),
       email: v.string([v.minLength(1, 'This email is required')]),
       date_of_birth: v.string([v.minLength(1, 'The date of birth field is required')]),
       gender: v.string([v.minLength(1, 'This gender is required')]),
       phone: v.string([v.minLength(1, 'This phone is required')])
     })
   }
+
+  const fieldObjectArray = [
+    {
+      name: 'first_name',
+      label: 'First Name',
+      type: 'text',
+      required: true,
+      size: 12,
+      classNames: ''
+    },
+    {
+      name: 'last_name',
+      label: 'Last Name',
+      type: 'text',
+      required: true,
+      size: 12,
+      classNames: ''
+    },
+    {
+      name: 'date_of_birth',
+      label: 'Date of Birth',
+      type: 'date',
+      required: true,
+      size: 12,
+      classNames: ''
+    },
+    {
+      name: 'email',
+      label: 'Email',
+      type: 'text',
+      required: true,
+      size: 12,
+      classNames: ''
+    },
+    {
+      name: 'gender',
+      label: 'Gender',
+      type: 'select',
+      options: ['Male', 'Female', 'Other'],
+      required: true,
+      size: 12,
+      classNames: ''
+    },
+    {
+      name: 'phone',
+      label: 'Contact Number',
+      type: 'text',
+      required: true,
+      size: 12,
+      classNames: ''
+    }
+  ]
 
   const {
     control,
@@ -77,11 +133,13 @@ const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelecte
   })
 
   // States
-  const [formData, setFormData] = useState(customerInitialData)
+  // const [formData, setFormData] = useState(customerInitialData)
   const [loading, setLoading] = useState(false)
+  const [errorState, setErrorState] = useState(null)
   const { data: session } = useSession()
 
   const onSubmit = async formData => {
+    console.log('------------------------------------', selectedRow)
     setLoading(true)
 
     if (selectedRow)
@@ -96,7 +154,6 @@ const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelecte
       var refreshCustomers = await new HttpService().getData('admin/customers', session?.user?.token)
 
       setSelectedRow(null)
-
       setData(refreshCustomers.data ?? [])
       handleClose()
     }
@@ -126,132 +183,90 @@ const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelecte
       <Divider />
       <div className='p-5'>
         <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
-          <TextField
-            label='Full Name'
-            fullWidth
-            placeholder='John Doe'
-            value={formData.name}
-            onChange={e => setFormData({ ...formData, name: e.target.value })}
-          />
-          {/* <TextField
-            label='Last Name'
-            fullWidth
-            placeholder='Doe'
-            value={formData.last_name}
-            onChange={e => setFormData({ ...formData, last_name: e.target.value })}
-          /> */}
-          <TextField
-            label='Date of Birth'
-            type='date'
-            format='MM/dd/yyyy'
-            fullWidth
-            placeholder='date_of_birth'
-            value={formData.date_of_birth}
-            onChange={e => setFormData({ ...formData, date_of_birth: e.target.value })}
-          />
-          <TextField
-            label='Email'
-            fullWidth
-            placeholder='test@example.com'
-            value={formData.email}
-            onChange={e => setFormData({ ...formData, email: e.target.value })}
-          />
-          {/* <TextField
-            label='Company'
-            fullWidth
-            placeholder='Company PVT LTD'
-            value={formData.company}
-            onChange={e => setFormData({ ...formData, company: e.target.value })}
-          /> */}
-          <FormControl fullWidth>
-            <InputLabel id='country'>Select Gender</InputLabel>
-            <Select
-              fullWidth
-              id='country'
-              value={formData.gender}
-              onChange={e => setFormData({ ...formData, gender: e.target.value })}
-              label='Select Gender'
-              labelId='country'
-              inputProps={{ placeholder: 'Gender' }}
-            >
-              <MenuItem value='male'>Male</MenuItem>
-              <MenuItem value='female'>Female</MenuItem>
-              <MenuItem value='other'>Other</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            label='Contact Number'
-            type='number'
-            fullWidth
-            placeholder='(397) 294-5153'
-            value={formData.phone}
-            onChange={e => setFormData({ ...formData, phone: e.target.value })}
-          />
-          {/* <FormControl fullWidth>
-            <InputLabel id='role-select'>Select Role</InputLabel>
-            <Select
-              fullWidth
-              id='select-role'
-              value={formData.role}
-              onChange={e => setFormData({ ...formData, role: e.target.value })}
-              label='Select Role'
-              labelId='role-select'
-              inputProps={{ placeholder: 'Select Role' }}
-            >
-              <MenuItem value='admin'>Admin</MenuItem>
-              <MenuItem value='author'>Author</MenuItem>
-              <MenuItem value='editor'>Editor</MenuItem>
-              <MenuItem value='maintainer'>Maintainer</MenuItem>
-              <MenuItem value='subscriber'>Subscriber</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id='plan-select'>Select Plan</InputLabel>
-            <Select
-              fullWidth
-              id='select-plan'
-              value={formData.plan}
-              onChange={e => setFormData({ ...formData, plan: e.target.value })}
-              label='Select Plan'
-              labelId='plan-select'
-              inputProps={{ placeholder: 'Select Plan' }}
-            >
-              <MenuItem value='basic'>Basic</MenuItem>
-              <MenuItem value='company'>Company</MenuItem>
-              <MenuItem value='enterprise'>Enterprise</MenuItem>
-              <MenuItem value='team'>Team</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id='plan-select'>Select Status</InputLabel>
-            <Select
-              fullWidth
-              id='select-status'
-              value={formData.status}
-              onChange={e => setFormData({ ...formData, status: e.target.value })}
-              label='Select Status'
-              labelId='status-select'
-              inputProps={{ placeholder: 'Select Status' }}
-            >
-              <MenuItem value='pending'>Pending</MenuItem>
-              <MenuItem value='active'>Active</MenuItem>
-              <MenuItem value='inactive'>Inactive</MenuItem>
-            </Select>
-          </FormControl> */}
-          <div className='flex items-center gap-4'>
-            <Button variant='contained' type='submit'>
-              {loading && <CircularProgress size={20} color='inherit' />}
-              Submit
-            </Button>
-
-            {/* <Button variant='outlined' color='error' type='reset' onClick={() => handleReset()}>
-              Cancel
-            </Button> */}
-
-            <Button variant='outlined' type='reset' onClick={() => reset()}>
-              Reset
-            </Button>
-          </div>
+          <Grid container spacing={5}>
+            {fieldObjectArray.map((fieldobj, index) => (
+              <Grid key={index} item xs={12} sm={12} lg={fieldobj.size} className={fieldobj.classNames}>
+                {fieldobj.type === 'text' && (
+                  <Controller
+                    control={control}
+                    rules={{ required: true }}
+                    name={fieldobj.name}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        autoFocus
+                        type={fieldobj.type}
+                        label={fieldobj.label}
+                        onChange={e => {
+                          field.onChange(e.target.value)
+                          errorState !== null && setErrorState(null)
+                        }}
+                        {...((errors[fieldobj.name] || errorState !== null) && {
+                          error: true,
+                          helperText: errors[fieldobj.name].message || errorState?.[0]
+                        })}
+                      />
+                    )}
+                  />
+                )}
+                {fieldobj.type === 'date' && (
+                  <Controller
+                    control={control}
+                    rules={{ required: true }}
+                    name={fieldobj.name}
+                    render={({ field }) => (
+                      <TextField
+                        variant='filled'
+                        {...field}
+                        fullWidth
+                        autoFocus
+                        type={fieldobj.type}
+                        label={fieldobj.label}
+                        onChange={e => {
+                          field.onChange(e.target.value)
+                          errorState !== null && setErrorState(null)
+                        }}
+                        {...((errors[fieldobj.name] || errorState !== null) && {
+                          error: true,
+                          helperText: errors[fieldobj.name].message || errorState?.[0]
+                        })}
+                      />
+                    )}
+                  />
+                )}
+                {fieldobj.type === 'select' && (
+                  <FormControl fullWidth>
+                    <InputLabel error={Boolean(errors[fieldobj.name])}>{fieldobj.label}</InputLabel>
+                    <Controller
+                      name={fieldobj.name}
+                      control={control}
+                      rules={{ required: fieldobj.required }}
+                      render={({ field }) => (
+                        <Select {...field} label={fieldobj.label} error={Boolean(errors[fieldobj.name])}>
+                          {fieldobj.options.map((option, i) => (
+                            <MenuItem key={i} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )}
+                    />
+                    {errors[fieldobj.name] && <FormHelperText error>{errors[fieldobj.name].message}</FormHelperText>}
+                  </FormControl>
+                )}
+              </Grid>
+            ))}
+            <Grid item xs={12} sm={12} className='flex gap-4'>
+              <Button variant='contained' type='submit' className='gap-2'>
+                {loading && <CircularProgress size={20} color='inherit' />}
+                Submit
+              </Button>
+              <Button variant='outlined' type='reset' onClick={() => reset()}>
+                Reset
+              </Button>
+            </Grid>
+          </Grid>
         </form>
       </div>
     </Drawer>
