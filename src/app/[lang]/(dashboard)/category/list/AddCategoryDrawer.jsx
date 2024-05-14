@@ -13,18 +13,14 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 
-import {
-  Card,
-  CardContent,
-  CircularProgress
-} from '@mui/material'
+import { Card, CardContent, CircularProgress } from '@mui/material'
 
 import * as v from 'valibot'
 
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { Controller, useForm } from 'react-hook-form'
 
-import { minLength, object, string, number } from 'valibot'
+import { minLength, object, string, number, any, optional } from 'valibot'
 import { useSession } from 'next-auth/react'
 
 import HttpService from '@/services/http_service'
@@ -45,16 +41,21 @@ const AddCategoryDrawer = ({
   // States
   const [slug, setSlug] = useState('')
 
+  const [position, setPosition] = useState('0') // New position state
+
+  // Attributes state
+  const [attributes, setAttributes] = useState(11) // Assuming an initial value
+
   // console.log(slug)
   var initialData = {
     locale: 'en',
     name: '',
     description: '',
     slug: slug,
-    position: '0',
+    position: position,
     channel: 'default',
     display_mode: 'product_and_description',
-    attributes: [11]
+    attributes: [attributes]
   }
 
   if (selectedRow) {
@@ -63,15 +64,16 @@ const AddCategoryDrawer = ({
       description: selectedRow.description,
       slug: selectedRow.slug,
       status: selectedRow.status,
-      position: selectedRow.position,
-      attributes: selectedRow.attributes
+      position: '0',
+      attributes: attributes
     }
   }
   var catSchema = v.object({
     name: v.string([v.minLength(1, 'Category name is required')]),
     description: v.string([v.minLength(1, 'This description is required')]),
     slug: v.string([v.minLength(1, 'The slug is required')]),
-    position: v.string([v.minLength(1, 'The position is required')])
+    position: v.optional(any()),
+    attributes: v.optional(any())
   })
 
   const {
@@ -88,9 +90,7 @@ const AddCategoryDrawer = ({
     catSchema = v.object({
       name: v.string([v.minLength(1, 'Category name is required')]),
       description: v.string([v.minLength(1, 'This description is required')]),
-      slug: v.string([v.minLength(1, 'This slug is required')]),
-      status: v.string([v.minLength(1, 'This status is required')]),
-      position: v.optional(v.string())
+      slug: v.string([v.minLength(1, 'This slug is required')])
     })
   }
   const httpService = new HttpService()
@@ -107,14 +107,16 @@ const AddCategoryDrawer = ({
 
   const onSubmit = async formData => {
     setLoading(true)
-    if (selectedRow)
-      var res = await new HttpService().putData(
-        formData,
-        `admin/catalog/categories/${selectedRow.id}`,
-        session?.user?.token
-      )
-    else var res = await httpService.postData(formData, 'admin/catalog/categories', session?.user?.token)
 
+    // if (selectedRow)
+    //   var res = await new HttpService().putData(
+    //     formData,
+    //     `admin/catalog/categories/${selectedRow.id}`,
+    //     session?.user?.token
+    //   )
+    // else
+    var res = await new HttpService().postData(formData, 'admin/catalog/categories', session?.user?.token)
+   
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
     } else if (res?.user?.id > 0) {
@@ -180,8 +182,10 @@ const AddCategoryDrawer = ({
                         )}
                       />
                     )}
+                   
                   </Grid>
                 ))}
+
                 <Grid item xs={12} sm={12} className='flex gap-4'>
                   <Button variant='contained' type='submit' className='gap-2'>
                     {loading && <CircularProgress size={20} color='inherit' />}
