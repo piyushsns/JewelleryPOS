@@ -1,5 +1,5 @@
 // React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // MUI Imports
 import Button from '@mui/material/Button'
@@ -13,64 +13,119 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 
-import useCustomerAPI from '../../../../hooks/useCustomer'
+import { CircularProgress, FormHelperText, Grid, InputAdornment } from '@mui/material'
+import { Controller, useForm } from 'react-hook-form'
+
+import * as v from 'valibot'
+
+import { valibotResolver } from '@hookform/resolvers/valibot'
+
+import { useSession } from 'next-auth/react'
+
+import { toast } from 'react-toastify'
+
+import HttpService from '@/services/http_service.js'
+
+// import useCustomerAPI from '../../../../hooks/useCustomer'
 
 // Vars
-const initialData = {
-  name: '',
-  email: '',
-  dob: '',
-  gender: '',
-  phone: ''
-}
-
-// role: '',
-// plan: '',
-// status: ''
-
-const AddUserDrawer = ({ open, handleClose }) => {
-  // States
-  const [formData, setFormData] = useState(initialData)
-  const { storeItem } = useCustomerAPI()
-
-  const handleSubmit = e => {
-    e.preventDefault()
-    handleClose()
-
-    //setFormData(initialData)
-    console.log('======================================================', formData)
-    storeItem(formData)
+const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelectedRow }) => {
+  var customerInitialData = {
+    name: '',
+    email: '',
+    date_of_birth: '',
+    gender: '',
+    phone: ''
   }
 
-  const handleReset = () => {
-    handleClose()
-    setFormData({
-      name: '',
-      email: '',
-      dob: '',
-      gender: '',
-      phone: ''
+  if (selectedRow) {
+    customerInitialData = {
+      name: selectedRow.name,
+      email: selectedRow.email,
+      date_of_birth: selectedRow.date_of_birth,
+      gender: selectedRow.gender,
+      phone: selectedRow.phone
+    }
+  }
+
+  var baseCustomerSchema = v.object({
+    name: v.string([v.minLength(1, 'This name is required')]),
+    email: v.string([v.minLength(1, 'This email is required')]),
+    date_of_birth: v.string([v.minLength(1, 'The date of birth is required')]),
+    gender: v.string([v.minLength(1, 'This gender is required')]),
+    phone: v.string([v.minLength(1, 'This phone is required')])
+  })
+
+  if (selectedRow) {
+    baseCustomerSchema = v.object({
+      name: v.string([v.minLength(1, 'This name is required')]),
+      email: v.string([v.minLength(1, 'This email is required')]),
+      date_of_birth: v.string([v.minLength(1, 'The date of birth field is required')]),
+      gender: v.string([v.minLength(1, 'This gender is required')]),
+      phone: v.string([v.minLength(1, 'This phone is required')])
     })
   }
+
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: valibotResolver(baseCustomerSchema),
+    defaultValues: customerInitialData
+  })
+
+  // States
+  const [formData, setFormData] = useState(customerInitialData)
+  const [loading, setLoading] = useState(false)
+  const { data: session } = useSession()
+
+  const onSubmit = async formData => {
+    setLoading(true)
+
+    if (selectedRow)
+      var res = await new HttpService().putData(formData, `admin/customers/${selectedRow.id}`, session?.user?.token)
+    else var res = await new HttpService().postData(formData, 'admin/customers', session?.user?.token)
+
+    if (res.success == false && res.exception_type == 'validation') {
+      toast.warn(res?.message)
+    } else if (res?.user?.id > 0) {
+      toast.success(res?.message || 'failed to add Customer')
+      reset()
+      var refreshCustomers = await new HttpService().getData('admin/customers', session?.user?.token)
+
+      setSelectedRow(null)
+
+      setData(refreshCustomers.data ?? [])
+      handleClose()
+    }
+
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    console.log(errors)
+  }, [errors])
 
   return (
     <Drawer
       open={open}
       anchor='right'
       variant='temporary'
-      onClose={handleReset}
+      onClose={handleClose}
       ModalProps={{ keepMounted: true }}
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
       <div className='flex items-center justify-between pli-5 plb-[15px]'>
         <Typography variant='h5'>Add New Customer</Typography>
-        <IconButton onClick={handleReset}>
+        <IconButton onClick={handleClose}>
           <i className='ri-close-line' />
         </IconButton>
       </div>
       <Divider />
       <div className='p-5'>
-        <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
+        <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           <TextField
             label='Full Name'
             fullWidth
@@ -90,9 +145,9 @@ const AddUserDrawer = ({ open, handleClose }) => {
             type='date'
             format='MM/dd/yyyy'
             fullWidth
-            placeholder='dob'
-            value={formData.dob}
-            onChange={e => setFormData({ ...formData, dob: e.target.value })}
+            placeholder='date_of_birth'
+            value={formData.date_of_birth}
+            onChange={e => setFormData({ ...formData, date_of_birth: e.target.value })}
           />
           <TextField
             label='Email'
@@ -185,10 +240,16 @@ const AddUserDrawer = ({ open, handleClose }) => {
           </FormControl> */}
           <div className='flex items-center gap-4'>
             <Button variant='contained' type='submit'>
+              {loading && <CircularProgress size={20} color='inherit' />}
               Submit
             </Button>
-            <Button variant='outlined' color='error' type='reset' onClick={() => handleReset()}>
+
+            {/* <Button variant='outlined' color='error' type='reset' onClick={() => handleReset()}>
               Cancel
+            </Button> */}
+
+            <Button variant='outlined' type='reset' onClick={() => reset()}>
+              Reset
             </Button>
           </div>
         </form>
@@ -197,4 +258,4 @@ const AddUserDrawer = ({ open, handleClose }) => {
   )
 }
 
-export default AddUserDrawer
+export default AddCustomerDrawer

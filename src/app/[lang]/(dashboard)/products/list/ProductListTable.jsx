@@ -127,6 +127,7 @@ const ProductListTable = ({ tableData, HideAddProsuctForm }) => {
   const [data, setData] = useState([tableData])
 
   const [globalFilter, setGlobalFilter] = useState('')
+  const httpService = new HttpService()
 
   const { data: session } = useSession()
 

@@ -1,7 +1,7 @@
 'use client'
 /* eslint-disable padding-line-between-statements */
 // React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // MUI Imports
 import Grid from '@mui/material/Grid'
@@ -16,27 +16,27 @@ import Divider from '@mui/material/Divider'
 import {
   Card,
   CardContent,
-  CircularProgress,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select
+  CircularProgress
 } from '@mui/material'
+
+import * as v from 'valibot'
 
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { Controller, useForm } from 'react-hook-form'
-import { minLength, object, string } from 'valibot'
 
-import useCategoryAPI from '../../../../../hooks/useCategory'
+import { minLength, object, string, number } from 'valibot'
+import { useSession } from 'next-auth/react'
+
+import HttpService from '@/services/http_service'
 
 // Vars
 
 const AddCategoryDrawer = ({
   open,
   handleClose,
-  httpService,
-  session,
+  setData,
+  selectedRow,
+  setSelectedRow,
   categories,
   setCategories,
   setOpen,
@@ -44,23 +44,34 @@ const AddCategoryDrawer = ({
 }) => {
   // States
   const [slug, setSlug] = useState('')
-  console.log(slug)
-  const initialData = {
+
+  // console.log(slug)
+  var initialData = {
     locale: 'en',
     name: '',
     description: '',
     slug: slug,
     position: '0',
     channel: 'default',
-
     display_mode: 'product_and_description',
     attributes: [11]
   }
 
-  const schema = object({
-    name: string([minLength(1, 'This name is required')]),
-    description: string([minLength(1, 'This description is required')]),
-    slug: string([minLength(1, 'This slug is required')])
+  if (selectedRow) {
+    initialData = {
+      name: selectedRow.name,
+      description: selectedRow.description,
+      slug: selectedRow.slug,
+      status: selectedRow.status,
+      position: selectedRow.position,
+      attributes: selectedRow.attributes
+    }
+  }
+  var catSchema = v.object({
+    name: v.string([v.minLength(1, 'Category name is required')]),
+    description: v.string([v.minLength(1, 'This description is required')]),
+    slug: v.string([v.minLength(1, 'The slug is required')]),
+    position: v.string([v.minLength(1, 'The position is required')])
   })
 
   const {
@@ -69,12 +80,20 @@ const AddCategoryDrawer = ({
     handleSubmit,
     formState: { errors }
   } = useForm({
-    resolver: valibotResolver(schema),
+    resolver: valibotResolver(catSchema),
     defaultValues: initialData
   })
 
-  const [formData, setFormData] = useState(initialData)
-  const { storeItem } = useCategoryAPI()
+  if (selectedRow) {
+    catSchema = v.object({
+      name: v.string([v.minLength(1, 'Category name is required')]),
+      description: v.string([v.minLength(1, 'This description is required')]),
+      slug: v.string([v.minLength(1, 'This slug is required')]),
+      status: v.string([v.minLength(1, 'This status is required')]),
+      position: v.optional(v.string())
+    })
+  }
+  const httpService = new HttpService()
   const [errorState, setErrorState] = useState(null)
 
   const [loading, setLoading] = useState(false)
@@ -84,36 +103,48 @@ const AddCategoryDrawer = ({
     { name: 'description', label: 'Description', type: 'text', required: true, size: 6, classNames: '' },
     { name: 'slug', label: 'Slug', type: 'text', required: true, size: 6, classNames: '' }
   ]
+  const { data: session } = useSession()
 
   const onSubmit = async formData => {
     setLoading(true)
-    var res = await httpService.postData(formData, 'admin/catalog/categories', session?.user?.token)
+    if (selectedRow)
+      var res = await new HttpService().putData(
+        formData,
+        `admin/catalog/categories/${selectedRow.id}`,
+        session?.user?.token
+      )
+    else var res = await httpService.postData(formData, 'admin/catalog/categories', session?.user?.token)
 
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
-    } else if (res?.data?.id > 0) {
-      setCategories([...categories, res.data])
-      toast.success(res.message)
+    } else if (res?.user?.id > 0) {
+      toast.success(res?.message || 'failed to add category')
       reset()
-      setOpen(false)
-      setSelectedCategories(res.data)
-    }
+      var refreshCategories = await new HttpService().getData('admin/catalog/categories', session?.user?.token)
 
+      setSelectedRow(null)
+
+      setData(refreshCategories.data ?? [])
+      handleClose()
+    }
     setLoading(false)
   }
+  useEffect(() => {
+    console.log(errors)
+  }, [errors])
 
   return (
     <Drawer
       open={open}
       anchor='right'
       variant='temporary'
-      onClose={reset}
+      onClose={handleClose}
       ModalProps={{ keepMounted: true }}
       sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
     >
       <div className='flex items-center justify-between pli-5 plb-[15px]'>
         <Typography variant='h5'>Add Category</Typography>
-        <IconButton onClick={reset}>
+        <IconButton onClick={handleClose}>
           <i className='ri-close-line' />
         </IconButton>
       </div>
@@ -124,7 +155,7 @@ const AddCategoryDrawer = ({
             <form className='flex flex-col gap-5' noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={5}>
                 {fieldObjectArray.map((fieldobj, index) => (
-                  <Grid key={index} item xs={12} sm={12} lg={fieldobj.size} className={fieldobj.classNames}>
+                  <Grid key={index} item lg={12} sm={12} className={fieldobj.classNames}>
                     {fieldobj.type === 'text' && (
                       <Controller
                         name={fieldobj.name}

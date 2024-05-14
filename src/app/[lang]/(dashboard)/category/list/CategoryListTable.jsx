@@ -109,33 +109,38 @@ const columnHelper = createColumnHelper()
 const CategoryListTable = ({ tableData }) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
+  const [selectedRow, setSelectedRow] = useState(null)
   const [rowSelection, setRowSelection] = useState({})
+  const httpService = new HttpService()
 
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
 
   const { data: session } = useSession()
 
-  const fetchCategories = async () => {
-    console.log(session?.user?.token)
+  useEffect(() => {
+    async function fetchCategories() {
+      var res = await httpService.getData('admin/catalog/categories', session?.user?.token)
 
-    var res = await HttpService.getData('admin/catalog/categories', session?.user?.token)
-
-    if (res.success == false && res.exception_type == 'validation') {
-      toast.warn(res?.message)
-    } else if (res?.data?.id > 0) {
-      setData(res.data)
-      setOpen(false)
+      setData(res.data ?? [])
     }
-  }
 
-  React.useEffect(() => {
     if (session?.user?.token) {
       fetchCategories()
     }
   }, [session])
 
-  console.log('================================================>', data)
+  const editCategories = row => {
+    setAddUserOpen(true)
+    setSelectedRow(row.original)
+    console.log('xxxxxxxxxxx',row.original)
+  }
+
+  const deleteCategories = row => {
+    console.log(row.original)
+  }
+
+  // console.log('================================================>', data)
 
   // Hooks
   const { lang: locale } = useParams()
@@ -146,10 +151,10 @@ const CategoryListTable = ({ tableData }) => {
         header: 'Category Name',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
+            {getAvatar({ avatar: row.original.avatar, fullName: row.original.name })}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
-                {row.original.fullName}
+                {row.original.name}
               </Typography>
               {/* <Typography variant='body2'>{row.original.name}</Typography> */}
             </div>
@@ -160,21 +165,26 @@ const CategoryListTable = ({ tableData }) => {
         header: 'Category Status',
         cell: ({ row }) => (
           <div className='flex items-center gap-3'>
-            <Typography className='font-medium' color='text.primary'>
-              {row.original.status}
-            </Typography>
+            <Chip
+              size='small'
+              variant='tonal'
+              className='capitalize'
+              label={row.original.status == 1 ? 'Active' : 'In active'}
+              color={userStatusObj[row.original.status == 1 ? 'active' : 'inactive']}
+            />
           </div>
-        )
+        ),
+        enableSorting: false
       }),
       columnHelper.accessor('action', {
         header: 'Action',
-        cell: () => (
+        cell: ({ row }) => (
           <div className='flex items-center'>
-            <IconButton>
-              <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
-            </IconButton>
-            <IconButton>
+            <IconButton onClick={() => editCategories(row)}>
               <i className='ri-edit-box-line text-[22px] text-textSecondary' />
+            </IconButton>
+            <IconButton onClick={() => deleteCategories(row)}>
+              <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
             </IconButton>
           </div>
         ),
@@ -327,7 +337,19 @@ const CategoryListTable = ({ tableData }) => {
           onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
         />
       </Card>
-      <AddCategoryDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
+      {/* <AddCategoryDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} /> */}
+      {addUserOpen && (
+        <AddCategoryDrawer
+          open={addUserOpen}
+          handleClose={() => {
+            setSelectedRow(null)
+            setAddUserOpen(!addUserOpen)
+          }}
+          setData={setData}
+          selectedRow={selectedRow}
+          setSelectedRow={setSelectedRow}
+        />
+      )}
     </>
   )
 }

@@ -33,6 +33,8 @@ import CustomAvatar from '@core/components/mui/Avatar'
 
 import AddNewCustomer from './AddNewCustomer'
 
+import useCheckoutAPI from '../../../../hooks/useCheckoutAPI'
+
 export const CustomerDialogForm = props => {
   return (
     <Dialog fullWidth maxWidth='md' scroll='body' open={props.open} onClose={() => props.setOpen(false)}>
@@ -60,6 +62,22 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
   const httpService = new HttpService()
 
   const { data: session } = useSession()
+
+  const {
+    saveAddressLoading,
+    saveShippingLoading,
+    savePaymentLoading,
+    checkMinimumOrderLoading,
+    saveOrderLoading,
+    summaryLoading,
+    error,
+    saveAddress,
+    saveShipping,
+    savePayment,
+    updateCustomer,
+    getSummary,
+    saveOrder
+  } = useCheckoutAPI()
 
   const [data, setData] = useState(() => [])
 
@@ -227,9 +245,10 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
     columnHelper.accessor('name', {
       header: 'Item'
     }),
-    columnHelper.accessor('purity', {
-      header: 'Purity (K)'
-    }),
+
+    // columnHelper.accessor('purity', {
+    //   header: 'Purity (K)'
+    // }),
     columnHelper.accessor('formatted_price', {
       header: 'Rate/gm'
     }),
@@ -338,6 +357,55 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
 
   const handleCustomerSelect = customer => {
     setSelectedCustomer(customer || {})
+  }
+
+  const checkoutProcess = async () => {
+    if (selectedCustomer) {
+      try {
+        const addressData = {
+          id: null,
+          company_name: 'XYZ',
+          first_name: selectedCustomer.first_name,
+          last_name: selectedCustomer.last_name,
+          address1: ['HaiderGanj, Mama Ka Bazar'],
+          email: selectedCustomer.email,
+          phone: selectedCustomer.phone,
+          city: 'Gwalior',
+          state: 'MP',
+          country: 'IN',
+          postcode: '474001',
+          use_for_shipping: true
+        }
+
+        const shippingData = {
+          shipping_method: 'free_free'
+        }
+
+        const paymentData = {
+          payment: {
+            description: 'Cash On Delivery',
+            image: 'https://suryaethnicapi.mytiny.us/themes/shop/default/build/assets/cash-on-delivery-73061c49.png',
+            method: 'cashondelivery',
+            method_title: 'Cash On Delivery',
+            sort: '1'
+          }
+        }
+
+        const updateCustomerResponse = await updateCustomer(selectedCustomer.id)
+
+        const addressResponse = await saveAddress(addressData)
+
+        const shippingResponse = await saveShipping(shippingData)
+
+        const paymentResponse = await savePayment(paymentData)
+
+        const orderResponse = await saveOrder()
+
+        const latestSummary = await getSummary()
+      } catch (error) {
+        console.error(error)
+      }
+    }
   }
 
   return (
@@ -455,14 +523,15 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
               </td>
             </tr>
             <tr>
-              <td rowSpan={'100%'} style={{ textAlign: 'end' }}>
-                <Grid xs={12} className='flex justify-end mt-5'>
-                  <Link href={`/${'en'}/apps/invoice/preview/${'4987'}`}>
-                    <Button variant='contained' color='primary'>
-                      Place Order
-                    </Button>
-                  </Link>
-                </Grid>
+              <td>
+                <Button className='is-full sm:is-auto lg:is-full' variant='contained' onClick={() => checkoutProcess()}>
+                  Place Order
+                </Button>
+              </td>
+              <td>
+                <Button className='is-full sm:is-auto lg:is-full' variant='outlined'>
+                  Hold The Order
+                </Button>
               </td>
             </tr>
           </tbody>
