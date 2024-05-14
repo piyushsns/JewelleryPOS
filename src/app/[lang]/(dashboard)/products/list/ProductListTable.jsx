@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default-member */
 /* eslint-disable padding-line-between-statements */
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
@@ -117,60 +118,46 @@ const buttonProps = {
 
 const columnHelper = createColumnHelper()
 
-const ProductListTable = ({tableData, HideAddProsuctForm }) => {
-  console.log('HideAddProsuctFormHideAddProsuctFormHideAddProsuctFormHideAddProsuctFormHideAddProsuctForm11111111111111111111',HideAddProsuctForm);
-
+const ProductListTable = ({ tableData, HideAddProsuctForm }) => {
   // States
-  const [addUserOpen, setAddUserOpen] = useState(false)
 
   const [rowSelection, setRowSelection] = useState({})
+  const [addUserOpen, setAddUserOpen] = useState(false)
 
-  const [data, setData] = useState()
+  const [data, setData] = useState([tableData])
 
   const [globalFilter, setGlobalFilter] = useState('')
 
   const { data: session } = useSession()
 
   const fetchProducts = async () => {
-
-    var res = await HttpService.getData('admin/catalog/products', session?.user?.token)
+    var res = await new HttpService().getData('admin/catalog/products', session?.user?.token)
+    setData(res.data)
 
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
     } else if (res?.data?.id > 0) {
-      setData(res.data)
       setOpen(false)
     }
   }
 
-  React.useEffect(() => {
-    fetchCategories()
-  }, [])
-
   useEffect(() => {
-    if (localStorage.getItem('product_id')) {
-      var Id = localStorage.getItem('product_id')
-
     if (session?.user?.token) {
       fetchProducts()
     }
-  }
-
   }, [session])
 
-  console.log('================================================>', data)
+  React.useEffect(() => {
+    var Id = localStorage.getItem('product_id')
 
-  // React.useEffect(() => {
-  //   fetchProducts()
-  //   var Id = localStorage.getItem('product_id')
-  //   if (Id !== '') {
-  //     setAddUserOpen(!addUserOpen)
-  //   }
-  // }, [])
+    if (Id !== '' && Id !== undefined) {
+      HideAddProsuctForm(Id)
+    }
+  }, [])
 
-  const handleSubmit = () => {
-    HideAddProsuctForm();
-  };
+  const handleSubmit = (id) => {
+    HideAddProsuctForm(id)
+  }
 
   // Hooks
   const { lang: locale } = useParams()
@@ -181,10 +168,10 @@ const ProductListTable = ({tableData, HideAddProsuctForm }) => {
         header: 'Product Name',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
+            {getAvatar({ avatar: row.original.avatar, fullName: row.original.name })}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
-                {row.original.fullName}
+                {row.original.name}
               </Typography>
               <Typography variant='body2'>{row.original.username}</Typography>
             </div>
@@ -233,12 +220,12 @@ const ProductListTable = ({tableData, HideAddProsuctForm }) => {
 
       columnHelper.accessor('action', {
         header: 'Action',
-        cell: () => (
+        cell: ({ row }) => (
           <div className='flex items-center'>
             <IconButton>
               <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => handleSubmit(row.original.id)}>
               <i className='ri-edit-box-line text-[22px] text-textSecondary' />
             </IconButton>
           </div>
@@ -317,10 +304,15 @@ const ProductListTable = ({tableData, HideAddProsuctForm }) => {
                 placeholder='Search Category'
                 className='is-full sm:is-auto'
               />
-              {/* <OpenDialogOnElementClick element={Button} elementProps={buttonProps} dialog={ProductCard} /> */}
-              <Button variant='contained' onClick={handleSubmit} className='is-full sm:is-auto'>
+              <OpenDialogOnElementClick
+                element={Button}
+                elementProps={buttonProps}
+                dialog={ProductCard}
+                HideAddProsuctForm={HideAddProsuctForm}
+              />
+              {/* <Button variant='contained' onClick={handleSubmit} className='is-full sm:is-auto'>
                 Add Product
-              </Button>
+              </Button> */}
             </div>
           </div>
           <div className='overflow-x-auto'>

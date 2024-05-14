@@ -1,34 +1,15 @@
 'use client'
-/* eslint-disable @next/next/no-async-client-component */
+
+/* eslint-disable import/order */
+
 /* eslint-disable import/no-unresolved */
-// Component Imports
 
-
-import { useState } from 'react';
-
-import AddProductPage from './AddProducts/AddProductPage';
-import ProductListTable from './list/ProductListTable';
-
-// const getData = async () => {
-//   // Vars
-//   const res = await fetch(`${process.env.API_URL}/apps/category-list`)
-
-//   if (!res.ok) {
-//     throw new Error('Failed to fetch userData')
-//   }
-
-//   return res.json()
-// }
+import ProductListPage from './list/'
 
 const ProductListApp = () => {
-  // Vars
-  const [addUserOpen, setAddUserOpen] = useState(false);
 
-  const hideAddProductForm = () => {
-    setAddUserOpen(false);
-  };
 
-  const data = [
+  const datas = [
     {
       id: 1,
       fullName: 'Necklace',
@@ -74,12 +55,7 @@ const ProductListApp = () => {
     }
   ]
 
-  return (
-    <>
-      <ProductListTable userData={data} HideAddProsuctForm={hideAddProductForm} />
-      {addUserOpen && <AddProductPage setAddUserOpen={setAddUserOpen} addUserOpen={addUserOpen} />}
-    </>
-  );
+  return <ProductListPage userData={datas} />
 }
 
 export default ProductListApp

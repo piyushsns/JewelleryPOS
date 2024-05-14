@@ -3,7 +3,12 @@
 // React Imports
 import { useEffect, useState } from 'react'
 
+import { useSession } from 'next-auth/react'
+
 // MUI Imports
+
+import { toast } from 'react-toastify'
+
 import Grid from '@mui/material/Grid'
 import Dialog from '@mui/material/Dialog'
 import Button from '@mui/material/Button'
@@ -19,9 +24,11 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
 import useProductAPI from '../../../../../hooks/useProduct'
 
+import HttpService from '@/services/http_service'
+
 // Vars
 
-const ProductCard = ({ open, setOpen, data }) => {
+const ProductCard = ({ open, setOpen, data ,HideAddProsuctForm}) => {
   // States
   const initialCardData = {
     type: 'simple',
@@ -30,6 +37,7 @@ const ProductCard = ({ open, setOpen, data }) => {
   }
 
   const [cardData, setCardData] = useState(initialCardData)
+  const { data: session } = useSession()
 
   const { storeItem } = useProductAPI()
 
@@ -43,19 +51,18 @@ const ProductCard = ({ open, setOpen, data }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
-  const hendleSubmit = () => {
-    var data = storeItem(cardData);
-    
-    data.then(datas => {
+  const hendleSubmit = async () => {
+    var data = await new HttpService().postData(cardData, `admin/catalog/products`, session?.user?.token)
 
-      if (datas != '') {
-
-        localStorage.setItem('product_id', datas?.data.id)
-      }
-
-    })
-
-    handleClose()
+    if (data.success == false && data.exception_type == 'validation') {
+      toast.warn(data?.message)
+    } else if (data?.data?.id > 0) {
+      localStorage.setItem('product_id', data?.data.id)
+      HideAddProsuctForm()
+      toast.success(data?.message || 'failed to add product')
+      handleClose()
+      setOpen(false)
+    }
   }
 
   return (
@@ -64,9 +71,9 @@ const ProductCard = ({ open, setOpen, data }) => {
         variant='h4'
         className='flex flex-col gap-2 text-center pbs-10 pbe-6 pli-10 sm:pbs-16 sm:pbe-6 sm:pli-16'
       >
-        {data ? 'Edit Card' : 'Add New Card'}
+        {data ? 'Edit Product' : 'Add New Product'}
         <Typography component='span' className='flex flex-col text-center'>
-          {data ? 'Edit your saved card details' : 'Add card for future billing'}
+          {/* {data ? 'Edit your saved card details' : 'Add Product '} */}
         </Typography>
       </DialogTitle>
 
@@ -79,14 +86,12 @@ const ProductCard = ({ open, setOpen, data }) => {
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
-                label='Type'
+                label='Product Type'
                 value={cardData.type}
                 onChange={e => setCardData({ ...cardData, type: e.target.value })}
               >
                 <MenuItem value='simple'>Simple</MenuItem>
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Germany'>Germany</MenuItem>
+                <MenuItem value='contegratel'>Contegratel</MenuItem>
               </Select>
             </FormControl>
           </Grid>
