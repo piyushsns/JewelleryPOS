@@ -77,11 +77,6 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...prop
 }
 
 const EmpListTable = () => {
-  const userStatusObj = {
-    active: 'success',
-    inactive: 'danger'
-  }
-
   const columnHelper = createColumnHelper()
 
   const { data: session } = useSession()
@@ -171,8 +166,8 @@ const EmpListTable = () => {
               size='small'
               variant='tonal'
               className='capitalize'
-              label={row.original.status == 1 ? 'Active' : 'In active'}
-              color={userStatusObj[row.original.status == 1 ? 'active' : 'inactive']}
+              color={row?.original?.status == '1' ? 'success' : 'error'}
+              {...(row?.original?.status == '1' ? { label: 'Active' } : { label: 'In Active' })}
             />
           </div>
         )
