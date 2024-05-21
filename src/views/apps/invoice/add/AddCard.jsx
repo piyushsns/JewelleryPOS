@@ -80,12 +80,13 @@ const AddAction = ({ invoiceData }) => {
                       <Typography color='text.primary'>+1 (123) 456 7891, +44 (876) 543 2198</Typography>
                     </div>
                   </div>
-                  <div className='flex flex-col gap-2'>
+                  <div className='flex flex-col gap-2 '>
                     <div className='flex items-center gap-4'>
                       <Typography variant='h5' className='min-is-[95px]'>
                         Invoice
                       </Typography>
                       <TextField
+                      className='w-40'
                         fullWidth
                         size='small'
                         value={invoiceData[0].id}
@@ -119,6 +120,7 @@ const AddAction = ({ invoiceData }) => {
                         dateFormat={'yyyy-MM-dd'}
                         onChange={date => setDueDate(date)}
                         customInput={<TextField fullWidth size='small' />}
+
                       />
                     </div>
                   </div>
