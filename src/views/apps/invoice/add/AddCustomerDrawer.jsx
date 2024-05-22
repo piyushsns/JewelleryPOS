@@ -22,8 +22,6 @@ import { minLength, object, string } from 'valibot';
 
 
 
-
-
 const AddCustomerDrawer = ({httpService, open, setOpen, session, customers, setCustomers, setSelectedCustomer }) => {
 
   const initialFormData = {
@@ -57,7 +55,7 @@ const AddCustomerDrawer = ({httpService, open, setOpen, session, customers, setC
         defaultValues: initialFormData
   });
 
-   
+
   const [errorState, setErrorState] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -194,7 +192,7 @@ export default AddCustomerDrawer;
 
 
 
-// 'use client'
+
 
 // // React Imports
 // import { useState } from 'react'

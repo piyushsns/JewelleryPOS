@@ -34,7 +34,7 @@ import themeConfig from '@configs/themeConfig'
 import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 
 const AddAction = ({ invoiceData }) => {
-  // States
+ 
   const [open, setOpen] = useState(false)
   const [count, setCount] = useState(1)
   const [selectData, setSelectData] = useState(null)
@@ -43,7 +43,7 @@ const AddAction = ({ invoiceData }) => {
   const [formData, setFormData] = useState(initialFormData)
   const [selectedItems, setSelectedItems] = useState(Array(count).fill({ item: '', karat: 24 }))
 
-  // Hooks
+
   const isBelowMdScreen = useMediaQuery(theme => theme.breakpoints.down('md'))
   const isBelowSmScreen = useMediaQuery(theme => theme.breakpoints.down('sm'))
 
@@ -261,7 +261,7 @@ const AddAction = ({ invoiceData }) => {
                       <div className='col-span-12 sm:col-span-4'>
                         <InputLabel className='mb-2'>Karat</InputLabel>
                         <TextField
-                        
+
                           // label='Karat'
 
                           fullWidth

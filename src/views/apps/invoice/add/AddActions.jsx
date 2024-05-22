@@ -21,11 +21,11 @@ import Switch from '@mui/material/Switch'
 // Component Imports
 import SendInvoiceDrawer from '@views/apps/invoice/shared/SendInvoiceDrawer'
 
-// Util Imports
+
 import { getLocalizedUrl } from '@/utils/i18n'
 
 const AddActions = () => {
-  // States
+
   const [sendDrawerOpen, setSendDrawerOpen] = useState(false)
 
   // Hooks
