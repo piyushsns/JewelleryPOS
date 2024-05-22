@@ -94,7 +94,7 @@ const AddNewCustomer = ({ httpService, session, customers, setCustomers, setOpen
   }
 
   return (
-    <Card fullWidth open={true} maxWidth='md' scroll='body'>
+    <Card fullWidth open={true}  maxWidth='md' scroll='body'>
       <CardContent>
         <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
