@@ -134,9 +134,15 @@ const POSPage = () => {
     if (isNotExist === -1) {
       const result = await CartAPIService.store(product.id, 1)
 
-      setSelectedProducts(result.data.items)
-
-      toast.success(result.message)
+      if (
+        result.redirect === undefined ||
+        result.message !== 'The requested quantity is not available, please try again later.'
+      ) {
+        setSelectedProducts(result.data.items)
+        toast.success(result.message)
+      } else {
+        toast.warn(result.message)
+      }
     }
 
     setIsRefreshOrderSummary(true)

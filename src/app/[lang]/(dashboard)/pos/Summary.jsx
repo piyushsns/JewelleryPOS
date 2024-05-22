@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import { useSession } from 'next-auth/react'
 
-import { Card, CardHeader, Grid, Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material'
+import { Card, CardHeader, Grid, Dialog, DialogTitle, DialogContent, IconButton, CircularProgress } from '@mui/material'
 
 import Button from '@mui/material/Button'
 import Autocomplete from '@mui/material/Autocomplete'
@@ -83,7 +83,9 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
 
   const [customers, setCustomers] = useState([])
 
-  const [selectedCustomer, setSelectedCustomer] = useState({})
+  const [loading, setLoading] = useState(false)
+
+  const [selectedCustomer, setSelectedCustomer] = useState(null)
 
   const [isDataUpdated, setIsDataUpdated] = useState(false)
 
@@ -156,11 +158,7 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
     }
   }, [session])
 
-  useEffect(() => {
-    console.log('selectedCustomer ==>', selectedCustomer)
-  }, [selectedCustomer])
-
-  // first Timew
+  // first Time
   useEffect(() => {
     async function fetchNow() {
       try {
@@ -177,6 +175,7 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
     fetchNow()
   }, [])
 
+  // second Time
   useEffect(() => {
     if (isRefreshOrderSummary === true) {
       async function fetchNow() {
@@ -217,14 +216,22 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
 
         setIsDataUpdated(false)
 
-        setCart(res.data)
+        if (res?.data && res?.data?.items) {
+          setCart(res.data)
+          setData(res.data.items)
 
-        setData(res.data.items)
+          toast.success(res.message)
+        } else if (res?.data?.message === 'The requested quantity is not available, please try again later.') {
+          toast.warn(res.data.message)
+
+          setCart(cart)
+
+          setData(cart?.items, [])
+        } else {
+          toast.warn(JSON.stringify(res))
+        }
 
         setIsRefreshOrderSummary(false)
-
-        toast.success(res.message)
-        console.log(res)
       } catch (error) {
         console.error('Error updating cart items:', error)
       }
@@ -356,55 +363,78 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
   })
 
   const handleCustomerSelect = customer => {
-    setSelectedCustomer(customer || {})
+    setSelectedCustomer(customer || null)
   }
 
   const checkoutProcess = async () => {
     if (selectedCustomer) {
       try {
-        const addressData = {
-          id: null,
-          company_name: 'XYZ',
-          first_name: selectedCustomer.first_name,
-          last_name: selectedCustomer.last_name,
-          address1: ['HaiderGanj, Mama Ka Bazar'],
-          email: selectedCustomer.email,
-          phone: selectedCustomer.phone,
-          city: 'Gwalior',
-          state: 'MP',
-          country: 'IN',
-          postcode: '474001',
-          use_for_shipping: true
-        }
-
-        const shippingData = {
-          shipping_method: 'free_free'
-        }
-
-        const paymentData = {
-          payment: {
-            description: 'Cash On Delivery',
-            image: 'https://suryaethnicapi.mytiny.us/themes/shop/default/build/assets/cash-on-delivery-73061c49.png',
-            method: 'cashondelivery',
-            method_title: 'Cash On Delivery',
-            sort: '1'
-          }
-        }
-
+        setLoading(true)
         const updateCustomerResponse = await updateCustomer(selectedCustomer.id)
 
-        const addressResponse = await saveAddress(addressData)
+        if (updateCustomerResponse.success === true) {
+          const addressResponse = await saveAddress({
+            billing: {
+              id: null,
+              company_name: 'XYZ',
+              first_name: selectedCustomer.first_name,
+              last_name: selectedCustomer.last_name,
+              address1: ['Street XYZ'],
+              email: selectedCustomer.email,
+              phone: selectedCustomer.phone,
+              city: 'Gwalior',
+              state: 'MP',
+              country: 'IN',
+              postcode: '474001',
+              use_for_shipping: true
+            }
+          })
 
-        const shippingResponse = await saveShipping(shippingData)
+          if (addressResponse.success === true) {
+            const shippingResponse = await saveShipping({ shipping_method: 'free_free' })
 
-        const paymentResponse = await savePayment(paymentData)
+            if (shippingResponse.success === true) {
+              const paymentResponse = await savePayment({
+                payment: {
+                  description: 'Cash On Delivery',
+                  image:
+                    'https://suryaethnicapi.mytiny.us/themes/shop/default/build/assets/cash-on-delivery-73061c49.png',
+                  method: 'cashondelivery',
+                  method_title: 'Cash On Delivery',
+                  sort: '1'
+                }
+              })
 
-        const orderResponse = await saveOrder()
+              if (paymentResponse.success === true) {
+                const orderResponse = await saveOrder()
 
-        const latestSummary = await getSummary()
+                if (orderResponse.success === true) {
+                  localStorage.removeItem('current_cart_id')
+                  setCart({})
+                  setData([])
+                  toast.success(orderResponse.message)
+                  setLoading(false)
+                } else {
+                  toast.error(orderResponse.message)
+                }
+              } else {
+                toast.error(paymentResponse.message)
+              }
+            } else {
+              toast.error(shippingResponse.message)
+            }
+          } else {
+            toast.error(addressResponse.message)
+          }
+        } else {
+          toast.error(updateCustomerResponse.message)
+        }
       } catch (error) {
         console.error(error)
+        toast.error(JSON.stringify(error))
       }
+    } else {
+      toast.error('Please select customer before placing an order..')
     }
   }
 
@@ -484,7 +514,7 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
                         ListboxComponent={List}
                         options={customers || []}
                         onChange={(event, value) => handleCustomerSelect(value)}
-                        {...(selectedCustomer.id != undefined ? { value: selectedCustomer } : { value: null })}
+                        {...(selectedCustomer?.id != undefined ? { value: selectedCustomer } : { value: null })}
                         getOptionLabel={option => `ID: ${option.id} ${option.name} (${option.email} | ${option.phone})`}
                         renderInput={params => (
                           <TextField {...params} size='small' placeholder='Select Existing customer...' />
@@ -525,14 +555,15 @@ export default function Summary({ isRefreshOrderSummary, setIsRefreshOrderSummar
             <tr>
               <td>
                 <Button className='is-full sm:is-auto lg:is-full' variant='contained' onClick={() => checkoutProcess()}>
+                  {loading && <CircularProgress size={20} color='inherit' />}
                   Place Order
                 </Button>
               </td>
-              <td>
+              {/* <td>
                 <Button className='is-full sm:is-auto lg:is-full' variant='outlined'>
                   Hold The Order
                 </Button>
-              </td>
+              </td> */}
             </tr>
           </tbody>
         </table>
