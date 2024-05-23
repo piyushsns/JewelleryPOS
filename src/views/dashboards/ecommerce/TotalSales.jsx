@@ -6,19 +6,21 @@ import { useEffect, useState } from 'react'
 // MUI Imports
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+
 import Typography from '@mui/material/Typography'
+
 import Logo_1 from '@views/dashboards/ecommerce/Logo_1'
 
 // Constants
 const GRAMS_PER_OUNCE = 31.1035;
 const GRAMS_PER_TEN_GRAMS = 10;
-const USD_TO_INR_EXCHANGE_RATE = 82; // Example conversion rate, you should update this with the latest rate
+const USD_TO_INR_EXCHANGE_RATE = 82;
 
 const GoldPrice = () => {
   const [priceInINR, setPriceInINR] = useState(null);
   const apiKey = 'aKf2SiEpnhA+a2OH6Zznaw==DglWBEwRUkF2zXG9';
 
-  // Fetch the gold price and exchange rate when the component mounts
+
   useEffect(() => {
     const fetchGoldPrice = async () => {
       try {
@@ -27,11 +29,13 @@ const GoldPrice = () => {
             'X-Api-Key': 'aKf2SiEpnhA+a2OH6Zznaw==DglWBEwRUkF2zXG9'
           }
         });
+
         const data = await response.json();
-        const pricePerOunce = data.price; // Assuming the API response returns an array with price field
+        const pricePerOunce = data.price;
         const pricePerGram = pricePerOunce / GRAMS_PER_OUNCE;
         const pricePerTenGrams = pricePerGram * GRAMS_PER_TEN_GRAMS;
         const priceInINR = pricePerTenGrams * USD_TO_INR_EXCHANGE_RATE;
+        
         setPriceInINR(priceInINR);
       } catch (error) {
         console.error('Error fetching gold price:', error);
