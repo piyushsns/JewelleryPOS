@@ -26,8 +26,6 @@ import { toast } from 'react-toastify'
 
 import HttpService from '@/services/http_service.js'
 
-
-// Vars
 const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelectedRow }) => {
   var customerInitialData = {
     first_name: '',
@@ -119,7 +117,6 @@ const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelecte
     defaultValues: customerInitialData
   })
 
-  // States
   const [loading, setLoading] = useState(false)
   const [errorState, setErrorState] = useState(null)
   const { data: session } = useSession()
@@ -135,12 +132,16 @@ const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelecte
     if (res.success == false && res.exception_type == 'validation') {
       toast.warn(res?.message)
     } else if (res?.user?.id > 0) {
-      toast.success(res?.message || 'failed to add Customer')
+      toast.success(res?.message || 'Customer added successfully!')
       reset()
       var refreshCustomers = await new HttpService().getData('admin/customers', session?.user?.token)
 
       setSelectedRow(null)
       setData(refreshCustomers.data ?? [])
+
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
       handleClose()
     }
 
@@ -162,7 +163,7 @@ const AddCustomerDrawer = ({ open, handleClose, setData, selectedRow, setSelecte
     >
       <div className='flex items-center justify-between pli-5 plb-[15px]'>
         <Typography variant='h5'>Add New Customer</Typography>
-        <IconButton onClick={handleClose}>
+        <IconButton  onClick={handleClose}>
           <i className='ri-close-line' />
         </IconButton>
       </div>
