@@ -110,7 +110,7 @@ const ProfitStackedBar = () => {
     xaxis: {
       axisTicks: { show: false },
       axisBorder: { show: false },
-      categories: [2016, 2017, 2018, 2019, 2020, 2021, 2022],
+      categories: [2017, 2018, 2019, 2020, 2021, 2022, 2023],
       labels: {
         style: { colors: disabledText, fontSize: theme.typography.body2.fontSize }
       }
@@ -200,7 +200,7 @@ const ProfitStackedBar = () => {
   }
 
   return (
-    <Card>
+    <Card className='h-[23rem]'>
       <Grid container>
         <Grid item xs={12} sm={7} className='border-be sm:border-be-0 sm:border-ie'>
           <CardHeader title='Total Profit' />

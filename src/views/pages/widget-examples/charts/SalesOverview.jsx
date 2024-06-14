@@ -50,7 +50,7 @@ const CardWidgetsSalesOverview = () => {
     stroke: { width: 0 },
     legend: { show: false },
     dataLabels: { enabled: false },
-    labels: ['Apparel', 'Electronics', 'FMCG', 'Other Sales'],
+    labels: ['Gold', 'Silver', 'Diamond', 'Other Products'],
     states: {
       hover: {
         filter: { type: 'none' }
@@ -94,7 +94,7 @@ const CardWidgetsSalesOverview = () => {
   return (
     <Card>
       <CardHeader
-        title='Sales Overview'
+        title='Overview'
         action={<OptionsMenu iconClassName='text-textPrimary' options={['Last 28 Days', 'Last Month', 'Last Year']} />}
       />
       <CardContent>
@@ -108,8 +108,8 @@ const CardWidgetsSalesOverview = () => {
                 <i className='ri-wallet-line text-primary' />
               </CustomAvatar>
               <div className='flex flex-col'>
-                <Typography>Number of Sales</Typography>
-                <Typography variant='h5'>$86,400</Typography>
+                <Typography>Number of Products</Typography>
+                <Typography variant='h5'>₹86,400</Typography>
               </div>
             </div>
             <Divider className='mlb-6' />
@@ -119,36 +119,36 @@ const CardWidgetsSalesOverview = () => {
                   <div>
                     <i className='ri-circle-fill text-[10px] text-primary' />
                   </div>
-                  <Typography>Apparel</Typography>
+                  <Typography>Gold</Typography>
                 </div>
-                <Typography className='font-medium'>$12,150</Typography>
+                <Typography className='font-medium'>₹12,150</Typography>
               </Grid>
               <Grid item xs={6}>
                 <div className='flex items-center gap-2 mbe-1'>
                   <div>
                     <i className='ri-circle-fill text-[10px] text-primary' />
                   </div>
-                  <Typography>Electronics</Typography>
+                  <Typography>Silver</Typography>
                 </div>
-                <Typography className='font-medium'>$24,900</Typography>
+                <Typography className='font-medium'>₹24,900</Typography>
               </Grid>
               <Grid item xs={6}>
                 <div className='flex items-center gap-2 mbe-1'>
                   <div>
                     <i className='ri-circle-fill text-[10px] text-primary' />
                   </div>
-                  <Typography>FMCG</Typography>
+                  <Typography>Diamond</Typography>
                 </div>
-                <Typography className='font-medium'>$12,750</Typography>
+                <Typography className='font-medium'>₹12,750</Typography>
               </Grid>
               <Grid item xs={6}>
                 <div className='flex items-center gap-2 mbe-1'>
                   <div>
                     <i className='ri-circle-fill text-[10px] text-primary' />
                   </div>
-                  <Typography>Other Sales</Typography>
+                  <Typography>Other Products</Typography>
                 </div>
-                <Typography className='font-medium'>$50,200</Typography>
+                <Typography className='font-medium'>₹50,200</Typography>
               </Grid>
             </Grid>
           </Grid>

@@ -7,6 +7,7 @@ import Congratulations from '@views/dashboards/ecommerce/Congratulations'
 import CardStatVertical from '@components/card-statistics/Vertical'
 import TotalProfitStackedBar from '@views/dashboards/ecommerce/TotalProfitStackedBar'
 import TotalSales from '@views/dashboards/ecommerce/TotalSales'
+import TotalEarning from '@views/dashboards/ecommerce/TotalEarning'
 import LineChartWithShadow from '@views/dashboards/ecommerce/LineChartWithShadow'
 import RadialBarChart from '@views/dashboards/ecommerce/RadialBarChart'
 import Transactions from '@views/dashboards/ecommerce/Transactions'
@@ -41,22 +42,22 @@ const DashboardECommerce = async () => {
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>
             <CardStatVertical
-              title='Revenue'
-              stats='95k'
-              avatarIcon='ri-money-dollar-circle-line'
+              title='New Customer'
+              stats='95'
+              avatarIcon='ri-user-line'
               avatarColor='success'
-              subtitle='Revenue Increase'
-              trendNumber='12%'
+              subtitle='Add New Customer'
+              trendNumber='12'
               trend='positive'
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <CardStatVertical
-              title='Transactions'
+              title='Total Purchase'
               stats='12.1k'
-              avatarIcon='ri-bank-card-line'
+              avatarIcon='ri-shopping-cart-line'
               avatarColor='info'
-              subtitle='Daily Transactions'
+              subtitle='Daily Purchase'
               trendNumber='38%'
               trend='positive'
             />
@@ -83,7 +84,11 @@ const DashboardECommerce = async () => {
         <SalesOverview />
       </Grid>
       <Grid item xs={12} md={6} lg={4}>
+
         <Grid container spacing={6}>
+        <Grid item xs={12}>
+        <TotalEarning />
+        </Grid>
           <Grid item xs={12} sm={6}>
             {/* <LineChartWithShadow /> */}
             <CardStatVertical
@@ -111,10 +116,10 @@ const DashboardECommerce = async () => {
       </Grid>
       <Grid item xs={12} md={6} lg={4}>
         {/* <WebsiteStatistics /> */}
-        <Transactions />
+        {/* <Transactions /> */}
       </Grid>
-      <Grid item xs={12} lg={8}>
-        <Typography variant='h4' className='mbe-9'>
+      <Grid item xs={12} lg={18}>
+        <Typography variant='h4' className='mbe-9 text-center'>
           Invoice List
         </Typography>
         <Table invoiceData={data.slice(0, 8)} />

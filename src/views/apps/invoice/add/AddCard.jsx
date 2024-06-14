@@ -38,7 +38,7 @@ import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 
 
 
-const AddAction = ({ invoiceData }) => {
+const AddAction = ({ invoiceData, handleClose }) => {
 
   const { data: session } = useSession()
 
@@ -413,7 +413,7 @@ const AddAction = ({ invoiceData }) => {
         </CardContent>
       </Card>
 
-      <AddCustomerDrawer open={open} toggle={() => setOpen(!open)} onSubmit={onFormSubmit} />
+      <AddCustomerDrawer open={open} handleClose={() => setOpen(!open)} onSubmit={onFormSubmit}  />
     </>
   )
 }

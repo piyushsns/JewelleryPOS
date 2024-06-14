@@ -98,8 +98,7 @@ const RadialBarChart = () => {
         <Typography variant='h4'>135k</Typography>
         <AppReactApexCharts type='radialBar' width='100%' height={205} options={options} series={[78]} />
         <Typography color='text.primary' className='font-medium text-center'>
-          Total Sales
-        </Typography>
+Online Payment        </Typography>
       </CardContent>
     </Card>
   )

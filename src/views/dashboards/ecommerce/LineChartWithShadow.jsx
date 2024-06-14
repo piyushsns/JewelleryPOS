@@ -101,10 +101,10 @@ const LineChartWithShadow = () => {
   return (
     <Card>
       <CardContent>
-        <Typography variant='h4'>$35.4k</Typography>
+        <Typography variant='h4'>₹35.4k</Typography>
         <AppReactApexCharts type='line' width='100%' height={113} options={options} series={series} />
         <Typography color='text.primary' className='font-medium text-center'>
-          Total Revenue
+          Total Cash
         </Typography>
       </CardContent>
     </Card>
